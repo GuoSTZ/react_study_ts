@@ -54,7 +54,9 @@ class EditTableDemo extends React.Component<
     return (
         <Form>
           <Form.Item
-            label={"可编辑表格"}>
+            label={"可编辑表格"}
+            labelCol={{span: 4}}
+            wrapperCol={{span: 20}}>
             <WrapperRef>
               <EditTable
                 ref={(node: any) => (this.nodeRef = node)}
