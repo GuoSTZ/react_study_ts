@@ -4,7 +4,7 @@ import {WrapperRef} from '@mcfed/components';
 
 import {renderConfig} from './Columns.render';
 import EditTable from './components/index';
-import './index.less';
+import './index.css';
 
 export interface FormProps {}
 
@@ -54,6 +54,7 @@ class EditTableDemo extends React.Component<
     return (
         <Form>
           <Form.Item
+            className="demo-editTable-formItem"
             label={"可编辑表格"}
             labelCol={{span: 4}}
             wrapperCol={{span: 20}}>
