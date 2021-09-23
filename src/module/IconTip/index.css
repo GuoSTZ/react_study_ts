@@ -1,0 +1,21 @@
+.placement-left {
+  margin-right: 4px;
+}
+.placement-right {
+  margin-left: 4px;
+}
+.success-icon {
+  color: #52c41a !important;
+}
+.info-icon {
+  color: #1890ff !important;
+}
+.warning-icon {
+  color: #faad14 !important;
+}
+.error-icon {
+  color: #f5222d !important;
+}
+.default-icon {
+  color: #000 !important;
+}
