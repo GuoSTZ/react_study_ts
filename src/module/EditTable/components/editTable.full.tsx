@@ -140,23 +140,27 @@ export default class EditTable<T extends Item> extends React.Component<
             {
               title: '操作',
               dataIndex: '操作',
-              className: 'operation',
               render: (text: any, record: any, index: number) => {
                 const editable = this.isEditing(record);
-                if (this.props.mode === 'full') {
+                if(this.props.mode === 'full') {
                   return (
-                    <div className='operation-button-full'>
-                      {this.renderAddAndDeleteButton('delete', index) &&
-                        this.renderDeleteConfirmButton(props, record)}
-                      {this.renderAddAndDeleteButton('add', index) && (
-                        <EditableContext.Consumer>
-                          {form => (
-                            <a onClick={(e: any) => this.addNew(e, form)}>
-                              {props.btnText?.add ? props.btnText?.add : '添加'}
+                    <div>
+                      {
+                        this.state.data?.length > 1 && this.renderDeleteConfirmButton(props, record)
+                      }
+                      {
+                        this.state.data?.length-1 === index && (
+                          <EditableContext.Consumer>
+                            {form => (
+                              <a onClick={(e: any) => this.addNew(e, form)}>
+                                {props.btnText?.add
+                                  ? props.btnText?.add
+                                  : '添加'}
                             </a>
-                          )}
-                        </EditableContext.Consumer>
-                      )}
+                            )}
+                          </EditableContext.Consumer>
+                        )
+                      }
                     </div>
                   );
                 } else {
@@ -180,9 +184,7 @@ export default class EditTable<T extends Item> extends React.Component<
                               !props.hideCancelConfirm ? (
                                 <Popconfirm
                                   title='确认取消?'
-                                  onConfirm={() =>
-                                    this.cancel(form, record.key)
-                                  }>
+                                  onConfirm={() => this.cancel(form, record.key)}>
                                   <a>
                                     {props.btnText?.cancel
                                       ? props.btnText?.cancel
@@ -190,8 +192,7 @@ export default class EditTable<T extends Item> extends React.Component<
                                   </a>
                                 </Popconfirm>
                               ) : (
-                                <a
-                                  onClick={() => this.cancel(form, record.key)}>
+                                <a onClick={() => this.cancel(form, record.key)}>
                                   {props.btnText?.cancel
                                     ? props.btnText?.cancel
                                     : '取消'}
@@ -221,37 +222,26 @@ export default class EditTable<T extends Item> extends React.Component<
   }
 
   renderDeleteConfirmButton(props: Readonly<EditTableProps<T>>, record: any) {
-    if (props.hideDeleteConfirm) {
+    if(props.hideDeleteConfirm) {
       return (
-        <a
-          style={{marginRight: 8}}
-          onClick={() => this.delete(record.key, 'delete')}>
-          {props.btnText?.delete ? props.btnText?.delete : '删除'}
+        <a style={{marginRight: 8}} onClick={() => this.delete(record.key, 'delete')}>
+          {props.btnText?.delete
+            ? props.btnText?.delete
+            : '删除'}
         </a>
-      );
+      )
     } else {
       return (
         <Popconfirm
           title='确认删除?'
           onConfirm={() => this.delete(record.key, 'delete')}>
           <a style={{marginRight: 8}}>
-            {props.btnText?.delete ? props.btnText?.delete : '删除'}
+            {props.btnText?.delete
+              ? props.btnText?.delete
+              : '删除'}
           </a>
         </Popconfirm>
-      );
-    }
-  }
-
-  renderAddAndDeleteButton(type: 'add' | 'delete', index: number) {
-    const {direction} = this.props;
-    if (type === 'add') {
-      if (direction === 'bottom') {
-        return this.state.data?.length - 1 === index;
-      } else {
-        return index === 0;
-      }
-    } else {
-      return this.state.data?.length - 1 > 0;
+      )
     }
   }
 
@@ -274,16 +264,9 @@ export default class EditTable<T extends Item> extends React.Component<
   }
 
   compileData(data: any[]) {
-    const rowKey = this.props.rowKey || 'key';
+    const {rowKey} = this.props;
     if (!data) {
       return [];
-    }
-    if (this.props.mode === 'full') {
-      if (data?.length === 0) {
-        let key =
-          new Date().valueOf() + '' + Math.floor(Math.random() * 10 + 1);
-        return [{key}];
-      }
     }
     return data.map
       ? data.map((it: any, idex: number) => ({
@@ -459,7 +442,7 @@ export default class EditTable<T extends Item> extends React.Component<
       return false;
     }
     // 如果是全表单编辑模式下
-    if (mode === 'full') {
+    if(mode === 'full') {
       let fullFlag = false;
       form?.validateFields((error: any, row: T) => {
         if (error) {
@@ -467,11 +450,11 @@ export default class EditTable<T extends Item> extends React.Component<
         }
         fullFlag = true;
       });
-      if (!fullFlag) {
+      if(!fullFlag) {
         return;
       }
     }
-    if (maxNum && this.state.data?.length >= maxNum) {
+    if(maxNum && this.state.data?.length >= maxNum) {
       message.error(maxErrorMsg || `最多可添加${maxNum}条数据`);
       return;
     }
@@ -513,7 +496,6 @@ export default class EditTable<T extends Item> extends React.Component<
   // 根据外界传入的editConfig来处理，当前仅接受对象和方法
   renderEditConfig(
     config: GetFieldDecoratorOptions | EditConfigFunctionType,
-    instance: any,
     form: WrappedFormUtils
   ): GetFieldDecoratorOptions | null {
     if (Object.prototype.toString.call(config) === '[object Object]') {
@@ -521,7 +503,7 @@ export default class EditTable<T extends Item> extends React.Component<
       return config;
     } else if (Object.prototype.toString.call(config) === '[object Function]') {
       // @ts-ignore
-      return config(instance, form);
+      return config(this.state.data, this.state.editingKey, form);
     } else {
       return {};
     }
@@ -542,16 +524,15 @@ export default class EditTable<T extends Item> extends React.Component<
       <EditableContext.Consumer>
         {(form: WrappedFormUtils) => {
           const {getFieldDecorator, setFieldsValue} = form;
-          const component = editComponent(text, record, instance, form);
+          const component = editComponent(text, record, instance, form, data);
           return (
             <FormItem style={{margin: 0}}>
               {getFieldDecorator(dataIndex, {
-                ...this.renderEditConfig(editConfig, instance, form),
+                ...this.renderEditConfig(editConfig, form),
                 initialValue:
                   record[dataIndex] === ''
                     ? editConfig &&
-                      this.renderEditConfig(editConfig, instance, form)
-                        ?.initialValue
+                      this.renderEditConfig(editConfig, form)?.initialValue
                     : record[dataIndex]
               })(
                 React.createElement(component.type, {
@@ -580,21 +561,21 @@ export default class EditTable<T extends Item> extends React.Component<
     );
   }
 
-  renderDefaultConfig() {
-    const {mode, btnText} = this.props;
-    if (mode === 'row') {
+  isRenderFooter() {
+    const {mode, maxNum, btnText} = this.props;
+    if(mode === 'row') {
       return {
         footer: () => (
-          <Button icon='plus' onClick={this.addNew} style={{width: '100%'}}>
+          <Button
+            icon='plus'
+            onClick={this.addNew}
+            style={{width: '100%'}}>
             {btnText?.add ? btnText?.add : '新增'}
           </Button>
         )
       };
     } else {
-      // 当前全表格编辑默认不需要分页
-      return {
-        pagination: false
-      };
+      return {};
     }
   }
 
@@ -606,7 +587,6 @@ export default class EditTable<T extends Item> extends React.Component<
       onChange,
       btnText,
       maxNum,
-      rowKey,
       ...otherProps
     } = this.props;
     const components = {
@@ -645,17 +625,14 @@ export default class EditTable<T extends Item> extends React.Component<
         bordered
         dataSource={this.state.data}
         columns={columnsFinal}
-        // @ts-ignore
         pagination={{
           pageSize: this.pageSize,
           current: this.state.currentPage,
           onChange: this.pageOnChange.bind(this)
         }}
-        rowClassName={(record: object, index: number) =>
-          mode === 'row' ? 'editable-row' : 'editTable-full'
-        }
+        rowClassName={(record: object, index: number) => mode === 'row' ? 'editable-row' : 'editTable-full'}
         {...otherProps}
-        {...this.renderDefaultConfig()}
+        {...this.isRenderFooter()}
       />
     );
   }
