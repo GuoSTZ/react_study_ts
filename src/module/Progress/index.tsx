@@ -1,0 +1,91 @@
+import React from 'react';
+import { Progress, Row, Col } from 'antd';
+import { ProgressProps } from 'antd/lib/progress';
+import './index.css';
+
+export interface ProgressViewProps extends ProgressProps {
+  /**
+   * 数据源
+   */
+  dataSource: dataSourceProps[];
+  /**
+   * 统一控制分隔符的显示和隐藏
+   */
+  colon?: boolean;
+  labelCol?: any;
+  wrapperCol?: any;
+}
+
+interface dataSourceProps {
+  /**
+   * 进度值
+   */
+  percent: number;
+  /**
+   * 左侧文字
+   */
+  label?: string;
+  /**
+   * 自定义进度条颜色
+   */
+  color?: string | Function;
+}
+
+interface ProgressViewState { }
+
+export default class ProgressView extends React.Component<
+  ProgressViewProps,
+  ProgressViewState
+> {
+  static defaultProps = {
+    dataSource: [],
+    colon: true,
+    labelCol: {
+      span: 4
+    },
+  }
+
+  compileWrapperCol(label: string, labelCol: any, wrapperCol: any) {
+    if(wrapperCol) {
+      return wrapperCol;
+    } else if(!label) {
+      return { span: 24 };
+    } else {
+      return { span: 24 - labelCol?.span };
+    }
+  }
+
+  render() {
+    const {dataSource, colon, labelCol, wrapperCol, ...otherProps} = this.props;
+    return (
+      <div className="ProgressView">
+        {
+          dataSource?.map((item: any) => (
+            <Row style={{color: '#000'}}>
+              { 
+                item.label && (
+                  <Col {...labelCol}>
+                    <label className={`progressView-label ${colon ? 'progressView-label-colon' : ''}`}>
+                      {item.label}
+                    </label>
+                  </Col>
+                )
+              }
+              <Col {...this.compileWrapperCol(item.label, labelCol, wrapperCol)} >
+                <Progress 
+                  {...otherProps} 
+                  percent={item.percent} 
+                  strokeColor={
+                    typeof item.color === 'function'
+                      ? item.color(item.percent)
+                      : item.color
+                  }
+                />
+              </Col>
+            </Row>
+          ))
+        }
+      </div>
+    )
+  }
+}
