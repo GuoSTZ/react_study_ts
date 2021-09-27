@@ -14,23 +14,22 @@ import {
 // import LoadingTree from './module/Tree';
 // import EditableTable from './module/Table';
 // import IconTip from './module/IconTip';
-import ProgressView from './module/Progress';
+// import ProgressView from './module/Progress';
+import CardView from './module/CardView';
 import './App.css';
 import { Icon } from 'antd';
+import image1 from './images/1.png'
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <ProgressView 
-          dataSource={[
-            {percent: 50, label: "CPU", color: 'red'},
-            {percent: 85, color: '#000'},
-            {percent: 99, color: (data: number) => {if(data> 80) return 'red'; else return 'orange';}},
-          ]} 
-          size="small"
-          status="active"
-        />
+        <CardView 
+          data={{
+            title: "敏感访问", 
+            image: image1, 
+            content: [{label: '敏感SQL', value: 30, color: 'red'}, {label: "DROP", value: 20, color: (data: number) => {if(data> 30) return 'blue';else return 'orange';}}]
+          }}/>
       </div>
     );
   }

@@ -1,0 +1,34 @@
+.CardView {
+  width: 200px;
+}
+.CardView.ant-card.ant-card-bordered {
+  border: none;
+}
+
+.CardView .ant-card-body {
+  padding: 0;
+}
+
+.CardView .ant-card-meta .ant-card-meta-detail .ant-card-meta-title {
+  margin-bottom: 4px;
+  color: #000;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.CardView .ant-card-meta .ant-card-meta-detail .ant-card-meta-description {
+  color: #82899E;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.CardView .ant-card-meta .ant-card-meta-detail .ant-card-meta-description .desc-content {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.CardView .ant-card-meta .ant-card-meta-detail .ant-card-meta-description .desc-content label::after {
+  content: ":";
+  margin: 0 4px;
+}
