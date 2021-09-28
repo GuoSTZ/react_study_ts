@@ -16,7 +16,8 @@ import {
 // import IconTip from './module/IconTip';
 // import ProgressView from './module/Progress';
 // import CardView from './module/CardView';
-import SelectView from './module/SelectView';
+// import SelectView from './module/SelectView';
+import TreeSelectView from './module/TreeSelectView';
 import './App.css';
 import { Icon } from 'antd';
 import image1 from './images/1.png'
@@ -25,7 +26,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <SelectView />
+        <TreeSelectView />
       </div>
     );
   }
