@@ -15,7 +15,8 @@ import {
 // import EditableTable from './module/Table';
 // import IconTip from './module/IconTip';
 // import ProgressView from './module/Progress';
-import CardView from './module/CardView';
+// import CardView from './module/CardView';
+import SelectView from './module/SelectView';
 import './App.css';
 import { Icon } from 'antd';
 import image1 from './images/1.png'
@@ -24,12 +25,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <CardView 
-          data={{
-            title: "敏感访问", 
-            image: image1, 
-            content: [{label: '敏感SQL', value: 30, color: 'red'}, {label: "DROP", value: 20, color: (data: number) => {if(data> 30) return 'blue';else return 'orange';}}]
-          }}/>
+        <SelectView />
       </div>
     );
   }
