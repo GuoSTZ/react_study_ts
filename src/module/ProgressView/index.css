@@ -1,3 +1,6 @@
+.ProgressView .ant-row {
+  color: #000;
+}
 .ProgressView .progressView-label {
   display: inline-block;
 }

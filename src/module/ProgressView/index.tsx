@@ -67,7 +67,7 @@ export default class ProgressView extends React.Component<
       <div className="ProgressView">
         {
           dataSource?.map((item: any) => (
-            <Row style={{color: '#000'}}>
+            <Row>
               { 
                 item.label && (
                   <Col {...labelCol}>

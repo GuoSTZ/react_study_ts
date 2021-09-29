@@ -77,6 +77,7 @@ export default class TreeSelectView<T extends TreeNodeValue> extends React.Compo
       treeData,
       value: this.state.value,
       onChange: this.onChange,
+      maxTagCount: 3,
       treeCheckable: true,
       showCheckedStrategy: SHOW_CHILD,
       searchPlaceholder: 'Please select',
