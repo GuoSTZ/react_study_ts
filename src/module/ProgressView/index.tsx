@@ -1,7 +1,7 @@
 import React from 'react';
 import { Progress, Row, Col } from 'antd';
 import { ProgressProps } from 'antd/lib/progress';
-import './index.css';
+import './index.less';
 
 export interface ProgressViewProps extends ProgressProps {
   /**
@@ -78,9 +78,9 @@ export default class ProgressView extends React.Component<
                 )
               }
               <Col {...this.compileWrapperCol(item.label, labelCol, wrapperCol)} >
-                <Progress 
-                  {...otherProps} 
-                  percent={item.percent} 
+                <Progress
+                  {...otherProps}
+                  percent={item.percent}
                   strokeColor={
                     typeof item.color === 'function'
                       ? item.color(item.percent)
