@@ -1,0 +1,1 @@
+export { viewPrefix } from "./prefix";

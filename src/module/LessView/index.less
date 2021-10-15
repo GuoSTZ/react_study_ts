@@ -1,0 +1,34 @@
+@import 'tool';
+@import '../../config/prefix';
+
+@colorList: @blue-6, @purple-6, @volcano-6;
+@colorSet: {
+  one: @blue-6; 
+  two: @purple-6; 
+  three: @volcano-6;
+}
+@LessView: ~'@{viewPrefix}-LessView';
+@boxClass: box;
+
+.@{LessView} {
+  display: flex;
+
+  .@{boxClass} {
+    .square(200px);
+    color: @LessView;
+  }
+  
+  each(@colorList, {
+    .@{boxClass}-@{index} {
+      background-color: @value;
+    }
+  });
+  
+  each(@colorSet, {
+    .@{boxClass}-@{key} {
+      background-color: @value;
+    }
+  });
+}
+
+
