@@ -1,5 +1,5 @@
 import React from 'react';
-import './less/function.less';
+import '../less/function.less';
 
 export default class FunctionView extends React.Component {
 

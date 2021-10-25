@@ -1,6 +1,6 @@
 import React from 'react';
-import './less/wave.less';
-
+import '../less/wave.less';
+// 转义
 export default class WaveView extends React.Component {
 
   render() {

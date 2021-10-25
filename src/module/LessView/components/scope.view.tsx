@@ -1,4 +1,5 @@
 import React from 'react';
+import '../less/scope.less';
 
 export default class ScopeView extends React.Component {
   value = 1;
