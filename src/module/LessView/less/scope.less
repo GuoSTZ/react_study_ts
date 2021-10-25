@@ -1,0 +1,10 @@
+@var: red;
+
+.a, .b, .c {
+  background-color: @var;
+}
+
+.scope {
+  background-color: @var;
+  @var: blue;
+}

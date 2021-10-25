@@ -1,0 +1,53 @@
+.paletteMixin() {
+  @functions: ~`(function() {
+    this.palette = function(color) {
+     console.log(6666);
+     return color;
+    }
+  })()`;
+}
+
+.paletteMixin1() {
+  @functions: ~`(function() {
+    this.palette1 = function(color) {
+     console.log(6666);
+     return 'green';
+    }
+  })()`;
+}
+
+// 函数定义好以后执行一下Mixin函数，使其内部定义的 @functions 变量名生效，即实例化此方法
+.paletteMixin();
+.paletteMixin1();
+
+.function {
+  width: 100px;
+  height: 100px;
+  background-color: ~`palette1('blue')`;
+  // color: ~`palette()`;
+}
+
+.remMixin() {
+  @functions: ~`(function() {
+    var clientWidth = '375px';
+    function convert(size) {
+      return typeof size === 'string' ? 
+        +size.replace('px', '') : size;
+    }
+    this.rem = function(size) {
+      return convert(size) / convert(clientWidth) * 10 + 'rem';
+    }
+  })()`;
+}
+   
+.remMixin();
+
+
+.el-function {
+  width: ~`rem("300px")`;
+  height: ~`rem(150)`;
+  background: blue;
+}
+
+
+
