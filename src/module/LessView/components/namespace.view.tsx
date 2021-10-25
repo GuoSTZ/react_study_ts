@@ -1,5 +1,5 @@
 import React from 'react';
-import './less/namespace.less';
+import '../less/namespace.less';
 
 export default class NamespaceView extends React.Component {
 
