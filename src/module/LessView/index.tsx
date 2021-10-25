@@ -1,9 +1,9 @@
 import React from 'react';
 import { viewPrefix } from '../../config';
-import ScopeView from './scope.view';
-import NamespaceView from './namespace.view';
-import FunctionView from './function.view';
-import WaveView from './wave.view';
+import ScopeView from './components/scope.view';
+import NamespaceView from './components/namespace.view';
+import FunctionView from './components/function.view';
+import WaveView from './components/wave.view';
 import './index.less';
 
 export interface LessViewProps { }
