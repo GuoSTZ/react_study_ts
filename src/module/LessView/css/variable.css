@@ -1,0 +1,12 @@
+:root{
+  /* root 的优先级高 */
+  --cssVariable: #000; 
+}
+
+.box {
+  --my-variable: block;
+  --cssVaruable: #f77;
+  display: var(--my-variable);
+  background-color: var(--cssVariable);
+}
+
