@@ -1,0 +1,56 @@
+// 普通变量
+@lessVariable: #f55;
+@width: 100px;
+@height: 500px;
+
+.variable {
+  width: @width;
+  height: @height;
+  background-color: @lessVariable;
+}
+
+// 选择器变量
+@lessVariable: variable;
+
+.@{lessVariable} {
+  width: @width;
+  height: @height;
+}
+div_@{lessVariable} {
+  width: @width;
+  height: @height;
+}
+
+// 属性变量
+@bgc: background-color;
+@w: width;
+@h: height;
+.variable {
+  @{w}: @width;
+  @{h}: @height;
+  @{bgc}: #fff;
+}
+
+// URL变量
+@url:"https://www.xxx.com/";
+
+.banner{
+  background: url("@{url}/img.png");
+}
+
+
+@a: 100px;
+@b: a;
+@w: width;
+@h: height;
+
+.box {
+  @{w}: @@b;
+  @{h}: @@b;
+}
+
+// .box {
+//   width: 100%;
+// }
+
+

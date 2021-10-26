@@ -1,12 +1,13 @@
 import React from 'react';
-import '../less/minix.less';
+import '../less/mixin.less';
 
-export default class MinixView extends React.Component {
+export default class MixinView extends React.Component {
 
   render() {
     return (
       <React.Fragment>
-        <div className="minix"></div>
+        <div className="mixin-wrap">666</div>
+        <div className="mixin-box">666</div>
       </React.Fragment>
     )
   }
