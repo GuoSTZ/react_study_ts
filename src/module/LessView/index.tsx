@@ -29,12 +29,12 @@ export default class LessView extends React.Component<
           <div className={`box box-two`}>two</div>
           <div className={`box box-three`}>three</div>
         </div> */}
-        {/* <ScopeView /> */}
+        <ScopeView />
         {/* <NamespaceView /> */}
         {/* <FunctionView /> */}
         {/* <WaveView /> */}
         {/* <VariableView /> */}
-        <MixinView />
+        {/* <MixinView /> */}
       </React.Fragment>
     )
   }

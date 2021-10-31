@@ -47,3 +47,29 @@
   height: .aaa[height];
   background-color: .example1.box.wrap()[background-color];
 }
+
+@theme: '#theme2';
+
+#theme1 {
+  .bgColor {
+    background-color: red;
+  }
+}
+
+#theme2 {
+  .bgColor {
+    background-color: green;
+    .borderLine {
+      border: 10px solid;
+    }
+  }
+}
+
+.namespace {
+  width: 100px;
+  height: 100px;
+  #theme1.bgColor();
+  #theme2.bgColor.borderLine();
+}
+
+// #theme1 > .bgColor();
