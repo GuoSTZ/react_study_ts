@@ -170,7 +170,7 @@
 //   .sizeMixin(200px);
 // }
 
-// 公共代码匹配
+// 匹配
 .borderMixin(@_, @size, @color) {
   width: 100px;
   height: 100px;
@@ -180,19 +180,16 @@
 .borderMixin(top, @size, @color) {
   border-top-color: @color;
 }
-
 .borderMixin(right, @size, @color) {
   border-right-color: @color;
 }
-
 .borderMixin(bottom, @size, @color) {
   border-bottom-color: @color;
 }
-
 .borderMixin(left, @size, @color) {
   border-left-color: @color;
 }
-
+// 为啥这里只生效了一条？
 .mixin-wrap {
   .borderMixin(top, 20px, orange);
   .borderMixin(right, 20px, blue);
