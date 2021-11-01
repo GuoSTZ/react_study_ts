@@ -81,6 +81,7 @@ export default class ProgressView extends React.Component<
                 <Progress
                   {...otherProps}
                   percent={item.percent}
+                  status="normal"
                   strokeColor={
                     typeof item.color === 'function'
                       ? item.color(item.percent)
