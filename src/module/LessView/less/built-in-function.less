@@ -1,0 +1,186 @@
+@import "./tool.less";
+.BuiltInFunction {
+  // 逻辑函数 - if
+  @bgColor: red;
+  @fontSize: 10px;
+
+  .built-in {
+    .sizeWithIf(200px, 300px);
+    background-color: if(isColor(@bgColor), @bgColor, black);
+    // font-size: if(@fontSize >= 24px, 24px, @fontSize);                       // true
+    // font-size: if( 14px > @fontSize || @fontSize > 24px, 30px, @fontSize);   // error
+    // font-size: if( 14px > @fontSize or @fontSize > 24px, 60px, @fontSize);   // true
+    // font-size: if( 14px < @fontSize && @fontSize < 24px, 30px);              // error
+    // font-size: if( 14px < @fontSize and @fontSize < 24px, @fontSize, 30px);  // true
+    // font-size: if( 14px < @fontSize < 24px, @fontSize, 30px);                // error
+  }
+
+  // 逻辑函数 - boolean
+  @bgColor: black;
+  @bgColor-light: boolean(luma(@bgColor) > 50%);
+
+  .built-in {
+    .sizeWithIf(200px, 300px);
+    background: @bgColor; 
+    color: if(@bgColor-light, black, white);  // 等价于 if(luma(@bgColor) > 50%, black, white);
+  }
+
+  .clearUlStyle() {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  // list 函数 - length
+  // @colorList: red, blue, orange, yellow;
+  // @liWidth: 100px;
+  // .colorList {
+  //   width: @liWidth * length(@colorList);
+  //   .clearUlStyle();
+  //   font-size: 0;
+  //   li {
+  //     display: inline-block;
+  //     width: @liWidth;
+  //     height: 100px;
+  //     background-color: red;
+  //   }
+  // }
+
+  // list 函数 - length
+  // @colorList: red, blue, orange, yellow;
+  // @liWidth: 100px;
+  // .colorList {
+  //   width: @liWidth * length(@colorList);
+  //   .clearUlStyle();
+  //   font-size: 0;
+  //   li {
+  //     display: inline-block;
+  //     width: @liWidth;
+  //     height: 100px;
+  //     &:nth-of-type(1) {
+  //       background-color: red;
+  //     }
+  //     &:nth-of-type(2) {
+  //       background-color: blue;
+  //     }
+  //     &:nth-of-type(3) {
+  //       background-color: orange;
+  //     }
+  //     &:nth-of-type(4) {
+  //       background-color: yellow;
+  //     }
+  //   }
+  // }
+
+  // list 函数 - each 简单用法
+  // @colorList: red, blue, orange, yellow;
+  // .colorList {
+  //   each(@colorList, {
+  //     li:nth-of-type(@{index}) {
+  //       background-color: @value
+  //     }
+  //   });
+  // }
+
+  // list 函数 - each
+  @colorList: red, blue, orange, yellow;
+  @liWidth: 100px;
+  .colorList {
+    width: @liWidth * length(@colorList);
+    .clearUlStyle();
+    font-size: 0;
+    li {
+      display: inline-block;
+      width: @liWidth;
+      height: 100px;
+      each(@colorList, {
+        &:nth-of-type(@{index}) {
+          background-color: @value
+        }
+      });
+    }
+  }
+
+  // list 函数 - extract
+  @colorList: red, blue, orange, yellow;
+  .extract {
+    .square(100px);
+    background-color: extract(@colorList, 3);
+    // background-color: @colorList[3];  //error
+  }
+
+  // list 函数 - range
+  // range(start, end, step)
+  @colorList: red, blue, orange, yellow;
+  .range {
+    width: range(4);    // value: 1 2 3 4;
+    width: range(4px);  // value: 1px 2px 3px 4px;
+    width: range(2px, 4px);  // value: 2px 3px 4px;
+    width: range(10px, 40px, 10);  // value: 10px 20px 30px 40px;
+  }
+
+  // list 函数 - range 生成的是一个list
+  @colorList: red, blue, orange, yellow;
+  @liWidth: 100px;
+  @len: length(@colorList); // 4
+  .colorList-range {
+    width: @liWidth * @len;
+    font-size: 0;
+    .clearUlStyle();
+    li {
+      display: inline-block;
+      width: @liWidth;
+      height: max(100px, 200px);
+      each(range(@len), {
+        &:nth-of-type(@{value}) {
+          background-color: extract(@colorList, @value);
+        }
+      });
+    }
+  }
+
+  // type 函数
+  // iscolor(#ff0);     
+  // iscolor(blue);     
+  // isstring("string"); 
+  // isnumber(1234);     
+  // ispixel(56px);    
+  // ispercentage(7.8%);     
+  // iskeyword(keyword);  
+  // isurl(url(...));
+  // isem(2em);
+  // isunit(11px, px);
+  // @rules: {
+  //   color: red;
+  // };
+  // isruleset(@rules);
+
+  // 综合函数 - default
+  // default() 当没有匹配到mixin时，返回true，若匹配到，则返回false
+  // .mixin(1)                   {x: 11}
+  // .mixin(2)                   {y: 22}
+  // .mixin(@x) when (default()) {z: @x}
+
+  // div {
+  //   .mixin(3);
+  // }
+
+  // div.special {
+  //   .mixin(1);
+  // }
+
+  // 综合函数 - unit, get-unit
+  // unit组合单位或者删除单位
+  // get-unit 获取传递参数的单位
+  // unit(5, px);    // 5px
+  // unit(5px);      // 5
+  // get-unit(5px);  // px
+  
+  // 综合函数 - svg-gradient
+  // 颜色渐变
+  .svg-gradient{
+    @list: red, green 50%, blue;
+    .size(100px, 100px);
+    background-image: svg-gradient(to bottom, @list);
+  }
+}

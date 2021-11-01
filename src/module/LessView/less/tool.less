@@ -3,6 +3,11 @@
   height: @height;
 }
 
+.sizeWithIf(@width; @height) {
+  width: if(@width < 100px, 100px, @width);
+  height: if(@height > 400px, 400px, @height);
+}
+
 .square(@size) {
   .size(@size; @size);
 }

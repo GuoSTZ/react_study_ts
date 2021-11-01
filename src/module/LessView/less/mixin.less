@@ -1,9 +1,11 @@
 // // Mixin 的定义分两种，有无参数
+// //普通无参
 // .color {
 //   color: #fff;
 //   background-color: green;
 // }
 
+// //有参数
 // .color(@color, @bgColor) {
 //   color: @color;
 //   background-color: @bgColor;
@@ -63,6 +65,19 @@
 //   .hoverMixin(200px, 200px, .5s);
 // }
 
+
+// 类似c#的重载
+// 根据参数来匹配混合
+// .func() {
+//   color: red;
+// }
+// .func(@color) {
+//   color: @color;
+// }
+// .func(@color, @bgColor) {
+//   color: @color;
+//   background-color: @bgColor;
+// }
 
 // // 默认参数
 // .hoverMixin(@width: 150px, @height: 150px, @second: .5s) {
@@ -171,6 +186,7 @@
 // }
 
 // 匹配
+// @_：通用匹配模式，无论同名的哪一个混合被匹配了，都会先执行通用匹配模式中的代码
 .borderMixin(@_, @size, @color) {
   width: 100px;
   height: 100px;
