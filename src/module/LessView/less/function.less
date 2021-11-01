@@ -1,23 +1,27 @@
 .paletteMixin() {
   @functions: ~`(function() {
     this.palette = function(color) {
-     console.log(6666);
      return color;
     }
   })()`;
 }
 
-.paletteMixin1() {
+.paletteMixin() {
   @functions: ~`(function() {
-    this.palette1 = function(color) {
-     console.log(6666);
+    this.palette = function() {
      return 'green';
     }
   })()`;
 }
 
-// 函数定义好以后执行一下Mixin函数，使其内部定义的 @functions 变量名生效，即实例化此方法
+// 函数定义好以后执行一下Mixin函数
+// 使其内部定义的 @functions 变量名生效，即实例化此方法
 .paletteMixin();
+
+
+
+
+
 .paletteMixin1();
 
 .function {

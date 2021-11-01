@@ -34,3 +34,16 @@
 .aa {
   width: ~"max(100px, 200px, 200px, 300px)";
 }
+
+.template {
+  @text: "Hello World";
+  @numText: "300px";
+  .square(100px);
+  width: `@{numText}`;
+  width: `parseInt(@{numText})`;
+  width: unit(`parseInt(@{numText})`, px);
+  background-color: aqua;
+  &::after {
+    content: `@{text}.toUpperCase()`;
+  }
+}
