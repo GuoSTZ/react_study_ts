@@ -22,7 +22,7 @@ export default class LessView extends React.Component<
     const prefixCls = `${viewPrefix}-LessView ${viewPrefix}LessView`;
     return (
       <div className='guos-react-LessView'>
-        <div className="template" />    
+        {/* <div className="template" />     */}
         {/* <div className="aa"></div> */}
         {/* <div className={prefixCls}>
           <div className={`box box-1`}>111</div>
@@ -34,7 +34,7 @@ export default class LessView extends React.Component<
         </div> */}
         {/* <ScopeView /> */}
         {/* <NamespaceView /> */}
-        {/* <FunctionView /> */}
+        <FunctionView />
         {/* <WaveView /> */}
         {/* <VariableView /> */}
         {/* <MixinView /> */}

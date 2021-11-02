@@ -1,15 +1,27 @@
 .paletteMixin() {
   @functions: ~`(function() {
-    this.palette = function(color) {
-     return color;
+    this.palette = function() {
+     return 'green';
     }
   })()`;
 }
 
 .paletteMixin() {
   @functions: ~`(function() {
-    this.palette = function() {
-     return 'green';
+    function checkIsColor(bgVal) {
+      if(bgVal === 'red') {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    
+    this.palette = function(color) {
+      if(checkIsColor(color)) {
+        return color;
+      } else {
+        return 'black';
+      }
     }
   })()`;
 }
@@ -18,17 +30,10 @@
 // 使其内部定义的 @functions 变量名生效，即实例化此方法
 .paletteMixin();
 
-
-
-
-
-.paletteMixin1();
-
 .function {
   width: 100px;
   height: 100px;
-  background-color: ~`palette1('blue')`;
-  // color: ~`palette()`;
+  background-color: ~`palette("aaa")`;
 }
 
 .remMixin() {
