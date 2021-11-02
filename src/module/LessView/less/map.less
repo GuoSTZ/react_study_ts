@@ -1,0 +1,23 @@
+.aaa {
+  width: 200px;
+  height: 50px;
+}
+
+.example {
+  .box {
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    .box-child {
+      width: 200px;
+      height: 200px;
+      background-color: blue;
+    }
+  }
+}
+
+.namespace {
+  width: 200px;
+  height: .aaa[height];
+  background-color: .example.box.box-child()[background-color];
+}

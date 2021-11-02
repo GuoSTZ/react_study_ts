@@ -1,0 +1,75 @@
+.example() {
+  .box {
+    width: 100px;
+    height: 100px;
+    background-color: red;
+  }
+}
+
+#test() {
+  .box {
+    width: 100px;
+    height: 100px;
+    background-color: red;
+  }
+}
+
+.example1 {
+  .box {
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    .wrap {
+      width: 200px;
+      height: 200px;
+      background-color: blue;
+    }
+  }
+}
+
+.aaa {
+  width: 200px;
+  height: 50px;
+}
+
+// 命名空间和访问符 
+// .namespace {
+//   .example1.box();
+// }
+
+// .namespace {
+//   .example1.box.wrap();
+// }
+
+// 映射
+.namespace {
+  width: 200px;
+  height: .aaa[height];
+  background-color: .example1.box.wrap()[background-color];
+}
+
+@theme: '#theme2';
+
+#theme1 {
+  .bgColor {
+    background-color: red;
+  }
+}
+
+#theme2 {
+  .bgColor {
+    background-color: green;
+    .borderLine {
+      border: 10px solid;
+    }
+  }
+}
+
+.namespace {
+  width: 100px;
+  height: 100px;
+  #theme1.bgColor();
+  #theme2.bgColor.borderLine();
+}
+
+// #theme1 > .bgColor();

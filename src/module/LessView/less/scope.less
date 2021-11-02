@@ -1,0 +1,18 @@
+@import "./tool.less";
+
+@bgColor: red;  // 声明变量
+
+.scope{
+  @bgColor: blue; // 声明变量
+  .size(100px, 100px);
+  background-color: @bgColor; 
+  .scope-child{
+    @bgColor: green; // 声明变量
+    .size(50px, 50px);
+    background-color: @bgColor;
+  }
+}
+.other{
+  .size(100px, 100px);
+  background-color: @bgColor;
+}

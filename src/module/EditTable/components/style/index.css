@@ -1,0 +1,9 @@
+.ant-table-tbody > .editable-row > td {
+  padding: 20px 20px;
+}
+.editable-row .ant-form-explain {
+  position: absolute;
+}
+.editable-row .ExtraColumn .ant-form-explain {
+  position: inherit;
+}

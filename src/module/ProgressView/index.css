@@ -1,0 +1,15 @@
+.ProgressView .ant-row {
+  color: #000;
+}
+.ProgressView .progressView-label {
+  display: inline-block;
+}
+
+.ProgressView .progressView-label-colon::after {
+  content: ':';
+  margin-left: 4px;
+}
+
+.ProgressView .ant-progress .ant-progress-text {
+  color: #000;
+}
