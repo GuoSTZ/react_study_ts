@@ -9,9 +9,6 @@
     .setBox(200px, 200px, aqua);
     margin: 10px;
     transition: .5s;
-    // &:not(:last-child) {
-    //   background-color: red;
-    // }
   }
 
   // 伪类 - 鼠标悬停
@@ -24,15 +21,19 @@
     background-color: transparent;
     a {
       margin-right: 10px;
+      // 未点击时的样式
       &:link {
         color: black;
       }
+      // 被访问过后的样式
       &:visited {
         color: green;
       }
+      // 鼠标移入的样式
       &:hover {
         color: red;
       }
+      // 鼠标点击到松开这一过程中的样式
       &:active {
         color: orange;
       }
