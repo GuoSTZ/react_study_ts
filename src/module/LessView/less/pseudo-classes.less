@@ -1,0 +1,143 @@
+@import './tool';
+
+.PseudoClassView {
+  display: flex;
+  width: 1000px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  > div {
+    .setBox(200px, 200px, aqua);
+    margin: 10px;
+    transition: .5s;
+    // &:not(:last-child) {
+    //   background-color: red;
+    // }
+  }
+
+  // 伪类 - 鼠标悬停
+  .hover-div:hover {
+    background-color: blueviolet;
+  }
+
+  // 伪类 - link,visited,hover,active
+  .a-div {
+    background-color: transparent;
+    a {
+      margin-right: 10px;
+      &:link {
+        color: black;
+      }
+      &:visited {
+        color: green;
+      }
+      &:hover {
+        color: red;
+      }
+      &:active {
+        color: orange;
+      }
+    }
+  }
+
+  // 伪类 - 获取焦点
+  .focus-div{
+    input:focus {
+      background-color: silver;
+    }
+  }
+
+  // 伪类 - *-of-type, *-child
+  // first-child
+  // last-child
+  // nth-child(n)
+  // nth-last-child(n)
+  // only-child
+
+  // first-of-type
+  // last-of-type
+  // nth-of-type(n)
+  // nth-last-of-type(n)
+  // only-of-type 
+  .child-div {
+    color: black;
+    ul , > div {
+      .clearUlStyle();
+      border: 1px solid;
+    }
+    p, ul {
+      margin: 0;
+    }
+    a {
+      color: black;
+    }
+
+    // 指向作用域的 第一个子元素，且是p标签时生效
+    // p:first-child {
+    //   color: red;
+    // }
+
+    // 指向作用域的 最后一个子元素，且是p标签时生效
+    // p:last-child {
+    //   color: red;
+    // }
+
+    // 指向作用域的 第n个子元素，且是p标签时生效
+    // p:nth-child(3) {
+    //   color: red;
+    // }
+
+    // 指向作用域的 倒数第选n个子元素，且是p标签时生效
+    // p:nth-last-child(3) {
+    //   color: red;
+    // }
+
+    // 指向作用域的 子元素只有一个，且是a标签时生效
+    // a:only-child {
+    //   color: red;
+    // }
+
+    // ---------------------------- 
+
+    // 指向作用域的 第一个p标签
+    // p:first-of-type {
+    //   color: gold;
+    // }
+
+    // 指向作用域的 最后一个p标签
+    // p:last-of-type {
+    //   color: gold;
+    // }
+
+    // 指向作用域的 第n个p标签
+    // p:nth-of-type(1) {
+    //   color: gold;
+    // }
+
+    // 指向作用域的 倒数第选n个p标签
+    // p:nth-last-of-type(3) {
+    //   color: gold;
+    // }
+
+    // 指向作用域的 a标签数量只有一个时生效
+    // a:only-of-type {
+    //   color: gold;
+    // }
+  }
+
+  .not-div {
+    p {
+      margin: 0;
+    }
+    section:not(:nth-child(3)) {
+      width: 100px;
+      height: 30px;
+      margin-bottom: 4px;
+      background-color: slateblue;
+    }
+  }
+
+  // 伪元素 - 用户选中部分 
+  .selection-div::selection {
+    background-color: gold;
+  }
+}

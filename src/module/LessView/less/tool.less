@@ -11,3 +11,20 @@
 .square(@size) {
   .size(@size; @size);
 }
+
+.setBgColor(@color) {
+  background-color: @color;
+}
+
+.setBox(@width; @height; @bgColor) {
+  width: @width;
+  height: @height;
+  background-color: @bgColor;
+}
+
+// 清除ul的默认样式
+.clearUlStyle {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

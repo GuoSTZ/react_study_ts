@@ -8,6 +8,7 @@ import VariableView from './components/variable.view';
 import MixinView from './components/mixin.view';
 import BuiltInFunction from './components/built-in-function.view';
 import ExtendView from './components/extend.view';
+import PseudoClassView from './components/pseudo-classes.view';
 import './index.less';
 
 export interface LessViewProps { }
@@ -34,12 +35,13 @@ export default class LessView extends React.Component<
         </div> */}
         {/* <ScopeView /> */}
         {/* <NamespaceView /> */}
-        <FunctionView />
+        {/* <FunctionView /> */}
         {/* <WaveView /> */}
         {/* <VariableView /> */}
         {/* <MixinView /> */}
         {/* <BuiltInFunction /> */}
         {/* <ExtendView /> */}
+        <PseudoClassView />
       </div>
     )
   }
