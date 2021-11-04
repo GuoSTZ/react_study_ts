@@ -134,21 +134,29 @@
     p {
       margin: 0;
     }
-    section:not(:nth-child(3)) {
-      .setBox(100px, 30px, slateblue);
-      margin-bottom: 4px;
-    }
-    // * 匹配类名中含有bb
-    section:not([class*="bb"]) {
-      .setBox(100px, 30px, gold);
-    }
-    // ^ 匹配类名开头含有aa
-    section:not([class^="aa"]) {
-      .setBox(100px, 30px, orange);
-    }
-    // $ 匹配类名结尾含有gg
-    section:not([class$="gg"]) {
-      .setBox(100px, 30px, green);
+    // section:not(:nth-child(3)) {
+    //   .setBox(100px, 30px, slateblue);
+    //   margin-bottom: 4px;
+    // }
+    // * 匹配类名中不含有bb的section标签
+    // section:not([class*="bb"]) {
+    //   .setBox(100px, 30px, gold);
+    // }
+    // ^ 匹配类名开头不是aa的section标签
+    // section:not([class^="aa"]) {
+    //   .setBox(100px, 30px, orange);
+    // }
+    // $ 匹配类名结尾不是gg的section标签
+    // section:not([class$="gg"]) {
+    //   .setBox(100px, 30px, green);
+    // }
+    // 匹配类名结尾是gg的section标签
+    // section[class$="gg"] {
+    //   .setBox(100px, 30px, pink);
+    // }
+    // 匹配类名开头是aa的全部标签
+    [class^="aa"] {
+      .setBox(100px, 30px, pink);
     }
   }
 
