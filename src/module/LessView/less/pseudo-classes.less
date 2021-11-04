@@ -38,6 +38,11 @@
         color: orange;
       }
     }
+    input {
+      &:active {
+        background-color: aquamarine;
+      }
+    }
   }
 
   // 伪类 - 获取焦点
@@ -130,10 +135,20 @@
       margin: 0;
     }
     section:not(:nth-child(3)) {
-      width: 100px;
-      height: 30px;
+      .setBox(100px, 30px, slateblue);
       margin-bottom: 4px;
-      background-color: slateblue;
+    }
+    // * 匹配类名中含有bb
+    section:not([class*="bb"]) {
+      .setBox(100px, 30px, gold);
+    }
+    // ^ 匹配类名开头含有aa
+    section:not([class^="aa"]) {
+      .setBox(100px, 30px, orange);
+    }
+    // $ 匹配类名结尾含有gg
+    section:not([class$="gg"]) {
+      .setBox(100px, 30px, green);
     }
   }
 

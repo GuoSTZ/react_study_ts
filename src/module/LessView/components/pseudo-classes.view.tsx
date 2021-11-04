@@ -10,6 +10,7 @@ export default class PseudoClassView extends React.Component {
         <div className="hover-div">鼠标悬停</div>
         <div className="a-div">
           <a href="#1">链接</a>
+          <input />
         </div>
         <div className="focus-div">
           <input placeholder="焦点获取" />
@@ -37,11 +38,11 @@ export default class PseudoClassView extends React.Component {
 
         </div>
         <div className="not-div">
-          <section>111</section>
-          <section>222</section>
-          <p>p标签乱入</p>
-          <section>333</section>
-          <section>444</section>
+          <section className="aabbcc">aabbcc</section>
+          <section className="eeffgg">eeffgg</section>
+          <p className="ccvvgg">p标签乱入(ccvvgg)</p>
+          <section className="aauull">aauull</section>
+          <section className="mmbbkk">mmbbkk</section>
         </div>
 
         {/* 伪元素 */}
