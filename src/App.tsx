@@ -19,6 +19,7 @@ import {
 // import SelectView from './module/SelectView';
 // import TreeSelectView from './module/TreeSelectView';
 // import TableTransfer from './module/TableTransfer';
+import EchartsView from './module/EchartsView';
 import LessView from './module/LessView';
 import './App.css';
 import { Icon } from 'antd';
@@ -28,7 +29,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <LessView />
+        <EchartsView />
       </div>
     );
   }

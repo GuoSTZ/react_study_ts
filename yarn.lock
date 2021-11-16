@@ -1569,6 +1569,35 @@
   optionalDependencies:
     antd "^3.9.3"
 
+"@mcfed/components@^0.7.9":
+  version "0.7.20"
+  resolved "http://nexus.mchz.com.cn:4873/@mcfed%2fcomponents/-/components-0.7.20.tgz#a259bd40f605372f7219e878c787084f7743c3c8"
+  integrity sha512-04aBxomq4574nNDOBQtl9oVsfusdFym54RDmhXyuqOrBSNcTvr6hbr11Gy4A1fiDHlqPBie9+yxlStJ2+8Ir4w==
+  dependencies:
+    "@ant-design/css-animation" "^1.7.2"
+    "@mcfed/utils" "^0.2.0-rc8"
+    "@types/classnames" "^2.2.11"
+    "@types/fscreen" "1.0.0"
+    "@types/qs" "^6.9.3"
+    "@types/react-text-mask" "^5.4.6"
+    classnames "^2.2.6"
+    cross-fetch "^2.2.3"
+    fscreen "1.2.0"
+    git "^0.1.5"
+    indexof "^0.0.1"
+    moment "^2.22.2"
+    prop-types "^15.6.2"
+    react "^16.9.0"
+    react-dom "^16.9.0"
+    react-router "^5.0.0"
+    react-router-dom "^5.0.0"
+    react-text-mask "^5.4.3"
+    react-virtualized "^9.21.1"
+    react-virtualized-transfer "^1.4.1"
+    text-mask-addons "^3.8.0"
+  optionalDependencies:
+    antd "^3.9.3"
+
 "@mcfed/core@0.6.2":
   version "0.6.2"
   resolved "http://nexus.mchz.com.cn:4873/@mcfed%2fcore/-/core-0.6.2.tgz#4b653496cf6df04e9a237abc94bf93e0b11bb99b"
@@ -1688,12 +1717,12 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@soc/components@1.0.9":
-  version "1.0.9"
-  resolved "http://nexus.mchz.com.cn:4873/@soc%2fcomponents/-/components-1.0.9.tgz#f8514ad91b5ae4a16935d76abf34822bf9e05531"
-  integrity sha512-BUaEFfRDx+2qgcviWKMMeSCiCYjJXFC5Kx2952SdF6aAJHxmLvOaZiYq2vqnC+vilfSGK/gmO2RITvTSx1mj1g==
+"@soc/components@1.0.21":
+  version "1.0.21"
+  resolved "http://nexus.mchz.com.cn:4873/@soc%2fcomponents/-/components-1.0.21.tgz#8242bc0325aa43e13f70b2d914ef50cf66a118dc"
+  integrity sha512-M1FR/tbR621jJgH1Mvn3d7qRnoERD/UOemOgCDWUOJQ6aBg0WQ24DCfpH19gLR0Yxk2KAw9qL9mPHnIMHzSIhw==
   dependencies:
-    "@mcfed/components" "^0.6.15"
+    "@mcfed/components" "^0.7.9"
     "@mcfed/crud" "0.5.0-beta2"
     "@mcfed/utils" "0.2.12"
     "@soc/utils" "1.0.6"
@@ -1702,6 +1731,7 @@
     antd "^3.26.0"
     copyfiles "^2.4.1"
     echarts "^5.0.0"
+    filesize "^8.0.3"
     react "^16.13.1"
 
 "@soc/framework@^1.0.10":
@@ -3119,6 +3149,15 @@ babel-plugin-transform-runtime@^6.23.0:
   dependencies:
     babel-runtime "^6.22.0"
 
+babel-polyfill@^6.26.0:
+  version "6.26.0"
+  resolved "http://nexus.mchz.com.cn:4873/babel-polyfill/-/babel-polyfill-6.26.0.tgz#379937abc67d7895970adc621f284cd966cf2153"
+  integrity sha1-N5k3q8Z9eJWXCtxiHyhM2WbPIVM=
+  dependencies:
+    babel-runtime "^6.26.0"
+    core-js "^2.5.0"
+    regenerator-runtime "^0.10.5"
+
 babel-preset-current-node-syntax@^1.0.0:
   version "1.0.1"
   resolved "http://nexus.mchz.com.cn:4873/babel-preset-current-node-syntax/-/babel-preset-current-node-syntax-1.0.1.tgz#b4399239b89b2a011f9ddbe3e4f401fc40cff73b"
@@ -4091,7 +4130,7 @@ core-js@^1.0.0:
   resolved "http://nexus.mchz.com.cn:4873/core-js/-/core-js-1.2.7.tgz#652294c14651db28fa93bd2d5ff2983a4f08c636"
   integrity sha1-ZSKUwUZR2yj6k70tX/KYOk8IxjY=
 
-core-js@^2.4.0:
+core-js@^2.4.0, core-js@^2.5.0:
   version "2.6.12"
   resolved "http://nexus.mchz.com.cn:4873/core-js/-/core-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
   integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==
@@ -5688,6 +5727,11 @@ filesize@6.1.0:
   version "6.1.0"
   resolved "http://nexus.mchz.com.cn:4873/filesize/-/filesize-6.1.0.tgz#e81bdaa780e2451d714d71c0d7a4f3238d37ad00"
   integrity sha512-LpCHtPQ3sFx67z+uh2HnSyWSLLu5Jxo21795uRDuar/EOuYWXib5EmPaGIBuSnRqH2IODiKA2k5re/K9OnN/Yg==
+
+filesize@^8.0.3:
+  version "8.0.6"
+  resolved "http://nexus.mchz.com.cn:4873/filesize/-/filesize-8.0.6.tgz#5f0c27aa1b507fa7d9f72c912a774ca6a44111b1"
+  integrity sha512-sHvRqTiwdmcuzqet7iVwsbwF6UrV3wIgDf2SHNdY1Hgl8PC45HZg/0xtdw6U2izIV4lccnrY9ftl6wZFNdjYMg==
 
 fill-range@^4.0.0:
   version "4.0.0"
@@ -10981,6 +11025,11 @@ regenerate@^1.4.0:
   version "1.4.2"
   resolved "http://nexus.mchz.com.cn:4873/regenerate/-/regenerate-1.4.2.tgz#b9346d8827e8f5a32f7ba29637d398b69014848a"
   integrity sha512-zrceR/XhGYU/d/opr2EKO7aRHUeiBI8qjtfHqADTwZd6Szfy16la6kqD0MIUs5z5hx6AaKa+PixpPrR289+I0A==
+
+regenerator-runtime@^0.10.5:
+  version "0.10.5"
+  resolved "http://nexus.mchz.com.cn:4873/regenerator-runtime/-/regenerator-runtime-0.10.5.tgz#336c3efc1220adcedda2c9fab67b5a7955a33658"
+  integrity sha1-M2w+/BIgrc7dosn6tntaeVWjNlg=
 
 regenerator-runtime@^0.11.0:
   version "0.11.1"
