@@ -13,12 +13,19 @@ export default class SelectView extends React.Component<
   SelectViewProps,
   SelectViewState
 > {
+  filterOption(inputValue: string, option: any) {
+    if(option?.props?.children?.toUpperCase()?.includes(inputValue?.toUpperCase())) {
+      return true;
+    }
+    return false;
+  }
+
   render() {
     return (
-      <Select style={{width: 300, marginLeft: 500}} defaultValue={1}>
-        <Option value={1} key={1}>aaa</Option>
-        <Option value={2} key={2}>bbb</Option>
-        <Option value={3} key={3}>ccc</Option>
+      <Select style={{width: 300, marginLeft: 500}} filterOption={this.filterOption} showSearch>
+        <Option value={"Aaa"} key={1}>Aaa</Option>
+        <Option value={"aaa"} key={2}>aaa</Option>
+        <Option value={"aAAB"} key={3}>aAAB</Option>
         <Option value={4} key={4}>ddd</Option>
       </Select>
     )
