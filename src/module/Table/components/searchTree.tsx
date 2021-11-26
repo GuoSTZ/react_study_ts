@@ -17,10 +17,16 @@ export interface SearchTreeProps {
    */
   dataSource?: DataSourceProps[];
   /**
-   * 
+   * 执行过滤条件 - 表格提供
    */
   confirm: Function;
+  /**
+   * 清除过滤条件 - 表格提供
+   */
   clearFilters: Function;
+  /**
+   * 记录过滤条件 - 表格提供
+   */
   setSelectedKeys: Function;
   /**
    * true - 显示确认和重置按钮，通过按钮来触发过滤操作
@@ -41,6 +47,10 @@ export interface SearchTreeProps {
    * disabled - 禁用未匹配节点
    */
   type?: 'default'|'hidden'|'disabled';
+  /**
+   * 临时方案，目前使用不便
+   * 用来处理过滤操作后，继续显示过滤菜单
+   */
   setVisible?: Function;
 }
 
@@ -58,6 +68,7 @@ export default class SearchTree extends React.Component<
 > {
   static defaultProps = {
     dataSource: [],
+    showTree: true,
     showNode: true,
     type: 'default'
   }
@@ -101,6 +112,7 @@ export default class SearchTree extends React.Component<
     return dataList;
   };
 
+  // 节点展开回调
   onExpand = (expandedKeys: string[]) => {
     this.setState({
       expandedKeys,
@@ -165,6 +177,7 @@ export default class SearchTree extends React.Component<
     });
   };
 
+  // 搜索框回车键回调
   onPressEnter = () => {
     const { showTree, confirm } = this.props;
     if(!showTree) {
@@ -261,7 +274,7 @@ export default class SearchTree extends React.Component<
         }
         {
           showNode && (
-            <div>
+            <div style={{borderTop: "1px solid #f2f2f2", marginTop: 8, paddingTop: 8}}>
               <Button
                 onClick={this.handleReset.bind(this)}
                 size="small"

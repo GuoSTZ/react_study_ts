@@ -1,0 +1,62 @@
+.VirtualTreeContainer {
+  width: 300px;
+  max-height: 325px;
+  overflow: auto;
+  border: 1px solid;
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding: 4px 0;
+      min-height: 32px;
+      // 此处需要手动设置层级 - 不方便
+      each(range(3), {
+        &.level@{value} {
+          margin-left: (@value - 1) * 24px;
+        }
+      });
+      &.visible {
+        display: block;
+      }
+      &.invisible {
+        display: none;
+      }
+      .switcher {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        margin: 0;
+        line-height: 24px;
+        text-align: center;
+        vertical-align: top;
+        border: 0;
+        outline: none;
+        cursor: pointer;
+        &.switcher-open {
+          .anticon-caret-down {
+            transform: scale(.83333333) rotate(0deg);
+          }
+        }
+        &.switcher-close {
+          .anticon-caret-down {
+            transform: scale(.83333333) rotate(-90deg);
+          }
+        }
+        .anticon-caret-down {
+          font-size: 12px;
+          transition: .3s;
+        }
+      }
+      .ant-checkbox-wrapper {
+        height: 24px;
+        line-height: 24px;
+      }
+    }
+  }
+  
+
+
+}

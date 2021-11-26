@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icon, Table, Input, Button, Select } from 'antd';
 import SearchTree from './components/searchTree';
+import VirtualTree from './components/VirtualTree';
 
 const randomWord = (randomFlag: boolean, min: number, max: number) => {
   let str = "",
@@ -24,7 +25,7 @@ const randomWord = (randomFlag: boolean, min: number, max: number) => {
 
 let data: any[] = [];
 
-for(let i=1; i< 230000; i++) {
+for(let i=1; i< 500; i++) {
   data.push({
     key: `${i}`,
     name: randomWord(false, 6, 6),
@@ -62,9 +63,9 @@ export default class FilterTable extends React.Component {
         confirm={confirm}
         clearFilters={clearFilters}
         setSelectedKeys={setSelectedKeys}
-        showNode={false}
-        showTree={false}
-        setVisible={() => this.setState({filterDropdownVisible: true})}
+        // showNode={false}
+        // showTree={false}
+        // setVisible={() => this.setState({filterDropdownVisible: true})}
         // type='disabled'
       />
     ),
@@ -108,7 +109,8 @@ export default class FilterTable extends React.Component {
       },
     ];
     return (
-      <Table columns={columns} dataSource={data} onChange={this.onChange} />
+      // <Table columns={columns} dataSource={data} onChange={this.onChange} />
+      <VirtualTree />
     )
   }
 }
