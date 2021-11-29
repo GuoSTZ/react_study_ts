@@ -4,15 +4,41 @@ import { TreeProps } from 'antd/lib/tree';
 import './index.less';
 
 export interface VirtualTreeProps extends TreeProps {
-
+  /**
+   * 树结构数组
+   */
+  // dataSource: any[];
 }
 
 interface VirtualTreeState {
+  /**
+   * 树结构数组拍平后的数组
+   */
   dataSource: any[];
+  /**
+   * 树节点高度
+   */
+  itemHeight: number;
+  /**
+   * 渲染节点从树结构数组中截取的起点
+   */
+  sliceStart: number;
+  /**
+   * 可视数据
+   */
+  visibleData: any[];
+  /**
+   * 可视数据的条数
+   */
+  visibleCount: number;
+  /**
+   * 偏移量
+   */
+  offset: number;
 }
 
-const x = 10;
-const y = 2;
+const x = 100;
+const y = 20;
 const z = 1;
 // 目前假定gData为全量数据
 const gData: any = [];
@@ -44,14 +70,22 @@ export default class VirtualTree extends React.Component<
   VirtualTreeProps,
   VirtualTreeState
 > {
+  treeRef = React.createRef();
   state = {
-    dataSource: []
+    dataSource: [],
+    itemHeight: 32,
+    sliceStart: 0,
+    visibleData: [],
+    visibleCount: 10,
+    offset: 0
   }
+
   componentDidMount() {
     this.setState({
       dataSource: this.clapTree(gData, 1)
-    })
+    });
   }
+
   // 拍平树结构数据，添加parentKey、childrenKey、tLevel、visible、expand
   clapTree(data: any, level: number, parentKey?: string, ) {
     let dataList: any = [];
@@ -80,14 +114,16 @@ export default class VirtualTree extends React.Component<
   }
 
   // 截取数据
-  sliceData(data: any[]) {
-    const PAGE_SIZE = 100;
+  sliceData(dataSource: any[], start: number) {
+    const { visibleCount } = this.state;
     const res = [];
-    for(let i=0; i< data?.length; i++) {
-      if(res?.length >= PAGE_SIZE) {
+    const data = dataSource?.filter((item: any) => item.visible);
+    for(let i=start; i< data?.length; i++) {
+      if(res?.length >= visibleCount) {
         break;
       }
       if(data[i].visible) {
+        console.log(i, data[i])
         res.push(data[i]);
       }
     }
@@ -133,38 +169,50 @@ export default class VirtualTree extends React.Component<
     }
   }
 
-  // 计算可视区域内要渲染的数据
-  handleVisibleData() {
-
+  // 监听滚动事件
+  handleScroll(e: any) {
+    const { itemHeight } = this.state;
+    let scrollTop = e?.target?.scrollTop;
+    const start = Math.floor(scrollTop / itemHeight);
+    this.setState({
+      offset: start * itemHeight,
+      sliceStart: start
+    })
   }
 
   render() {
     const {...otherProps} = this.props;
-    const { dataSource } = this.state;
+    const { dataSource, sliceStart, itemHeight, offset } = this.state;
+    const treeLength = dataSource?.filter((item: any) => item.visible)?.length;
     return (
-      <div className="VirtualTreeContainer">
-        <ul style={{height: 70*32}}>
-          {
-            this.sliceData(dataSource)?.map((item: any) => {
-              return (
-                <li key={item.key} className={`level${item.tLevel} ${item.visible ? 'visible' : 'invisible'}`}>
-                  {
-                    item?.childrenKey?.length > 0 ? (
-                      <span id={item.key} className={`switcher switcher-close`} onClick={this.handleClick.bind(this, item.key)}>
-                        <Icon type="caret-down" />
-                      </span>
-                    ) : (
-                      <span id={item.key} className={`switcher`}>
-                      </span>
-                    )
-                  }
-                  <Checkbox indeterminate={false} value={item.key}>{item.title}</Checkbox>
-                  {/* {item.title} */}
-                </li>
-              )
-            })
-          }
-        </ul>
+      <div 
+        className="VirtualTreeContainer" 
+        onScroll={this.handleScroll.bind(this)}
+        ref={(ref: any) => this.treeRef = ref}>
+        <div className="VirtualTreeContainer-box" style={{height: treeLength * itemHeight}}></div>
+        <div className="VirtualTreeContainer-content" style={{transform: `translateY(${offset}px)`}}>
+          <ul>
+            {
+              this.sliceData(dataSource, sliceStart)?.map((item: any) => {
+                return (
+                  <li key={item.key} className={`level${item.tLevel} ${item.visible ? 'visible' : 'invisible'}`}>
+                    {
+                      item?.childrenKey?.length > 0 ? (
+                        <span id={item.key} className={`switcher switcher-close`} onClick={this.handleClick.bind(this, item.key)}>
+                          <Icon type="caret-down" />
+                        </span>
+                      ) : (
+                        <span id={item.key} className={`switcher`}>
+                        </span>
+                      )
+                    }
+                    <Checkbox indeterminate={false} value={item.key}>{item.title}</Checkbox>
+                  </li>
+                )
+              })
+            }
+          </ul>
+        </div>
       </div>
     )
   }
