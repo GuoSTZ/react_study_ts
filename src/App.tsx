@@ -9,14 +9,14 @@ import {
 // import EditTableView from './module/EditTable';
 // import DisabledButton from './module/Button/DisabledButton';
 // import RouteTabs from './module/RouteTabs';
-// import ReactFileView from './module/ReactFileView';
+import ReactFileView from './module/ReactFileView';
 // import Mammoth from './module/mammoth';
 // import LoadingTree from './module/Tree';
-import EditableTable, {FilterTable} from './module/Table';
+// import EditableTable, {FilterTable} from './module/Table';
 // import IconTip from './module/IconTip';
 // import ProgressView from './module/ProgressView';
 // import CardView from './module/CardView';
-import SelectView from './module/SelectView';
+// import SelectView from './module/SelectView';
 // import TreeSelectView from './module/TreeSelectView';
 // import TableTransfer from './module/TableTransfer';
 // import EchartsView from './module/EchartsView';
@@ -29,7 +29,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <FilterTable />
+        <ReactFileView />
       </div>
     );
   }
