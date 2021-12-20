@@ -21,6 +21,7 @@ import ReactFileView from './module/ReactFileView';
 // import TableTransfer from './module/TableTransfer';
 // import EchartsView from './module/EchartsView';
 // import LessView from './module/LessView';
+import { ModalMethodView } from './module/Modal';
 import './App.css';
 import { Icon } from 'antd';
 import image1 from './images/1.png'
@@ -29,7 +30,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <ReactFileView />
+        <ModalMethodView />
       </div>
     );
   }
