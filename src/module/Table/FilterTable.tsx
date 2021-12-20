@@ -1,7 +1,6 @@
 import React from 'react';
 import { Icon, Table, Input, Button, Select } from 'antd';
 import SearchTree from './components/searchTree';
-import VirtualTree from './components/VirtualTree';
 
 const randomWord = (randomFlag: boolean, min: number, max: number) => {
   let str = "",
@@ -109,8 +108,7 @@ export default class FilterTable extends React.Component {
       },
     ];
     return (
-      // <Table columns={columns} dataSource={data} onChange={this.onChange} />
-      <VirtualTree />
+      <Table columns={columns} dataSource={data} onChange={this.onChange} />
     )
   }
 }
