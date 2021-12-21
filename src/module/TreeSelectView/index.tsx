@@ -1,18 +1,84 @@
 import React from "react";
-import { TreeSelect } from 'antd';
+// import  TreeSelect  from './virtualTree';
 import { TreeSelectProps } from "antd/lib/tree-select";
+import RcTreeSelect, {
+  TreeNode,
+  SHOW_ALL,
+  SHOW_PARENT,
+  SHOW_CHILD,
+  TreeSelectProps as RcTreeSelectProps,
+} from 'rc-tree-select';
+import TreeSelect from './rcTreeSelect';
+import './style/index.less';
 
-const { SHOW_PARENT, SHOW_CHILD, SHOW_ALL } = TreeSelect;
+// const { SHOW_PARENT, SHOW_CHILD, SHOW_ALL } = TreeSelect;
 
 type TreeNodeValue = string | number | string[] | number[];
 
-export interface TreeSelectViewProps<T extends TreeNodeValue> extends TreeSelectProps<T> {
+export interface TreeSelectViewProps<T extends TreeNodeValue> extends RcTreeSelectProps<T> {
 
 }
 
 interface TreeSelectViewState {
   value: string[];
 }
+
+const x = 16;
+const y = 20;
+const z = 1;
+// 目前假定gData为全量数据
+const gData: any = [];
+
+const generateData = (_level: number, _preKey?: string, _tns?: any) => {
+  const preKey = _preKey || '0';
+  const tns = _tns || gData;
+
+  const children = [];
+  for (let i = 0; i < x; i++) {
+    const key = `${preKey}-${i}`;
+    tns.push({ title: key, key });
+    if (i < y) {
+      children.push(key);
+    }
+  }
+  if (_level < 0) {
+    return tns;
+  }
+  const level = _level - 1;
+  children.forEach((key, index) => {
+    tns[index].children = [];
+    return generateData(level, key, tns[index].children);
+  });
+};
+generateData(z);
+
+function clapTree(data: any, level: number, parentKey?: string, ) {
+  let dataList: any = [];
+  for (let i = 0; i < data.length; i++) {
+    const node = data[i];
+    const { key } = node;
+    // 保存子节点的key
+    let childrenKey = node?.children?.map((item: any) => item.key);
+    // 区分每个节点的层级
+    let tLevel = !parentKey ? 1 : level;
+    dataList.push({ 
+      key, 
+      title: key, 
+      parentKey, 
+      childrenKey, 
+      tLevel, 
+      visible: !parentKey,
+      expand: false
+    });
+
+    if (node.children) {
+      dataList = [].concat(dataList, clapTree(node.children, ++tLevel, key));
+    }
+  }
+  return dataList;
+}
+
+console.log(clapTree(gData, 1).length)
 
 export default class TreeSelectView<T extends TreeNodeValue> extends React.Component<
   TreeSelectViewProps<T>,
@@ -74,18 +140,21 @@ export default class TreeSelectView<T extends TreeNodeValue> extends React.Compo
       },
     ];
     const tProps = {
-      treeData,
-      value: this.state.value,
+      treeData: gData,
+      treeDefaultExpandAll: true,
       onChange: this.onChange,
-      maxTagCount: 3,
-      treeCheckable: true,
-      showCheckedStrategy: SHOW_CHILD,
+      // treeCheckable: true,
+      // showCheckedStrategy: SHOW_CHILD,
       searchPlaceholder: 'Please select',
-      filterTreeNode: this.filterTreeNode,
+      // filterTreeNode: this.filterTreeNode,
       style: {
         width: '100%',
       },
     };
-    return <TreeSelect {...tProps} />;
+    return (
+      <TreeSelect 
+        {...tProps}
+      />
+    );
   }
 }
