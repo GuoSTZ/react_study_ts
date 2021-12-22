@@ -1,13 +1,4 @@
 import React from "react";
-// import  TreeSelect  from './virtualTree';
-import { TreeSelectProps } from "antd/lib/tree-select";
-import RcTreeSelect, {
-  TreeNode,
-  SHOW_ALL,
-  SHOW_PARENT,
-  SHOW_CHILD,
-  TreeSelectProps as RcTreeSelectProps,
-} from 'rc-tree-select';
 import TreeSelect from './rcTreeSelect';
 import './style/index.less';
 
@@ -15,7 +6,7 @@ import './style/index.less';
 
 type TreeNodeValue = string | number | string[] | number[];
 
-export interface TreeSelectViewProps<T extends TreeNodeValue> extends RcTreeSelectProps<T> {
+export interface TreeSelectViewProps{
 
 }
 
@@ -23,7 +14,7 @@ interface TreeSelectViewState {
   value: string[];
 }
 
-const x = 16;
+const x = 160;
 const y = 20;
 const z = 1;
 // 目前假定gData为全量数据
@@ -78,10 +69,9 @@ function clapTree(data: any, level: number, parentKey?: string, ) {
   return dataList;
 }
 
-console.log(clapTree(gData, 1).length)
-
+// console.log(clapTree(gData, 1).length)
 export default class TreeSelectView<T extends TreeNodeValue> extends React.Component<
-  TreeSelectViewProps<T>,
+  TreeSelectViewProps,
   TreeSelectViewState
 > {
   state = {
@@ -92,61 +82,18 @@ export default class TreeSelectView<T extends TreeNodeValue> extends React.Compo
     this.setState({ value });
   };
   filterTreeNode(inputValue: string, treeNode: any) {
-    if(treeNode?.props?.title?.toUpperCase()?.includes(inputValue?.toUpperCase())) {
+    if(treeNode?.title?.toUpperCase()?.includes(inputValue?.toUpperCase())) {
       return true;
     }
     return false;
   }
   render() {
-    const treeData = [
-      {
-        title: '全部',
-        value: '0',
-        key: '0',
-      },
-      {
-        title: 'Node1',
-        value: '0-0',
-        key: '0-0',
-        children: [
-          {
-            title: 'Child Node1',
-            value: '0-0-0',
-            key: '0-0-0',
-          },
-        ],
-      },
-      {
-        title: 'Node2',
-        value: '0-1',
-        key: '0-1',
-        children: [
-          {
-            title: 'Child Node3',
-            value: '0-1-0',
-            key: '0-1-0',
-          },
-          {
-            title: 'Child Node4',
-            value: '0-1-1',
-            key: '0-1-1',
-          },
-          {
-            title: 'Child Node5',
-            value: '0-1-2',
-            key: '0-1-2',
-          },
-        ],
-      },
-    ];
     const tProps = {
       treeData: gData,
       treeDefaultExpandAll: true,
       onChange: this.onChange,
       // treeCheckable: true,
-      // showCheckedStrategy: SHOW_CHILD,
-      searchPlaceholder: 'Please select',
-      // filterTreeNode: this.filterTreeNode,
+      filterTreeNode: this.filterTreeNode,
       style: {
         width: '100%',
       },
@@ -154,6 +101,7 @@ export default class TreeSelectView<T extends TreeNodeValue> extends React.Compo
     return (
       <TreeSelect 
         {...tProps}
+        showSearch
       />
     );
   }
