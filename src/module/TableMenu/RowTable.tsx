@@ -1,51 +1,37 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Table } from 'antd';
-import BaseTable from './BaseTable';
+import BaseTable, { BaseTableProps } from './BaseTable';
+import { DispatchContext, StateContext } from '.';
 
-const RowTable = (props: any) => {
-  const columns = [
-    {
-      title: '姓名',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: '年龄',
-      dataIndex: 'age',
-      key: 'age',
-    },
-    {
-      title: '住址',
-      dataIndex: 'address',
-      key: 'address',
-    },
-  ];
+export interface RowTableProps extends BaseTableProps{
+}
 
-  const data = [];
-  for (let i = 1000; i < 1003; ++i) {
-    data.push({
-      key: i,
-      name: `测试${i}`,
-      age: Math.floor(Math.random()*200),
-      address: `地址${i}`
-    });
+const RowTable = (props: RowTableProps) => {
+  const { dataSource, columns, ...otherProps } = props;
+  const dispatch = useContext(DispatchContext);
+  const state = useContext(StateContext);
+
+  const rowOnChange = (selectRowKeys: any[], selectRows: any[]) => {
+    dispatch({type: 'sourceSelect', payload: ([] as any[]).concat(state?.sourceSelectRows, selectRows)});
   }
-
-  const onClick = (source: any[], selectRowKeys: any[], selectRows: any[]) => {
-
-  }
-
-
 
   return (
-    <BaseTable 
-      columns={columns} 
-      dataSource={data} 
-      pagination={false}
-      rowSelection={{}}
+    <BaseTable
+      {...props}
+      rowOnChange={rowOnChange}
+      rowSelection={{
+        getCheckboxProps: (record: any) => {
+          const target_keys = state?.targetSelectRows?.map((item: any) => item.key);
+          if (target_keys?.includes(record?.key)) {
+            return { disabled: true };
+          } else {
+            return {};
+          }
+        }
+      }}
       showHeader={false}
       showButton={false}
-      btnOnClick={props.btnOnClick}
+      // expandedRowOnChange={rowOnChange}
     />
   );
 }

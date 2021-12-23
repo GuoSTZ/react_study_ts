@@ -11,13 +11,14 @@ import {
 // import RouteTabs from './module/RouteTabs';
 // import ReactFileView from './module/ReactFileView';
 // import Mammoth from './module/mammoth';
-// import TreeView, {LoadingTree} from './module/Tree';
+import TreeView, {LoadingTree, VirtualTree} from './module/Tree';
 // import EditableTable, {FilterTable} from './module/Table';
 // import IconTip from './module/IconTip';
 // import ProgressView from './module/ProgressView';
 // import CardView from './module/CardView';
 // import SelectView from './module/SelectView';
-// import TreeSelectView from './module/TreeSelectView';
+import TreeSelectView from './module/TreeSelectView';
+import SimpleTreeSelectView from './module/TreeSelectView/simpleTreeSelect';
 // import TableTransfer from './module/TableTransfer';
 // import EchartsView from './module/EchartsView';
 // import LessView from './module/LessView';

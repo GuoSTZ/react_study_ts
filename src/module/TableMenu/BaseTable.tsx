@@ -1,20 +1,55 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Table, Button } from 'antd';
 import { TableProps } from 'antd/es/table/interface';
+import { ButtonProps } from 'antd/lib/button';
 import classNames from 'classnames';
 import { ButtonType } from 'antd/lib/button';
 
 import './index.less';
 
 export interface BaseTableProps extends TableProps<any> {
+  /**
+   * 表格数据
+   */
   dataSource: any[];
+  /**
+   * 表格列属性配置
+   */
   columns: any[];
+  /**
+   * 是否展示按钮
+   */
   showButton?: boolean;
+  // ButtonProps?: ButtonProps;
+  /**
+   * 按钮类型
+   */
   btnType?: ButtonType;
+  /**
+   * 按钮文字
+   */
   btnText?: string;
+  /**
+   * 按钮点击回调
+   */
   btnOnClick?: Function;
+  /**
+   * 按钮点击回调
+   */
+  btnDisabled?: boolean;
+  /**
+   * 自定义样式名
+   */
   className?: string;
   rowOnChange?: Function;
+  /**
+   * 展开行勾选框点击回调  
+   */
+  expandedRowOnChange?: Function;
+  /**
+   * 是否展示展开行
+   */
+  showExpandedRow?: boolean;
 }
 
 const BaseTable = (props: BaseTableProps) => {
@@ -24,10 +59,14 @@ const BaseTable = (props: BaseTableProps) => {
     btnType = "primary",
     btnText,
     btnOnClick,
+    btnDisabled,
     className = "",
-    rowSelection = {},
+    rowSelection={},
     showButton = true,
     rowOnChange,
+    expandedRowOnChange,
+    showExpandedRow,
+    expandedRowRender,
     ...otherProps
   } = props;
   const [source, setSource] = useState([] as any);
@@ -38,16 +77,16 @@ const BaseTable = (props: BaseTableProps) => {
     setSource(dataSource);
   }, [dataSource]);
 
-  const clearSelectRows = () => {
-    setSelectRowKeys([]);
-    setSelectRows([]);
-  }
-
   const onClick = () => {
     clearSelectRows();
     if (btnOnClick) {
-      btnOnClick(source, selectRowKeys, selectRows);
+      btnOnClick(source);
     }
+  }
+
+  const clearSelectRows = () => {
+    setSelectRowKeys([]);
+    setSelectRows([]);
   }
 
   const tableConfig: BaseTableProps = {
@@ -55,29 +94,35 @@ const BaseTable = (props: BaseTableProps) => {
     dataSource: source,
     columns,
     pagination: false,
-    rowSelection: {
-      ...rowSelection,
-      selectedRowKeys: selectRowKeys,
-      onChange: (selectedRowKeys: any[], selectedRows: any[]) => {
-        setSelectRowKeys(selectedRowKeys);
-        setSelectRows(selectedRows);
-        if(rowOnChange) {
-          rowOnChange(selectedRowKeys, selectedRows, clearSelectRows);
-        }
-      }
-    }
+  }
+
+  if (showExpandedRow) {
+    tableConfig.expandedRowRender = expandedRowRender
   }
 
   return (
     <div className={classNames("BaseTable", className)}>
       {
         showButton && (
-          <Button type={btnType} onClick={onClick}>
+          <Button type={btnType} onClick={onClick} disabled={btnDisabled}>
             {btnText}
           </Button>
         )
       }
-      <Table {...tableConfig} />
+      <Table 
+        {...tableConfig} 
+        rowSelection={{
+          ...rowSelection,
+          selectedRowKeys: selectRowKeys,
+          onChange: (selectedRowKeys: any[], selectedRows: any[]) => {
+            setSelectRowKeys(selectedRowKeys);
+            setSelectRows(selectedRows);
+            if(rowOnChange) {
+              rowOnChange(selectedRowKeys, selectedRows);
+            }
+          },
+        }}
+      />
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import TreeSelect from './rcTreeSelect';
+import { TreeSelect } from 'antd';
 import './style/index.less';
 
 // const { SHOW_PARENT, SHOW_CHILD, SHOW_ALL } = TreeSelect;
@@ -14,22 +14,21 @@ interface TreeSelectViewState {
   value: string[];
 }
 
-const x = 160;
+const x = 16;
 const y = 20;
 const z = 1;
-// 目前假定gData为全量数据
 const gData: any = [];
 
-const generateData = (_level: number, _preKey?: string, _tns?: any) => {
+const generateData = (_level: number, _preKey?: any, _tns?: any) => {
   const preKey = _preKey || '0';
   const tns = _tns || gData;
 
   const children = [];
   for (let i = 0; i < x; i++) {
-    const key = `${preKey}-${i}`;
-    tns.push({ title: key, key });
+    const value = `${preKey}-${i}`;
+    tns.push({ title: value, value });
     if (i < y) {
-      children.push(key);
+      children.push(value);
     }
   }
   if (_level < 0) {
@@ -42,6 +41,8 @@ const generateData = (_level: number, _preKey?: string, _tns?: any) => {
   });
 };
 generateData(z);
+
+console.log(clapTree(gData, 1).length, '====')
 
 function clapTree(data: any, level: number, parentKey?: string, ) {
   let dataList: any = [];
@@ -70,7 +71,7 @@ function clapTree(data: any, level: number, parentKey?: string, ) {
 }
 
 // console.log(clapTree(gData, 1).length)
-export default class TreeSelectView<T extends TreeNodeValue> extends React.Component<
+export default class SimpleTreeSelectView<T extends TreeNodeValue> extends React.Component<
   TreeSelectViewProps,
   TreeSelectViewState
 > {
@@ -88,20 +89,15 @@ export default class TreeSelectView<T extends TreeNodeValue> extends React.Compo
     return false;
   }
   render() {
-    const tProps = {
-      treeData: gData,
-      treeDefaultExpandAll: true,
-      onChange: this.onChange,
-      treeCheckable: true,
-      filterTreeNode: this.filterTreeNode,
-      style: {
-        width: '100%',
-      },
-    };
     return (
-      <TreeSelect 
-        {...tProps}
-        showSearch
+      <TreeSelect
+        style={{ width: '100%' }}
+        value={this.state.value}
+        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+        treeData={gData}
+        placeholder="Please select"
+        treeDefaultExpandAll
+        onChange={this.onChange}
       />
     );
   }
