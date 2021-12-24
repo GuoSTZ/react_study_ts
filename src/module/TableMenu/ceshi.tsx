@@ -2,6 +2,20 @@ import React from 'react';
 import TableMenu from '.';
 
 export default class TableMenuView extends React.Component {
+  getFirstData = (expanded: boolean, record: any, callback: any) => {
+    if(expanded) {
+      const data = [];
+      for (let i = 1000; i < 1003; ++i) {
+        data.push({
+          key: i + record.key * 100,
+          name: `测试${i + record.key * 100}`,
+          age: i + record.key * 100,
+          address: `地址${i + record.key * 100}`
+        });
+      }
+      callback(data);
+    }
+  }
   render() {
     let dataSource: any = [];
     for(let i=0; i< 22; i++) {
@@ -36,6 +50,7 @@ export default class TableMenuView extends React.Component {
       columns,
       btnText: "添加",
       scroll: { y: 540 },
+      customOnExpand: [this.getFirstData]
     };
     const targetTableConfig = {
       dataSource: [],

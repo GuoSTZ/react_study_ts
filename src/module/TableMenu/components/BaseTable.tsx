@@ -4,8 +4,10 @@ import { TableProps } from 'antd/es/table/interface';
 import { ButtonProps } from 'antd/lib/button';
 import classNames from 'classnames';
 import { ButtonType } from 'antd/lib/button';
-
 import './index.less';
+
+type CallbackType = (data: any[]) => void;
+type CustomOnExpandType = (expanded: boolean, record: any, callback: CallbackType) => void;
 
 export interface BaseTableProps extends TableProps<any> {
   /**
@@ -41,15 +43,18 @@ export interface BaseTableProps extends TableProps<any> {
    * 自定义样式名
    */
   className?: string;
-  rowOnChange?: Function;
   /**
-   * 展开行勾选框点击回调  
+   * 行选中项发生变化时的回调
    */
-  expandedRowOnChange?: Function;
+  rowOnChange?: Function;
   /**
    * 是否展示展开行
    */
   showExpandedRow?: boolean;
+  /**
+   * 获取每层展开数据的方法
+   */
+  customOnExpand?: CustomOnExpandType[];
 }
 
 const BaseTable = (props: BaseTableProps) => {
@@ -61,11 +66,11 @@ const BaseTable = (props: BaseTableProps) => {
     btnOnClick,
     btnDisabled,
     className = "",
-    rowSelection={},
+    rowSelection = {},
     showButton = true,
     rowOnChange,
-    expandedRowOnChange,
     showExpandedRow,
+    customOnExpand,
     expandedRowRender,
     ...otherProps
   } = props;
@@ -109,18 +114,18 @@ const BaseTable = (props: BaseTableProps) => {
           </Button>
         )
       }
-      <Table 
-        {...tableConfig} 
+      <Table
+        {...tableConfig}
         rowSelection={{
-          ...rowSelection,
           selectedRowKeys: selectRowKeys,
           onChange: (selectedRowKeys: any[], selectedRows: any[]) => {
             setSelectRowKeys(selectedRowKeys);
             setSelectRows(selectedRows);
-            if(rowOnChange) {
+            if (rowOnChange) {
               rowOnChange(selectedRowKeys, selectedRows);
             }
           },
+          ...rowSelection
         }}
       />
     </div>

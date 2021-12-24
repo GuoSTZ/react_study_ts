@@ -12,7 +12,7 @@ import {
 // import ReactFileView from './module/ReactFileView';
 // import Mammoth from './module/mammoth';
 import TreeView, {LoadingTree, VirtualTree} from './module/Tree';
-// import EditableTable, {FilterTable} from './module/Table';
+import EditableTable, {FilterTable, ExpandedTableView} from './module/Table';
 // import IconTip from './module/IconTip';
 // import ProgressView from './module/ProgressView';
 // import CardView from './module/CardView';
