@@ -69,7 +69,7 @@ const BaseTable = (props: BaseTableProps) => {
     rowSelection = {},
     showButton = true,
     rowOnChange,
-    showExpandedRow,
+    showExpandedRow=false,
     customOnExpand,
     expandedRowRender,
     ...otherProps

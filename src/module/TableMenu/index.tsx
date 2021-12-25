@@ -31,9 +31,8 @@ const TableMenu = (props: TableMenuProps) => {
   const [state, dispatch] = useReducer(selectReducer, initialState);
   const { sourceSelectRows, targetSelectRows, rowSelectRows } = state;
 
-  // 临时mock数据用 
-  const [mockData, setMockData] = useState({} as any);
   const [targetData, setTargetData] = useState([] as any);
+  const [expandedRowData, setExpandedRowData] = useState({} as any);
 
   useEffect(() => {
     setTargetData(target_dataSource);
@@ -87,23 +86,24 @@ const TableMenu = (props: TableMenuProps) => {
   }
 
   // 嵌套子表格设置
-  const renderRowTable = (level: number) => {
+  const renderRowTable = (_level: number) => {
     const len = customOnExpand?.length;
+    const expandedRowConfig: any = {};
+    if(_level < len) {
+      expandedRowConfig.expandedRowRender = renderRowTable(_level+1);
+      expandedRowConfig.onExpand = onExpand(_level+1);
+    }
     return (record: any, index: number, indent: any, expanded: boolean) => {
-      const config = {
-        className: 'RowTable',
-        fatherKey: record.key,
-        columns: sourceTableConfig?.columns,
-        dataSource: mockData[record.key],
-        rowSelection: { getCheckboxProps }
-      }
       if (expanded) {
         return (
-          <RowTable {...config}
-  
-            // showExpandedRow
-            // expandedRowRender={rowTable}
-            // onExpand={onExpand}
+          <RowTable
+            className="RowTable"
+            fatherKey={record.key}
+            columns={sourceTableConfig?.columns}
+            dataSource={expandedRowData[record.key]}
+            rowSelection={{ getCheckboxProps }}
+            showExpandedRow={_level < len}
+            {...expandedRowConfig}
           />
         )
       }
@@ -111,12 +111,12 @@ const TableMenu = (props: TableMenuProps) => {
   }
 
   // 左侧表格展开回调
-  const onExpand = (level: number) => {
+  const onExpand = (_level: number = 1) => {
     return (expanded: boolean, record: any) => {
       // 传入customOnExpand且长度大于0，表明需要做嵌套子表格
-      if(customOnExpand && customOnExpand?.length > 0) {
-        customOnExpand[0](expanded, record, (data: any) => {
-          setMockData(Object.assign({}, mockData, { [record.key]: data }));
+      if(customOnExpand && customOnExpand?.length > 0 && _level > 0) {
+        customOnExpand[_level-1](expanded, record, (data: any) => {
+          setExpandedRowData(Object.assign({}, expandedRowData, { [record.key]: data }));
         });
       }
     }
