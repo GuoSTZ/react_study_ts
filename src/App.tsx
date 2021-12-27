@@ -18,7 +18,6 @@ import EditableTable, {FilterTable, ExpandedTableView} from './module/Table';
 // import CardView from './module/CardView';
 // import SelectView from './module/SelectView';
 import TreeSelectView from './module/TreeSelectView';
-import SimpleTreeSelectView from './module/TreeSelectView/simpleTreeSelect';
 // import TableTransfer from './module/TableTransfer';
 // import EchartsView from './module/EchartsView';
 // import LessView from './module/LessView';
