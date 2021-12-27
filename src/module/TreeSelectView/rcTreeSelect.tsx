@@ -37,35 +37,36 @@ export interface RefTreeSelectProps {
 type SizeType = 'small' | 'middle' | 'large' | undefined;
 type DirectionType = 'ltr' | 'rtl' | undefined;
 
-// 全局默认 size 值
-let size: SizeType = 'middle';
+const SizeContext = React.createContext<SizeType>(undefined);
+
 // 全局默认 direction 值
 let direction: DirectionType = "ltr";
 
 const InternalTreeSelect = <T extends DefaultValueType>(
-  props: TreeSelectProps<T>,
-  ref: React.Ref<RefTreeSelectProps>
-) => {
-  const {
-    treeLine,
-    size: customizeSize,
-    switcherIcon,
+  {
     prefixCls: customizePrefixCls,
-    dropdownClassName,
-    className,
+    size: customizeSize,
     bordered = true,
+    className,
+    treeCheckable,
     multiple,
     listHeight = 256,
     listItemHeight = 26,
     notFoundContent,
-    treeIcon,
-    getPopupContainer = () => document.body,
+    switcherIcon,
+    treeLine,
+    getPopupContainer,
+    dropdownClassName,
+    treeIcon = false,
     transitionName,
     choiceTransitionName = '',
     virtual = true,
     dropdownMatchSelectWidth = true,
-    treeCheckable
-  } = props;
+    ...props
+  }: TreeSelectProps<T>,
+  ref: React.Ref<RefTreeSelectProps>,
+) => {
+  const size = React.useContext(SizeContext);
 
   const prefixCls = getPrefixCls('select', customizePrefixCls);
   const treePrefixCls = getPrefixCls('select-tree', customizePrefixCls);
@@ -74,6 +75,33 @@ const InternalTreeSelect = <T extends DefaultValueType>(
   const mergedDropdownClassName = classNames(dropdownClassName, `${treeSelectPrefixCls}-dropdown`, {
     [`${treeSelectPrefixCls}-dropdown-rtl`]: direction === 'rtl',
   });
+
+  const isMultiple = !!(treeCheckable || multiple);
+
+  // ===================== Icons =====================
+  const { suffixIcon, removeIcon, clearIcon } = getIcons({
+    ...props,
+    multiple: isMultiple,
+    prefixCls,
+  });
+
+  // ===================== Empty =====================
+  let mergedNotFound: React.ReactNode;
+  if (notFoundContent !== undefined) {
+    mergedNotFound = notFoundContent;
+  } else {
+    mergedNotFound = renderEmpty('Select');
+  }
+
+  // ==================== Render =====================
+  const selectProps = omit(props as typeof props & { itemIcon: any; switcherIcon: any }, [
+    'suffixIcon',
+    'itemIcon',
+    'removeIcon',
+    'clearIcon',
+    'switcherIcon',
+  ]);
+
   const mergedSize = customizeSize || size;
   const mergedClassName = classNames(
     !customizePrefixCls && treeSelectPrefixCls,
@@ -86,29 +114,6 @@ const InternalTreeSelect = <T extends DefaultValueType>(
     className,
   );
   const rootPrefixCls = getPrefixCls();
-
-  const { suffixIcon, removeIcon, clearIcon } = getIcons({
-    ...props,
-    multiple: true,
-    prefixCls,
-  });
-
-  const selectProps = omit(props as typeof props & { itemIcon: any; switcherIcon: any }, [
-    'suffixIcon',
-    'itemIcon',
-    'removeIcon',
-    'clearIcon',
-    'switcherIcon',
-  ]);
-
-
-  // ===================== Empty =====================
-  let mergedNotFound: React.ReactNode;
-  if (notFoundContent !== undefined) {
-    mergedNotFound = notFoundContent;
-  } else {
-    mergedNotFound = renderEmpty('Select');
-  }
 
   return (
     <RcTreeSelect

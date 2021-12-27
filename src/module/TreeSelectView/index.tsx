@@ -14,13 +14,13 @@ interface TreeSelectViewState {
   value: string[];
 }
 
-const x = 160;
+const x = 20;
 const y = 20;
 const z = 1;
 // 目前假定gData为全量数据
 const gData: any = [];
 
-const generateData = (_level: number, _preKey?: string, _tns?: any) => {
+const generateData = (_level: number, _preKey?: string, _tns?: any[]) => {
   const preKey = _preKey || '0';
   const tns = _tns || gData;
 
@@ -43,33 +43,20 @@ const generateData = (_level: number, _preKey?: string, _tns?: any) => {
 };
 generateData(z);
 
-function clapTree(data: any, level: number, parentKey?: string, ) {
+function clapTree(data: any ) {
   let dataList: any = [];
   for (let i = 0; i < data.length; i++) {
     const node = data[i];
-    const { key } = node;
-    // 保存子节点的key
-    let childrenKey = node?.children?.map((item: any) => item.key);
-    // 区分每个节点的层级
-    let tLevel = !parentKey ? 1 : level;
-    dataList.push({ 
-      key, 
-      title: key, 
-      parentKey, 
-      childrenKey, 
-      tLevel, 
-      visible: !parentKey,
-      expand: false
-    });
+    dataList.push(node);
 
     if (node.children) {
-      dataList = [].concat(dataList, clapTree(node.children, ++tLevel, key));
+      dataList = [].concat(dataList, clapTree(node.children));
     }
   }
   return dataList;
 }
 
-// console.log(clapTree(gData, 1).length)
+console.log(clapTree(gData).length)
 export default class TreeSelectView<T extends TreeNodeValue> extends React.Component<
   TreeSelectViewProps,
   TreeSelectViewState
