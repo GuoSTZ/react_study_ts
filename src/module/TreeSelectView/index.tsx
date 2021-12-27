@@ -1,4 +1,3 @@
-import { Icon } from "antd";
 import React from "react";
 import TreeSelect from './rcTreeSelect';
 
@@ -43,7 +42,8 @@ export default class TreeSelectView<T extends TreeNodeValue> extends React.Compo
         onChange={this.onChange}
         maxTagCount={3}
         maxTagPlaceholder={(omittedValues: any) => "隐藏更多..."}
-        treeLine
+        // treeLine
+        treeCheckable
         onSearch={(value: any) => console.log(value)}
         onSelect={(value: any) => console.log(value)}
         onTreeExpand={(value: any) => console.log(value)}
