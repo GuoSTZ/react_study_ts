@@ -11,6 +11,8 @@ import { DefaultValueType } from 'rc-tree-select/lib/interface';
 import omit from 'rc-util/lib/omit';
 import { AntTreeNodeProps, TreeProps } from 'antd/lib/tree';
 import { getPrefixCls, getTransitionName, renderEmpty, renderSwitcherIcon, getIcons } from './utils';
+import './style/index.less';
+
 
 export interface TreeSelectProps<T>
   extends Omit<
