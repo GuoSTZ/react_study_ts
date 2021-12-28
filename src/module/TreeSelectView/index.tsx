@@ -44,6 +44,7 @@ export default class TreeSelectView<T extends TreeNodeValue> extends React.Compo
         maxTagPlaceholder={(omittedValues: any) => "隐藏更多..."}
         // treeLine
         treeCheckable
+        treeCheckStrictly
         onSearch={(value: any) => console.log(value)}
         onSelect={(value: any) => console.log(value)}
         onTreeExpand={(value: any) => console.log(value)}
@@ -56,6 +57,12 @@ export default class TreeSelectView<T extends TreeNodeValue> extends React.Compo
           </TreeNode>
           <TreeNode value="parent 1-1" title="parent 1-1" key="random2">
             <TreeNode value="sss" title={<b style={{ color: '#08c' }}>sss</b>} key="random3" />
+          </TreeNode>
+        </TreeNode>
+        <TreeNode value="parent 2" title="parent 2" key="0-2">
+          <TreeNode value="parent 2-0" title="parent 2-0" key="0-2-1">
+            <TreeNode value="leaf-a" title="my leaf-a" key="random-a" />
+            <TreeNode value="leaf-b" title="your leaf-b" key="random-b" />
           </TreeNode>
         </TreeNode>
       </TreeSelect>
