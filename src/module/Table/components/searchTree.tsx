@@ -1,7 +1,6 @@
 import React from 'react';
 import { Tree, Input, Button } from 'antd';
 
-
 const { TreeNode } = Tree;
 const { Search } = Input;
 
@@ -17,17 +16,17 @@ export interface SearchTreeProps {
    */
   dataSource?: DataSourceProps[];
   /**
-   * 执行过滤条件 - 表格提供
+   * 执行过滤条件 - 表格筛选时需提供
    */
-  confirm: Function;
+  confirm?: Function;
   /**
-   * 清除过滤条件 - 表格提供
+   * 清除过滤条件 - 表格筛选时需提供
    */
-  clearFilters: Function;
+  clearFilters?: Function;
   /**
-   * 记录过滤条件 - 表格提供
+   * 记录过滤条件 - 表格筛选时需提供
    */
-  setSelectedKeys: Function;
+  setSelectedKeys?: Function;
   /**
    * true - 显示确认和重置按钮，通过按钮来触发过滤操作
    * false - 不显示确认和重置按钮，选中节点时，触发过滤操作
@@ -48,8 +47,7 @@ export interface SearchTreeProps {
    */
   type?: 'default'|'hidden'|'disabled';
   /**
-   * 临时方案，目前使用不便
-   * 用来处理过滤操作后，继续显示过滤菜单
+   * 用来处理过滤操作后，保持过滤菜单的显示（临时方案，与组件外方法耦合度较高，目前不建议使用）
    */
   setVisible?: Function;
 }
@@ -139,7 +137,7 @@ export default class SearchTree extends React.Component<
         autoExpandParent: true,
       });
     } else {
-      setSelectedKeys(value ? [value] : []);
+      setSelectedKeys && setSelectedKeys(value ? [value] : []);
     }
     this.setState({
       searchValue: value,
@@ -149,12 +147,12 @@ export default class SearchTree extends React.Component<
   // 选中节点以及选中节点复选框时的回调
   onChoose = (keys: any, e: any) => {
     const { setSelectedKeys, confirm, showNode, setVisible } = this.props;
-    setSelectedKeys(keys);
+    setSelectedKeys && setSelectedKeys(keys);
     this.setState({
       checkedKeys: keys,
       selectedKeys: keys
     }, () => {
-      !showNode && confirm();
+      !showNode && confirm && confirm();
       setVisible && setVisible();
     });
   }
@@ -162,13 +160,13 @@ export default class SearchTree extends React.Component<
   // 确定按钮回调
   handleSearch = () => {
     const { confirm } = this.props;
-    confirm();
+    confirm && confirm();
   };
 
   // 重置按钮回调
   handleReset = () => {
     const { clearFilters } = this.props;
-    clearFilters();
+    clearFilters && clearFilters();
     this.setState({
       searchValue: '',
       checkedKeys: [],
@@ -181,7 +179,7 @@ export default class SearchTree extends React.Component<
   onPressEnter = () => {
     const { showTree, confirm } = this.props;
     if(!showTree) {
-      confirm();
+      confirm && confirm();
     }
   }
 
@@ -230,8 +228,9 @@ export default class SearchTree extends React.Component<
   }
 
   // 节点过滤，使用该方法后，不需要在loop方法中做文本的处理
-  // 但是该方法目前来看，限制较大。匹配到的节点，其全部文字高亮，且颜色固定为红色。
-  filterTreeNode(searchValue: string, node: any) {
+  // 该方法目前来看，限制较大。匹配到的节点，其全部文字高亮，且颜色固定为红色。无法进行自定义处理
+  filterTreeNode(node: any) {
+    const { searchValue } = this.state;
     return !!searchValue && node?.props?.title?.props?.children?.toUpperCase()?.includes(searchValue?.toUpperCase());
   }
 
@@ -266,7 +265,7 @@ export default class SearchTree extends React.Component<
               expandedKeys={expandedKeys}
               onExpand={this.onExpand}
               autoExpandParent={autoExpandParent}
-              // filterTreeNode={this.filterTreeNode.bind(this, searchValue)}
+              // filterTreeNode={this.filterTreeNode}
             >
               {this.loop(dataSource)}
             </Tree>
