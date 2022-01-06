@@ -104,6 +104,8 @@ const TableMenu = (props: TableMenuProps) => {
             rowSelection={{ getCheckboxProps }}
             showExpandedRow={_level < len}
             {...expandedRowConfig}
+            expandIconColumnIndex={1}
+            expandIconAsCell={false}
           />
         )
       }
@@ -136,6 +138,9 @@ const TableMenu = (props: TableMenuProps) => {
             expandedRowRender={renderRowTable(1)}
             onExpand={onExpand(1)}
             rowSelection={{ getCheckboxProps }}
+            expandIconColumnIndex={1}
+            expandIconAsCell={false}
+            indentSize={24}
           />
 
           <TargetTable

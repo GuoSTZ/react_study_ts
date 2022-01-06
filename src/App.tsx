@@ -22,7 +22,7 @@ import {
 // import EchartsView from './module/EchartsView';
 // import LessView from './module/LessView';
 // import { ModalMethodView } from './module/Modal';
-// import TableMenuView from './module/TableMenu/ceshi';
+import TableMenuView from './module/TableMenu/ceshi';
 import AnimateCssView from './module/AnimateCss';
 import './App.css';
 import { Icon } from 'antd';
@@ -32,7 +32,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <AnimateCssView />
+        <TableMenuView />
       </div>
     );
   }

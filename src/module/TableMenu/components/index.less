@@ -17,8 +17,8 @@
         .ant-table-body {
           .ant-table-tbody {
             .ant-table-expanded-row {
-              > td:nth-of-type(2) {
-                padding: 0;
+              > td {
+                padding: 8px 0;
               }
             }
           }
@@ -39,5 +39,16 @@
 
   .RowTable {
     width: 100%;
+    .ant-table-wrapper {
+      .ant-table-body {
+        .ant-table-tbody {
+          .ant-table-expanded-row {
+            > td {
+              padding: 8px 0;
+            }
+          }
+        }
+      }
+    }
   }
 }
