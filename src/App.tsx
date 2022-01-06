@@ -12,7 +12,7 @@ import {
 // import ReactFileView from './module/ReactFileView';
 // import Mammoth from './module/mammoth';
 import TreeView, {LoadingTree, VirtualTree, IOTreeView} from './module/Tree';
-import EditableTable, {FilterTable, ExpandedTableView} from './module/Table';
+import TableView, {FilterTable, ExpandedTableView, EditableTable} from './module/Table';
 // import IconTip from './module/IconTip';
 // import ProgressView from './module/ProgressView';
 // import CardView from './module/CardView';
@@ -31,7 +31,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <TreeSelectView />
+        <TableView />
       </div>
     );
   }

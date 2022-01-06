@@ -3,6 +3,7 @@ import React from 'react';
 import EditableTable from './AddRowTable.jsx';
 import FilterTable from './FilterTable';
 import ExpandedTableView from './expandedTable';
+import TableView from './table';
 
-export default EditableTable;
-export {FilterTable, ExpandedTableView};
+export default TableView;
+export {FilterTable, ExpandedTableView, EditableTable};
