@@ -11,18 +11,19 @@ import {
 // import RouteTabs from './module/RouteTabs';
 // import ReactFileView from './module/ReactFileView';
 // import Mammoth from './module/mammoth';
-import TreeView, {LoadingTree, VirtualTree, IOTreeView} from './module/Tree';
-import TableView, {FilterTable, ExpandedTableView, EditableTable} from './module/Table';
+// import TreeView, {LoadingTree, VirtualTree, IOTreeView} from './module/Tree';
+// import TableView, {FilterTable, ExpandedTableView, EditableTable} from './module/Table';
 // import IconTip from './module/IconTip';
 // import ProgressView from './module/ProgressView';
 // import CardView from './module/CardView';
 // import SelectView from './module/SelectView';
-import TreeSelectView from './module/TreeSelectView';
+// import TreeSelectView from './module/TreeSelectView';
 // import TableTransfer from './module/TableTransfer';
 // import EchartsView from './module/EchartsView';
 // import LessView from './module/LessView';
 // import { ModalMethodView } from './module/Modal';
-import TableMenuView from './module/TableMenu/ceshi';
+// import TableMenuView from './module/TableMenu/ceshi';
+import AnimateCssView from './module/AnimateCss';
 import './App.css';
 import { Icon } from 'antd';
 import image1 from './images/1.png'
@@ -31,7 +32,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <TableView />
+        <AnimateCssView />
       </div>
     );
   }
