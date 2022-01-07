@@ -50,7 +50,7 @@ export default class TableMenuView extends React.Component {
       columns,
       btnText: "添加",
       scroll: { y: 540 },
-      customOnExpand: [this.getFirstData, this.getFirstData, this.getFirstData]
+      customOnExpand: [this.getFirstData, this.getFirstData, this.getFirstData, this.getFirstData, this.getFirstData]
     };
     const targetTableConfig = {
       dataSource: [],

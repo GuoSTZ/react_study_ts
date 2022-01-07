@@ -97,7 +97,7 @@ const TableMenu = (props: TableMenuProps) => {
       if (expanded) {
         return (
           <RowTable
-            className="RowTable"
+            className={`RowTable${_level}`}
             fatherKey={record.key}
             columns={sourceTableConfig?.columns}
             dataSource={expandedRowData[record.key]}
