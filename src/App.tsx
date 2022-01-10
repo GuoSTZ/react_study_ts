@@ -24,6 +24,7 @@ import {
 // import { ModalMethodView } from './module/Modal';
 import TableMenuView from './module/TableMenu/ceshi';
 import AnimateCssView from './module/AnimateCss';
+import AnimationView from './module/Animation';
 import './App.css';
 import { Icon } from 'antd';
 import image1 from './images/1.png'
@@ -32,7 +33,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <TableMenuView />
+        <AnimationView />
       </div>
     );
   }

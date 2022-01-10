@@ -1,0 +1,101 @@
+// animation-name：检索或设置对象所应用的动画名称
+// animation-duration ：检索或设置对象动画的持续时间
+// animation-timing-function ：检索或设置对象动画的过渡类型
+// animation-delay ：检索或设置对象动画延迟的时间
+// animation-iteration-count ：检索或设置对象动画的循环次数
+// animation-direction ：检索或设置对象动画在循环中是否反向运动
+// animation-fill-mode ：检索或设置对象动画时间之外的状态
+// animation-play-state ：检索或设置对象动画的状态。w3c正考虑是否将该属性移除，因为动画的状态可以通过其它的方式实现，比如重设样式
+
+#animation-wrap {
+  .class1{
+    height: 100px;
+    width: 100px;
+    animation: run1 3s;
+    background-color: red;
+    &:hover {
+      animation-play-state: paused;
+    }
+  }
+  @keyframes run1{
+    0%{
+      background-color: red;
+    }
+    50%{
+      background-color: green;
+    }
+    100%{
+      background-color: blue;
+    }
+  }
+
+  .class2{
+    height: 100px;
+    width: 100px;
+    animation: run2 10s steps(3, end);
+    background-color: red;
+    &:hover {
+      animation-play-state: paused;
+    }
+  }
+  @keyframes run2{
+    0%{
+      background-color: red;
+    }
+    33.333%{
+      background-color: green;
+    }
+    66.666%{
+      background-color: blue;
+    }
+    100%{
+
+    }
+  }
+
+  .class3{
+    background-image: url('./4.png');
+    background-repeat: no-repeat;
+    height: 250px;
+    width: 160px;
+    animation: girlRun 1s steps(1, end) infinite;
+    &:hover {
+      animation-play-state: paused;
+    }
+  }
+  @keyframes girlRun{
+    0%{
+      background-position: 0px 0;
+    }
+    11.111%{
+      background-position: -140 px 0;
+    }
+    22.222%{
+      background-position: -300px 0;
+    }
+    33.333%{
+      background-position: -460px 0;
+    }
+    44.444%{
+      background-position: -620px 0;
+    }
+    55.555%{
+      background-position: -780px 0;
+    }
+    66.666%{
+      background-position: -940px 0;
+    }
+    77.777%{
+      background-position: -1100px 0;
+    }
+    88.888%{
+      background-position: -1260px 0;
+    }
+    99.999%{
+      background-position: -1420px 0;
+    }
+    100%{
+      // background-position: 0px 0;
+    }
+  }
+}
