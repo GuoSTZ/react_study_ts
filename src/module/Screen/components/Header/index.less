@@ -1,0 +1,39 @@
+@interval: 1s;
+@color1: azure;
+@color2: aqua;
+@color3: dodgerblue;
+@color4: blue;
+@imgUrl: ~"../../assets/images";
+
+.Header {
+  width: 100%;
+  height: 210px;
+  background-image: url("@{imgUrl}/header.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  h1 {
+    display: block;
+    text-align: center;
+    text-shadow: 
+      0 0 10px @color1,
+      0 0 20px @color2,
+      0 0 40px @color3,
+      0 0 80px @color4;
+    will-change: filter, color;
+    filter: saturate(60%);
+    // animation: flicker steps(100) @interval 1s infinite;
+  
+    color: azure;
+    font-family: Sriracha;
+    font-size: 40px;
+    font-weight: 800;
+  }
+  
+  @keyframes flicker {
+    50% {
+      color: white;
+      filter: saturate(200%) hue-rotate(20deg);
+    }
+  }
+}
+

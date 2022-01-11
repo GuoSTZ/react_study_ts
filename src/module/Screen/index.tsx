@@ -1,19 +1,29 @@
-import React from 'react';
-import Center from './components/center';
+import React, { useState } from 'react';
+import { FullScreen } from '@mcfed/components';
+import Center from './components/Center';
 import FlyingLine from './components/FlyingLine';
+import { Header } from './components';
 import './index.less';
 
-export default class ScreenView extends React.Component {
-  render() {
-    return (
-      <div style={{background: "gray", opacity: .5}}>
-        {/* <div className="center"></div> */}
-        {/* <Center /> */}
-        <FlyingLine start={{x: 20, y: 20}} control={{x: 150, y: 20}} end={{x: 300, y: 200}}/>
-        <div style={{marginLeft: 200, width: 200, height: 200}}>
-          <FlyingLine start={{x: 20, y: 20}} control={{x: 150, y: 20}} end={{x: 300, y: 200}}/>
-        </div>
-      </div>
-    )
-  }
+interface ScreenViewProps {
+
 }
+
+const ScreenView: React.FC = (props: ScreenViewProps) => {
+  const [fullscreen, setFullscreen] = useState(false as boolean);
+  return (
+    <FullScreen
+      className='screenView'
+      fullscreen={fullscreen}
+      onChange={(isFull: any) => {
+        console.log(isFull, '===')
+        if (!isFull) {
+          setFullscreen(false)
+        }
+      }}>
+      <Header />
+    </FullScreen>
+  )
+}
+
+export default ScreenView;

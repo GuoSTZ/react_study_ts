@@ -33,9 +33,9 @@ import image1 from './images/1.png'
 class App extends Component {
   render() {
     return (
-      <div className="App">
+      // <div className="App">
         <ScreenView />
-      </div>
+      // </div>
     );
   }
 }
