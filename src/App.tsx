@@ -22,9 +22,10 @@ import {
 // import EchartsView from './module/EchartsView';
 // import LessView from './module/LessView';
 // import { ModalMethodView } from './module/Modal';
-import TableMenuView from './module/TableMenu/ceshi';
-import AnimateCssView from './module/AnimateCss';
-import AnimationView from './module/Animation';
+// import TableMenuView from './module/TableMenu/ceshi';
+// import AnimateCssView from './module/AnimateCss';
+// import AnimationView from './module/Animation';
+import ScreenView from './module/Screen';
 import './App.css';
 import { Icon } from 'antd';
 import image1 from './images/1.png'
@@ -33,7 +34,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <AnimationView />
+        <ScreenView />
       </div>
     );
   }
