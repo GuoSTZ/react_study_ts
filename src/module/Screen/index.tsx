@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FullScreen } from '@mcfed/components';
 import Center from './components/Center';
 import FlyingLine from './components/FlyingLine';
-import { Header } from './components';
+import { Header, Left } from './components';
 import './index.less';
 
 interface ScreenViewProps {
@@ -23,6 +23,7 @@ const ScreenView: React.FC = (props: ScreenViewProps) => {
       }}>
       <div className='large-screen'>
         <Header />
+        <Left />
       </div>
     </FullScreen>
 
