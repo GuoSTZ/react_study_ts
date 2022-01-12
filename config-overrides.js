@@ -1,4 +1,4 @@
-const { override, fixBabelImports, addLessLoader } = require('customize-cra');
+const { override, fixBabelImports, addLessLoader, addPostcssPlugins } = require('customize-cra');
 
 module.exports = override(
   fixBabelImports('import', {
@@ -7,8 +7,8 @@ module.exports = override(
     style: 'css',
     // style: true
   }),
-  addLessLoader({  
-    javascriptEnabled: true,    
+  addLessLoader({
+    javascriptEnabled: true,
     modifyVars: {
       '@red-6': '#FF3D55', //红色系基础色
       '@volcano-6': '#FF6537', //橙色系基础色
@@ -30,4 +30,11 @@ module.exports = override(
   // addWebpackAlias({  
   //   '@': path.resolve('./src')  
   // })
+
+  addPostcssPlugins([require('postcss-pxtorem')({
+    rootValue: 192,
+    propList: ['*']
+    // propList: ['*', '!border*', '!font-size*', '!letter-spacing'],
+    // propWhiteList: []
+  }),])
 );

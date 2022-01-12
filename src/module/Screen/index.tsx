@@ -21,8 +21,11 @@ const ScreenView: React.FC = (props: ScreenViewProps) => {
           setFullscreen(false)
         }
       }}>
-      <Header />
+      <div className='large-screen'>
+        <Header />
+      </div>
     </FullScreen>
+
   )
 }
 
