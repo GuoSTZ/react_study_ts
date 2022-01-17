@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="410px" height="248px" viewBox="0 0 410 248" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <!-- Generator: Sketch 55 (78076) - https://sketchapp.com -->
+  <title>编组 30备份</title>
+  <desc>Created with Sketch.</desc>
+  <g id="衢江数据局大屏" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="编组-30备份">
+      
+      <g id="编组-29" transform="translate(0.000000, 0.287578)">
+        <path d="M1.06127321,0.3 L1.06127321,246.695951 L399.533561,246.695951 L409.207704,238.387169 L409.207704,7.02567984 L401.778203,0.3 L1.06127321,0.3 Z" id="矩形" stroke="#075677" stroke-width="0.6" fill-opacity="0.1" fill="#000000" opacity="0.800000012"></path>
+        <polygon id="矩形" fill="#C7C7C7" transform="translate(1.087533, 3.659199) rotate(-270.000000) translate(-1.087533, -3.659199) " points="-2.57166612 3.33293933 4.74673244 3.33293933 4.74673244 3.98545923 -2.57166612 3.98545923"></polygon>
+        <path d="M399.513641,3.23550502 L405.655491,8.40184208" id="直线-7" stroke="#0E4A5D" stroke-width="0.6" stroke-linecap="square"></path>
+        <path d="M397.063767,4.73144961 L403.205617,9.89778667" id="直线-7备份" stroke="#226177" stroke-linecap="square"></path>
+        <polyline id="路径-5" stroke="#07383D" stroke-width="0.6" points="390.610149 243.663367 397.993931 242.877574 405.377712 236.229831 405.377712 230.638032"></polyline>
+      </g>
+      
+      <polygon id="矩形" fill="#C7C7C7" points="0.76127321 0.287578493 9.46153846 0.287578493 9.46153846 1.22864248 0.76127321 1.22864248"></polygon>
+      
+      <g id="编组-27" transform="translate(11.696242, 0.287578)">
+        <rect id="矩形" fill="#0E4A5D" x="0" y="0" width="8.70026525" height="1.06261808"></rect>
+        <rect id="矩形" fill="#0E4A5D" x="17.4005305" y="0" width="8.70026525" height="1.06261808"></rect>
+        <rect id="矩形" fill="#4DD1FD" x="8.70026525" y="0" width="8.70026525" height="1.06261808"></rect>
+      </g>
+
+      <g id="编组-27" transform="translate(251.981432, 0.000000)">
+        <rect id="矩形" fill="#0E4A5D" x="0" y="0" width="36.2511052" height="1.06261808"></rect>
+        <rect id="矩形" fill="#0E4A5D" x="72.5022104" y="0" width="36.2511052" height="1.06261808"></rect>
+        <rect id="矩形" fill="#4DD1FD" x="36.2511052" y="0" width="36.2511052" height="1.06261808"></rect>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="150px" height="150px" version="1.1" xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+  <title>边框定义</title>
+  <desc>border component</desc>
+  <defs>
+    <mask id="light">
+      <!-- <rect x="0" y="0" width="150" height="150" fill="red"  /> -->
+      <polygon points="0,0 145,0 145,145 145,145 0,145" fill="green" stroke='#07383D' stroke-width='0.5' />
+    </mask>
+    <mask id="path698mask1">
+      <path id="path698_2" d="
+          M 0 10
+          L 10 0
+          L 368.6 0
+          L 378.6 10
+
+          v 272.48    
+          L 368.6 292.48
+          h -140
+          L 218.60000000000002 302.48
+
+          L 10 302.48
+          L 0 292.48
+          L 0 10
+        " fill="transparent" stroke="white" stroke-width="2" class="path1">
+      </path>
+    </mask>
+  </defs>
+  <g>
+    <!-- <polygon points="0,0 150,0 150,145 145,150 0,150" fill="green" stroke='#07383D' stroke-width='0.5'
+      mask="url(#light)" />
+    <polygon points="0,0 150,0 150,145 145,150 0,150" fill="green" stroke='#07383D' stroke-width='0.5' /> -->
+    <path d="M0,0 L120,20 v 100 L0,120 Z" fill="#fff" stroke="red" stroke-width="1" transform="translate(5,5)"
+      mask="url(#light)"></path>
+  </g>
+  <!-- <g>
+    <circle cx="0" cy="0" r="20" fill="aquamarine" />
+  </g> -->
+  <style>
+    @keyframes stroke_fill {
+      0% {
+        fill: white;
+      }
+
+      50% {
+        fill: white;
+        /* stroke-dashoffset: 0; */
+      }
+
+      100% {
+        fill: black;
+        /* stroke-dashoffset: 0; */
+      }
+    }
+
+    .animation {
+      animation: stroke_fill 4s ease forwards infinite;
+      /* stroke-dasharray: 324.774;
+      stroke-dashoffset: 324.774; */
+    }
+  </style>
+
+  <g class="animation1" stroke="red" stroke-width="1">
+    <rect x="0" y="0" width="120" height="120" fill="#fff"/>
+    <!-- <rect x="160" y="20" width="120" height="120" /> -->
+  </g>
+</svg>    
