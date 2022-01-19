@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FullScreen } from '@mcfed/components';
-import Center from './components/Center';
+// import Center from './components/Center';
 import FlyingLine from './components/FlyingLine';
 import { Header, Left } from './components';
 import './index.less';

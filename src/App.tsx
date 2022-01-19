@@ -26,6 +26,7 @@ import {
 // import AnimateCssView from './module/AnimateCss';
 // import AnimationView from './module/Animation';
 import ScreenView from './module/Screen';
+import TransferView from './module/Transfer';
 import './App.css';
 import { Icon } from 'antd';
 import image1 from './images/1.png'
@@ -36,20 +37,20 @@ import customSvg from './custom.svg';
 class App extends Component {
   render() {
     return (
-      // <div className="App">
-        // <ScreenView />
-        <div 
-          style={{
-            margin: 200, 
-            width: 410,
-            height: 400,
-            background: `url(${customSvg})`, 
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat'
-          }}
-        >
-            666
-        </div>
+      <div className="App">
+        <TransferView />
+      </div>
+      // <div
+      //   style={{
+      //     margin: 200,
+      //     width: 410,
+      //     height: 400,
+      //     background: `url(${customSvg})`,
+      //     backgroundSize: 'contain',
+      //     backgroundRepeat: 'no-repeat'
+      //   }}
+      // >
+      //   666
       // </div>
     );
   }
