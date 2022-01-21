@@ -31,10 +31,11 @@ module.exports = override(
   //   '@': path.resolve('./src')  
   // })
 
-  addPostcssPlugins([require('postcss-pxtorem')({
-    rootValue: 192,
-    propList: ['*']
-    // propList: ['*', '!border*', '!font-size*', '!letter-spacing'],
-    // propWhiteList: []
-  }),])
+  // px转换rem
+  // addPostcssPlugins([require('postcss-pxtorem')({
+  //   rootValue: 192,
+  //   propList: ['*']
+  //   // propList: ['*', '!border*', '!font-size*', '!letter-spacing'],
+  //   // propWhiteList: []
+  // }),])
 );
