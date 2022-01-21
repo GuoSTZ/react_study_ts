@@ -26,7 +26,8 @@ import {
 // import AnimateCssView from './module/AnimateCss';
 // import AnimationView from './module/Animation';
 import ScreenView from './module/Screen';
-import TransferView from './module/Transfer';
+import TransferView, { ListTransfer, Ceshi } from './module/Transfer';
+import { FormView, WrappedDynamicFieldSet } from './module/Form';
 import './App.css';
 import { Icon } from 'antd';
 import image1 from './images/1.png'
@@ -38,7 +39,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <TransferView />
+        <FormView />
       </div>
       // <div
       //   style={{
