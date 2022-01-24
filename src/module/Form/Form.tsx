@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Input, Icon, Button, List, Checkbox } from 'antd';
-import WrapDynamicFieldSet from './DynamicFieldSet';
+import DynamicFieldSet from './DynamicFieldSet';
 import './style/Form.less';
 
 const FormWrap = (props: any) => {
@@ -40,10 +40,26 @@ const FormWrap = (props: any) => {
           )}
         </Form.Item>
         <Form.Item>
+          {getFieldDecorator('aaa', {
+            rules: [{ required: true, message: 'Please input your aaa!' }],
+          })(
+            <Form.Item>
+              {getFieldDecorator('bbb', {
+                rules: [{ required: true, message: 'Please input your bbb!' }],
+              })(
+                <Input
+                  prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                  placeholder="bbb"
+                />,
+              )}
+            </Form.Item>
+          )}
+        </Form.Item>
+        <Form.Item>
           {getFieldDecorator('set', {
             // rules: [{ required: true, message: 'Please!' }],
           })(
-            <WrapDynamicFieldSet />
+            <DynamicFieldSet form={form} onChange={props.onChange} />
           )}
         </Form.Item>
       </Form>
