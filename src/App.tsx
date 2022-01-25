@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 // import { Button } from 'antd';
 // import EditTableView from './module/EditTable';
+import CheckView from './module/EditTable/check';
 // import DisabledButton from './module/Button/DisabledButton';
 // import RouteTabs from './module/RouteTabs';
 // import ReactFileView from './module/ReactFileView';
@@ -39,7 +40,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <FormView />
+        <CheckView />
       </div>
       // <div
       //   style={{

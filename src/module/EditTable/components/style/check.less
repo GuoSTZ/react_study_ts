@@ -1,0 +1,31 @@
+// .ant-table-tbody > .editable-row > td {
+//   padding: 20px 20px;
+// }
+// .editable-row {
+//   .ant-form-explain {
+//     position: absolute;
+//   }
+//   .ExtraColumn {
+//     .ant-form-explain {
+//       position: inherit;
+//     }
+//   }
+// }
+
+.editTable-full {
+  td {
+    padding: 0 !important;
+    padding-right: 16px !important;
+    border-bottom: none !important;
+  }
+}
+.editTable-full:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
+  > td {
+  background: #fff !important;
+}
+.editTable-full .operation {
+  vertical-align: top;
+}
+.editTable-full .operation .operation-button-full {
+  margin-top: 10px;
+}
