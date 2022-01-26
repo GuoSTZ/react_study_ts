@@ -220,6 +220,7 @@ export default class EditTable<T extends Item> extends React.Component<
                           </EditableContext.Consumer>
                           <EditableContext.Consumer>
                             {form =>
+                              this.props?.hideCancelConfirm === false ||
                               !JSON.parse(
                                 localStorage.getItem('hideCancelConfirm') ||
                                   'true'
@@ -328,11 +329,17 @@ export default class EditTable<T extends Item> extends React.Component<
     if (!data) {
       return [];
     }
+    // 全编辑表格模式数据初始化
     if (this.props.mode === 'full') {
       if (data?.length === 0) {
         let key =
           new Date().valueOf() + '' + Math.floor(Math.random() * 10 + 1);
-        return [{key}];
+        let columns = [...this.props.columns];
+        let obj: any = { key };
+        columns.forEach((d: any) => {
+          obj[d?.dataIndex] = '';
+        });
+        return [obj];
       }
     }
     return data.map
@@ -386,6 +393,7 @@ export default class EditTable<T extends Item> extends React.Component<
                     </EditableContext.Consumer>
                     <EditableContext.Consumer>
                       {form =>
+                        this.props?.hideCancelConfirm === false ||
                         !JSON.parse(
                           localStorage.getItem('hideCancelConfirm') || 'true'
                         ) ? (
@@ -554,24 +562,42 @@ export default class EditTable<T extends Item> extends React.Component<
       }
     );
   }
+
+  // 重复代码抽出
+  handleDataForSave(newRow: any, key: string) {
+    const newData = [...this.state.data];
+    const index = newData.findIndex((item: Item) => key === item.key);
+    if (index > -1) {
+      const item = newData[index];
+      newData.splice(index, 1, {
+        ...item,
+        ...newRow,
+        key: item.key
+      });
+    } else {
+      newData.push(newRow);
+    }
+    return newData;
+  }
+
   save(form: WrappedFormUtils, key: string) {
     const {onSave, mode} = this.props;
+    // 全编辑表格模式下，不需要子项触发onChange时，对一行内的其他子项进行规则校验
+    if(mode === 'full') {
+      const full_row: any = form.getFieldsValue();
+      const newData = this.handleDataForSave(full_row, key);
+      this.setState({data: newData, editingKey: ''}, () => {
+        this.handleChangeData(newData);
+      });
+      return;
+    }
+
     form.validateFields((error: any, row: T) => {
       if (error) {
         return;
       }
-      const newData = [...this.state.data];
-      const index = newData.findIndex((item: Item) => key === item.key);
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-          key: item.key
-        });
-      } else {
-        newData.push(row);
-      }
+      const index = [...this.state.data].findIndex((item: Item) => key === item.key);
+      const newData = this.handleDataForSave(row, key);
       if (onSave && mode === 'row') {
         onSave(newData[index], (status: boolean) => {
           // 如果返回为false，则不继续执行前端数据保存操作
@@ -622,6 +648,21 @@ export default class EditTable<T extends Item> extends React.Component<
     this.revertStatus();
   };
 
+  // 获取字段的initialValue值，全编辑表格模式下，需要将该值初始化到新增的数据中
+  // 使用该方法原因：当前最外层的Form收集数据时，无法触发内部子项的校验，故只能在新增的时候，直接进行数据初始化
+  getColumnInitialValue() {
+    const columns = this.props.columns;
+    const configs = columns?.map((item: any) => ({
+      dataIndex: item.dataIndex,
+      config: this.renderEditConfig(item.editConfig, {}, {} as any)
+    }));
+    let obj: any = {};
+    configs?.map((item: any) => {
+      obj[item.dataIndex] = item.config?.initialValue
+    });
+    return obj;
+  }
+
   addNew = (e: any, form?: WrappedFormUtils) => {
     const {mode, maxNum, maxErrorMsg} = this.props;
     if (this.state.editingKey !== '' && mode === 'row') {
@@ -638,6 +679,7 @@ export default class EditTable<T extends Item> extends React.Component<
         }
         fullFlag = true;
       });
+      // 如果当前行有校验未通过的子项，则无法新增行
       if (!fullFlag) {
         return;
       }
@@ -655,10 +697,14 @@ export default class EditTable<T extends Item> extends React.Component<
     if (keyList.length > 1) {
       keyList.length = keyList.length - 1;
     }
-    keyList.forEach(d => {
+    keyList.forEach((d: any) => {
+      if(mode === 'full') {
+        obj[d] = this.getColumnInitialValue()[d] ?? '';
+        return;
+      }
       obj[d] = '';
     });
-    let data = [];
+    let data: any = [];
     if (this.props.direction === 'bottom') {
       data = [...this.state.data, obj];
       // 默认页数为10条，该属性为默认配置不暴露，故此处直接设为10来处理
@@ -676,6 +722,11 @@ export default class EditTable<T extends Item> extends React.Component<
     this.setState({
       data,
       editingKey: key
+    }, () => {
+      // 目前只开放全编辑表格模式下，添加一条空数据后，需要直接抛出
+      if(mode === 'full') {
+        this.handleChangeData(data);
+      }
     });
 
     this.activeStatus();
@@ -714,38 +765,6 @@ export default class EditTable<T extends Item> extends React.Component<
         {(form: WrappedFormUtils) => {
           const {getFieldDecorator, setFieldsValue} = form;
           const component = editComponent(text, record, instance, form);
-          console.log((
-            <FormItem style={{margin: 0}}>
-              {getFieldDecorator(dataIndex, {
-                ...this.renderEditConfig(editConfig, instance, form),
-                initialValue:
-                  record[dataIndex] === ''
-                    ? editConfig &&
-                      this.renderEditConfig(editConfig, instance, form)
-                        ?.initialValue
-                    : record[dataIndex]
-              })(
-                React.createElement(component.type, {
-                  ...component.props,
-                  ...(mode !== 'row'
-                    ? {
-                        onChange: function(
-                          e: HTMLElementEvent<HTMLInputElement>
-                        ) {
-                          // e is event
-                          if (e.target) {
-                            setFieldsValue({[dataIndex]: e.target.value});
-                          } else {
-                            setFieldsValue({[dataIndex]: e});
-                          }
-                          instance.save(form, record.key);
-                        }
-                      }
-                    : {})
-                })
-              )}
-            </FormItem>
-          ))
           return (
             <FormItem style={{margin: 0}}>
               {getFieldDecorator(dataIndex, {
@@ -821,6 +840,7 @@ export default class EditTable<T extends Item> extends React.Component<
     const components = {
       body: {
         row: (otherProps as any)?.onSearch ? EditableFormRow(otherProps) : _EditableFormRow
+        // row: EditableFormRow(otherProps)
         // cell: EditableCell
       }
     };
