@@ -1,0 +1,67 @@
+.TableTransfer {
+  position: relative;
+  width: 540px;
+  .leftDropdown {
+    position: absolute;
+    top: 15px;
+    margin-left: 15px;
+    font-size: 10px;
+    cursor: pointer;
+    z-index: 1;
+  }
+  .rightDropdown {
+    position: absolute;
+    top: 15px;
+    right: calc( 50% - 20px - 10px - 15px );
+    font-size: 10px;
+    cursor: pointer;
+    z-index: 1;
+  }
+  .ant-transfer {
+    .ant-transfer-list {
+      width: calc( 50% - 20px );
+      min-width: 250px;
+      .ant-transfer-list-header {
+        .ant-transfer-list-header-selected {
+          padding-left: 16px;
+        }
+      }
+      .ant-transfer-list-body-customize-wrapper {
+        padding: 0;
+        height: 100%;
+        .ant-table-wrapper, 
+        .ant-spin-nested-loading, 
+        .ant-spin-container {
+          height: inherit;
+        }
+        .ant-table-wrapper {
+          .ant-table {
+            min-height: 330px;
+            height: 330px;
+            overflow: auto;
+            table {
+              .ant-table-tbody {
+                tr {
+                  td {
+                    border: 0;
+                    padding: 6px;
+                    &:not(.ant-table-selection-column) {
+                      padding-left: 0;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        ul.ant-pagination {
+          width: 100%;
+          margin: 0;
+          padding: 8px 0;
+          text-align: right;
+          border-top: 1px solid #f0f0f0;
+        }
+      }
+    }
+  }
+}

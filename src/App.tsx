@@ -19,7 +19,7 @@ import CheckView from './module/EditTable/check';
 // import CardView from './module/CardView';
 // import SelectView from './module/SelectView';
 // import TreeSelectView from './module/TreeSelectView';
-// import TableTransfer from './module/TableTransfer';
+import TableTransfer from './module/TableTransfer';
 // import EchartsView from './module/EchartsView';
 // import LessView from './module/LessView';
 // import { ModalMethodView } from './module/Modal';
@@ -38,9 +38,32 @@ import customSvg from './custom.svg';
 
 class App extends Component {
   render() {
+    const leftTableColumns = [
+      {
+        dataIndex: 'title',
+        title: 'Name',
+      }
+    ];
+    const rightTableColumns = [
+      {
+        dataIndex: 'title',
+        title: 'Name',
+      }
+    ];
+    const mockData: any = [];
+    for (let i = 0; i < 100; i++) {
+      mockData.push({
+        key: i.toString(),
+        title: `content${i + 1}`
+      });
+    }
     return (
       <div className="App">
-        <CheckView />
+        <TableTransfer
+          leftColumns={leftTableColumns}
+          rightColumns={rightTableColumns}
+          dataSource={mockData}
+        />
       </div>
       // <div
       //   style={{
