@@ -46,32 +46,45 @@ const TableTransferView = (props: any) => {
     return data?.slice((page - 1) * itemSize, page * itemSize);
   }
 
+  const filterFunc = (data: any) => {
+    return (item: any) => item?.title?.toUpperCase()?.includes(data?.toUpperCase());
+  }
+
   // 获取筛选后穿梭框内显示的数据key值数组
   const getFilterData: any = (direction: 'left'|'right') => {
-    const data: any = {
+    const data = {
       'left': [],
       'right': []
     }
+    const leftItems: any = [];
+    const rightItems: any = [];
     dataSource?.map((item: any) => {
-      if(targetKeys?.includes(item.key))
-        data['right'].push(item);
-      else
-        data['left'].push(item);
+      if(targetKeys?.includes(item.key)) {
+        rightItems.push(item);
+      } else {
+        leftItems.push(item);
+      }
     });
-    return getKeys(data[direction]?.filter((item: any) => item.title?.toUpperCase()?.includes(filterValue[direction]?.toUpperCase())));
+    data['left'] = getKeys(leftItems?.filter(filterFunc(filterValue['left'])));
+    let right_temp = getKeys(rightItems?.filter(filterFunc(filterValue['right'])));
+    
+    data['right'] = targetKeys?.filter((item: any) => right_temp?.includes(item));
+    return data[direction];
   }
 
+  // 全选所有
   const getSelectAll = (direction: 'left'|'right', selectedKeys: any, setSelectedKeys: any) => {
     return () => {
-      const keys = getFilterData(direction);
+      const keys = getEnabledItemKeys(getFilterData(direction));
       if (keys?.length === selectedKeys.length) {
         setSelectedKeys([]);
       } else {
-        setSelectedKeys(getEnabledItemKeys(keys));
+        setSelectedKeys(keys);
       }
     }
   }
 
+  // 全选当页
   const getSelectAllCurrent = (direction: 'left'|'right', page: number, selectedKeys: any, setSelectedKeys: any) => {
     return () => {
       const keys = getFilterData(direction);
@@ -81,6 +94,7 @@ const TableTransferView = (props: any) => {
     }
   }
 
+  // 反选当页
   const getInvertCurrent = (direction: 'left'|'right', page: number, selectedKeys: any, setSelectedKeys: any) => {
     return () => {
       const keys = getFilterData(direction);

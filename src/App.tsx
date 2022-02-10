@@ -51,10 +51,10 @@ class App extends Component {
       }
     ];
     const mockData: any = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 1; i < 101; i++) {
       mockData.push({
         key: i.toString(),
-        title: `content${i + 1}`,
+        title: `content${i}`,
         disabled: i % 2 === 0
       });
     }
