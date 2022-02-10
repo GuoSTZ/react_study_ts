@@ -18,7 +18,7 @@ const TableTransferView = (props: any) => {
     rightColumns, 
     dataSource: _dataSource, 
     targetKeys: _targetKeys, 
-    itemSize = 10, 
+    itemSize = 10,
     ...restProps 
   } = props;
 
@@ -148,8 +148,18 @@ const TableTransferView = (props: any) => {
     setFilterValue(Object.assign({}, filterValue, {[direction]: value}));
   }
 
+  // 临时解决方案
+  const handleStyle = () => {
+    const { listStyle } = props;
+    if(listStyle && listStyle.width) {
+      return {width: `${listStyle.width * 2 + 52}px`};
+    } else {
+      return {width: `${250 * 2 + 52}px`};
+    }
+  }
+
   return (
-    <div className='TableTransfer'>
+    <div className='TableTransfer' style={handleStyle()}>
       <LeftDropdown />
       <RightDropdown />
 
