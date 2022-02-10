@@ -26,40 +26,60 @@
           padding-left: 16px;
         }
       }
-      .ant-transfer-list-body-customize-wrapper {
-        padding: 0;
+      .ant-transfer-list-body {
         height: 100%;
-        .ant-table-wrapper, 
-        .ant-spin-nested-loading, 
-        .ant-spin-container {
-          height: inherit;
+        .ant-transfer-list-body-search-wrapper {
+          padding-bottom: 12px;
         }
-        .ant-table-wrapper {
-          .ant-table {
-            min-height: 330px;
-            height: 330px;
-            overflow: auto;
-            table {
-              .ant-table-tbody {
-                tr {
-                  td {
-                    border: 0;
-                    padding: 6px;
-                    &:not(.ant-table-selection-column) {
-                      padding-left: 0;
+        .ant-transfer-list-body-customize-wrapper {
+          padding: 0;
+          height: 100%;
+          .ant-table-wrapper, 
+          .ant-spin-nested-loading, 
+          .ant-spin-container {
+            height: 100%;
+          }
+          .ant-table-wrapper {
+            .ant-table-tbody
+              > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
+              > td,
+            .ant-table-tbody
+              > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
+              > td {
+              background-color: #f7f8fa;
+            }
+            .ant-table-tbody > tr:hover.ant-table-row-selected > td,
+            .ant-table-tbody > tr.ant-table-row-selected > td {
+              background-color: #f0f8ff;
+            }
+            .ant-table {
+              overflow: auto;
+              height: calc( 100% - 41px );
+              table {
+                .ant-table-tbody {
+                  tr {
+                    td {
+                      border: 0;
+                      padding: 6px;
+                      &:not(.ant-table-selection-column) {
+                        padding-left: 0;
+                      }
                     }
                   }
                 }
               }
             }
           }
+          ul.ant-pagination {
+            width: 100%;
+            margin: 0;
+            padding: 8px 0;
+            text-align: right;
+            border-top: 1px solid #f0f0f0;
+          }
         }
-        ul.ant-pagination {
-          width: 100%;
-          margin: 0;
-          padding: 8px 0;
-          text-align: right;
-          border-top: 1px solid #f0f0f0;
+        .ant-transfer-list-body-search-wrapper + .ant-transfer-list-body-customize-wrapper {
+          height: calc( 100% - 56px );
         }
       }
     }

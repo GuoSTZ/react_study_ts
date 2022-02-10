@@ -66,6 +66,7 @@ class App extends Component {
           dataSource={mockData}
           showSearch
           targetKeys={['1', '2', '3', '4']}
+          listStyle={{height: 256}}
         />
       </div>
       // <div
