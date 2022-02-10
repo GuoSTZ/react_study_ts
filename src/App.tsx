@@ -54,7 +54,8 @@ class App extends Component {
     for (let i = 0; i < 100; i++) {
       mockData.push({
         key: i.toString(),
-        title: `content${i + 1}`
+        title: `content${i + 1}`,
+        disabled: i % 2 === 0
       });
     }
     return (
@@ -63,6 +64,8 @@ class App extends Component {
           leftColumns={leftTableColumns}
           rightColumns={rightTableColumns}
           dataSource={mockData}
+          showSearch
+          targetKeys={['1', '2', '3', '4']}
         />
       </div>
       // <div
