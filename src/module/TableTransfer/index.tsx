@@ -92,16 +92,20 @@ const TableTransferView = (props: any) => {
   }
 
   const { DropdownView: LeftDropdown } = useDropdownView({
-    selectAll: getSelectAll('left', sourceSelectedKeys, setSourceSelectedKeys),
-    selectAllCurrent: getSelectAllCurrent('left', sourcePage, sourceSelectedKeys, setSourceSelectedKeys),
-    invertCurrent: getInvertCurrent('left', sourcePage, sourceSelectedKeys, setSourceSelectedKeys),
+    menuItems: [
+      {title: '全选所有', onClick: getSelectAll('left', sourceSelectedKeys, setSourceSelectedKeys)},
+      {title: '全选当页', onClick: getSelectAllCurrent('left', sourcePage, sourceSelectedKeys, setSourceSelectedKeys)},
+      {title: '反选当页', onClick: getInvertCurrent('left', sourcePage, sourceSelectedKeys, setSourceSelectedKeys)},
+    ],
     className: 'leftDropdown'
   });
 
   const { DropdownView: RightDropdown } = useDropdownView({
-    selectAll: getSelectAll('right', targetSelectedKeys, setTargetSelectedKeys),
-    selectAllCurrent: getSelectAllCurrent('right', targetPage, targetSelectedKeys, setTargetSelectedKeys),
-    invertCurrent: getInvertCurrent('right', targetPage, targetSelectedKeys, setTargetSelectedKeys),
+    menuItems: [
+      {title: '全选所有', onClick: getSelectAll('right', targetSelectedKeys, setTargetSelectedKeys)},
+      {title: '全选当页', onClick: getSelectAllCurrent('right', targetPage, targetSelectedKeys, setTargetSelectedKeys)},
+      {title: '反选当页', onClick: getInvertCurrent('right', targetPage, targetSelectedKeys, setTargetSelectedKeys)},
+    ],
     className: 'rightDropdown'
   });
 
