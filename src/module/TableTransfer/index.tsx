@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Transfer, Table } from 'antd';
+import { TransferProps } from 'antd/lib/transfer';
+import { ColumnProps } from 'antd/lib/table';
 import useDropdownView from './useDropdownVIew';
 import './index.less';
 
-const TableTransfer = (props: any) => {
+export interface TableTransferProps extends TransferProps{
+  leftColumns: ColumnProps<any>[];
+  rightColumns: ColumnProps<any>[];
+  itemSize?: number;
+}
+
+const TableTransfer = (props: TableTransferProps) => {
   const [dataSource, setDataSource] = useState([] as any);                    // 全部数据 - dataSource
   const [targetKeys, setTargetKeys] = useState([] as any);                    // 右侧穿梭框内的数据
   const [sourceSelectedKeys, setSourceSelectedKeys] = useState([] as any);    // 左侧穿梭框被勾选的数据
@@ -28,7 +36,7 @@ const TableTransfer = (props: any) => {
       _data = _data?.map((record: any) => {
         return Object.assign({}, {
           ...record,
-          title: props.render(record),
+          title: props.render && props.render(record),
         });
       })
     }
@@ -127,7 +135,7 @@ const TableTransfer = (props: any) => {
   });
 
   // 数据转移回调
-  const onChange = (nextTargetKeys: any, direction: 'left'|'right', moveKeys: any) => {
+  const onChange = (nextTargetKeys: any, direction: string, moveKeys: string[]) => {
     setTargetKeys(nextTargetKeys);
 
     // 移动数据时产生的分页变化，需要做额外处理

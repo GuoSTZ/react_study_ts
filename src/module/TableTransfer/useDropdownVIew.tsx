@@ -1,7 +1,17 @@
 import React from 'react';
 import { Menu, Dropdown, Icon } from 'antd';
 
-const useDropdownView = ({ menuItems, className }: any) => {
+export interface DropdownViewProps {
+  menuItems: MenuItemsProps[];
+  className: string;
+}
+
+interface MenuItemsProps {
+  title: string;
+  onClick: Function;
+}
+
+const useDropdownView = ({ menuItems, className }: DropdownViewProps) => {
 
   const menu = (
     <Menu>
