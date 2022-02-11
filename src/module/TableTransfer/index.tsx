@@ -142,21 +142,10 @@ const TableTransferView = (props: any) => {
     setFilterValue(Object.assign({}, filterValue, {[direction]: value}));
   }
 
-  // 临时解决方案
-  const handleStyle = () => {
-    const { listStyle } = props;
-    if(listStyle && listStyle.width) {
-      return {width: `${listStyle.width * 2 + 52}px`};
-    } else {
-      return {width: `${250 * 2 + 52}px`};
-    }
-  }
-
   return (
-    <div className='TableTransfer' style={handleStyle()}>
+    <div className='TableTransfer'>
       <LeftDropdown />
       <RightDropdown />
-
       <Transfer
         dataSource={dataSource}
         targetKeys={targetKeys}
@@ -179,7 +168,6 @@ const TableTransferView = (props: any) => {
           disabled: listDisabled,
         }) => {
           const columns = direction === 'left' ? leftColumns : rightColumns;
-
           const rowSelection = {
             getCheckboxProps: (item: any) => ({ disabled: listDisabled || item.disabled }),
             onSelect({ key }: any, selected: boolean) {
@@ -208,8 +196,7 @@ const TableTransferView = (props: any) => {
                 simple: true,
                 onChange(page, pageSize) {
                   direction === 'left' ? setSourcePage(page) : setTargetPage(page)
-                },
-
+                }
               }}
             />
           );
