@@ -26,6 +26,7 @@ const TableTransfer = (props: TableTransferProps) => {
     dataSource: _dataSource = [], 
     targetKeys: _targetKeys = [], 
     itemSize = 10,
+    selectedKeys: _selectedKeys = [],
     ...restProps 
   } = props;
 
@@ -42,6 +43,8 @@ const TableTransfer = (props: TableTransferProps) => {
     }
     setDataSource(_data);
     setTargetKeys(_targetKeys);
+    setSourceSelectedKeys(_selectedKeys?.filter((item: any) => !targetKeys.includes(item)));
+    setTargetSelectedKeys(_selectedKeys?.filter((item: any) => targetKeys.includes(item)));
   }, [_dataSource]);
 
   const getKeys = (data: any) => data?.map((item: any) => item.key);
@@ -154,12 +157,19 @@ const TableTransfer = (props: TableTransferProps) => {
   // 选中回调
   const onSelectChange = (sourceSelectedKeys: any, targetSelectedKeys: any) => {
     setSourceSelectedKeys(sourceSelectedKeys);
-    setTargetSelectedKeys(targetSelectedKeys)
+    setTargetSelectedKeys(targetSelectedKeys);
+
+    if(props.onSelectChange) {
+      props.onSelectChange(sourceSelectedKeys, targetSelectedKeys);
+    }
   }
 
   // 搜索回调
   const onSearch = (direction: 'left'|'right', value: string) => {
     setFilterValue(Object.assign({}, filterValue, {[direction]: value}));
+    if(props.onSearch) {
+      props.onSearch(direction, value);
+    }
   }
 
   return (
