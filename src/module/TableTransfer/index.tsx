@@ -1,15 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { Transfer, Table } from 'antd';
+import { Transfer, Table, message } from 'antd';
 import { TransferProps } from 'antd/lib/transfer';
 import { ColumnProps } from 'antd/lib/table';
 import useDropdownView from './useDropdownVIew';
 import './index.less';
 
 export interface TableTransferProps extends TransferProps {
+  /**
+   * 左侧表格列配置
+   */
   leftColumns: ColumnProps<any>[];
+  /**
+   * 右侧表格列配置
+   */
   rightColumns: ColumnProps<any>[];
+  /**
+   * 每页展示条数
+   */
   itemSize?: number;
+  /**
+   * 下拉菜单配置
+   */
   dropdownConfig?: DropdownConfigProps;
+  /**
+   * 允许转移的最大数据量
+   */
+  maxTargetKeys?: number;
 }
 
 interface DropdownConfigProps {
@@ -29,6 +45,7 @@ const TableTransfer = (props: TableTransferProps) => {
   const [sourcePage, setSourcePage] = useState(1);                              // 左侧穿梭框当前页码
   const [targetPage, setTargetPage] = useState(1);                              // 右侧穿梭框当前页面
   const [filterValue, setFilterValue] = useState({ 'left': '', 'right': '' });  // 搜索框输入内容
+  const [showMaxError, setShowMaxError] = useState(false);                          // 错误信息显示状态
 
   const {
     leftColumns,
@@ -39,6 +56,7 @@ const TableTransfer = (props: TableTransferProps) => {
     selectedKeys: _selectedKeys = [],
     showSelectAll = true,
     dropdownConfig = {},
+    maxTargetKeys,
     ...restProps
   } = props;
 
@@ -140,6 +158,9 @@ const TableTransfer = (props: TableTransferProps) => {
     }
   }
 
+  /**
+   * 下拉菜单配置
+   */
   const handleDropdownConfig = (direction: string, className: string) => {
     // dropdownConfig
     let menuItems: any = [];
@@ -181,7 +202,15 @@ const TableTransfer = (props: TableTransferProps) => {
 
   // 数据转移回调
   const onChange = (nextTargetKeys: any, direction: string, moveKeys: string[]) => {
+    if(typeof maxTargetKeys === 'number' && maxTargetKeys >= 0 && nextTargetKeys?.length > maxTargetKeys) {
+      // 保留选择项
+      setSourceSelectedKeys(moveKeys.slice(maxTargetKeys, moveKeys.length));
+      setTargetKeys(moveKeys.slice(0, maxTargetKeys));
+      setShowMaxError(true);
+      return;
+    }
     setTargetKeys(nextTargetKeys);
+    setShowMaxError(false);
 
     // 移动数据时产生的分页变化，需要做额外处理
     const sourceKeys = getContraryKeys(getKeys(dataSource), nextTargetKeys)
@@ -287,6 +316,9 @@ const TableTransfer = (props: TableTransferProps) => {
           );
         }}
       </Transfer>
+      <div className={`helpText ${showMaxError ? "helpTextIn" : "helpTextOut"}`}>
+        资产成员最多{maxTargetKeys}项
+      </div>
     </div>
   )
 }
