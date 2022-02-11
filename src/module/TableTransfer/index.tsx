@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Transfer, Table } from 'antd';
-import difference from 'lodash/difference';
 import useDropdownView from './useDropdownVIew';
 import './index.less';
 
-const TableTransferView = (props: any) => {
+const TableTransfer = (props: any) => {
   const [dataSource, setDataSource] = useState([] as any);                    // 全部数据 - dataSource
   const [targetKeys, setTargetKeys] = useState([] as any);                    // 右侧穿梭框内的数据
   const [sourceSelectedKeys, setSourceSelectedKeys] = useState([] as any);    // 左侧穿梭框被勾选的数据
@@ -206,4 +205,4 @@ const TableTransferView = (props: any) => {
   )
 }
 
-export default TableTransferView;
+export default TableTransfer;
