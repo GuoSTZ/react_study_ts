@@ -15,16 +15,26 @@ const TableTransfer = (props: any) => {
   const { 
     leftColumns, 
     rightColumns, 
-    dataSource: _dataSource, 
-    targetKeys: _targetKeys, 
+    dataSource: _dataSource = [], 
+    targetKeys: _targetKeys = [], 
     itemSize = 10,
     ...restProps 
   } = props;
 
   useEffect(() => {
-    setDataSource(_dataSource);
+    let _data: any = _dataSource.slice(0, _dataSource.length);
+    // 默认为title字段处理，传入自定义render时，转化为title属性
+    if(props.render) {
+      _data = _data?.map((record: any) => {
+        return Object.assign({}, {
+          ...record,
+          title: props.render(record),
+        });
+      })
+    }
+    setDataSource(_data);
     setTargetKeys(_targetKeys);
-  }, [_dataSource, _targetKeys]);
+  }, [_dataSource]);
 
   const getKeys = (data: any) => data?.map((item: any) => item.key);
 
@@ -117,16 +127,19 @@ const TableTransfer = (props: any) => {
   });
 
   // 数据转移回调
-  const onChange = (nextTargetKeys: any) => {
+  const onChange = (nextTargetKeys: any, direction: 'left'|'right', moveKeys: any) => {
     setTargetKeys(nextTargetKeys);
 
     // 移动数据时产生的分页变化，需要做额外处理
     const sourceKeys = getContraryKeys(getKeys(dataSource), nextTargetKeys)
-    if(Math.ceil(nextTargetKeys.length / itemSize) < targetPage) {
+    if(nextTargetKeys.length > 0 && Math.ceil(nextTargetKeys.length / itemSize) < targetPage) {
       setTargetPage(targetPage - 1);
     }
-    if(Math.ceil(sourceKeys.length / itemSize) < sourcePage) {
+    if(sourceKeys.length > 0 && Math.ceil(sourceKeys.length / itemSize) < sourcePage) {
       setSourcePage(sourcePage - 1);
+    }
+    if(props.onChange) {
+      props.onChange(nextTargetKeys, direction, moveKeys);
     }
   };
 
@@ -148,14 +161,15 @@ const TableTransfer = (props: any) => {
       <Transfer
         dataSource={dataSource}
         targetKeys={targetKeys}
-        selectedKeys={[...sourceSelectedKeys, ...targetSelectedKeys]}
-        onChange={onChange}
-        onSelectChange={onSelectChange}
+        // 默认用title处理，可传入自定义方法做覆盖
         filterOption={(inputValue: string, item: any) =>
           item?.title?.toUpperCase()?.indexOf(inputValue?.toUpperCase()) !== -1
         }
-        onSearch={onSearch}
         {...restProps}
+        selectedKeys={[...sourceSelectedKeys, ...targetSelectedKeys]}
+        onChange={onChange}
+        onSelectChange={onSelectChange}
+        onSearch={onSearch}
         showSelectAll={false}
       >
         {({
