@@ -29,11 +29,9 @@ const TableTransferView = (props: any) => {
 
   const getKeys = (data: any) => data?.map((item: any) => item.key);
 
-  const allKeys = getKeys(dataSource);
-  const enabledKeys = getKeys(dataSource?.filter((item: any) => !item.disabled));
-
   // 筛选非禁用的数据key
   const getEnabledItemKeys = (keys: any) => {
+    const enabledKeys = getKeys(dataSource?.filter((item: any) => !item.disabled));
     return keys?.filter((item: any) => enabledKeys?.includes(item));
   }
 
@@ -52,24 +50,20 @@ const TableTransferView = (props: any) => {
 
   // 获取筛选后穿梭框内显示的数据key值数组
   const getFilterData: any = (direction: 'left'|'right') => {
-    const data = {
+    const data: any = {
       'left': [],
-      'right': []
+      'right': new Array(targetKeys.length)
     }
-    const leftItems: any = [];
-    const rightItems: any = [];
-    dataSource?.map((item: any) => {
-      if(targetKeys?.includes(item.key)) {
-        rightItems.push(item);
+    dataSource?.forEach((record: any) => {
+      const indexOfKey = targetKeys.indexOf(record.key);
+      if (indexOfKey !== -1) {
+        data['right'][indexOfKey] = record;
       } else {
-        leftItems.push(item);
+        data['left'].push(record);
       }
     });
-    data['left'] = getKeys(leftItems?.filter(filterFunc(filterValue['left'])));
-    let right_temp = getKeys(rightItems?.filter(filterFunc(filterValue['right'])));
-    
-    data['right'] = targetKeys?.filter((item: any) => right_temp?.includes(item));
-    return data[direction];
+    const filterItems = data[direction]?.filter((filterFunc(filterValue[direction])));
+    return getKeys(filterItems);
   }
 
   // 全选所有
@@ -128,7 +122,7 @@ const TableTransferView = (props: any) => {
     setTargetKeys(nextTargetKeys);
 
     // 移动数据时产生的分页变化，需要做额外处理
-    const sourceKeys = getContraryKeys(allKeys, nextTargetKeys)
+    const sourceKeys = getContraryKeys(getKeys(dataSource), nextTargetKeys)
     if(Math.ceil(nextTargetKeys.length / itemSize) < targetPage) {
       setTargetPage(targetPage - 1);
     }
