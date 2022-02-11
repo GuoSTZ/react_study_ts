@@ -135,7 +135,8 @@ const TableTransfer = (props: TableTransferProps) => {
   const getSelectCount = (direction: string, selectedKeys: any, setSelectedKeys: any) => {
     return () => {
       const keys = getEnabledItemKeys(getFilterData(direction));
-      setSelectedKeys(keys.slice(0, 10));
+      const count = typeof dropdownConfig.selectCount === 'number' ? dropdownConfig.selectCount : 1000;
+      setSelectedKeys(keys.slice(0, count));
     }
   }
 
