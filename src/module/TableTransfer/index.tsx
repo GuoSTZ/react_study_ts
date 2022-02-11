@@ -5,35 +5,47 @@ import { ColumnProps } from 'antd/lib/table';
 import useDropdownView from './useDropdownVIew';
 import './index.less';
 
-export interface TableTransferProps extends TransferProps{
+export interface TableTransferProps extends TransferProps {
   leftColumns: ColumnProps<any>[];
   rightColumns: ColumnProps<any>[];
   itemSize?: number;
+  dropdownConfig?: DropdownConfigProps;
 }
 
-const TableTransfer = (props: TableTransferProps) => {
-  const [dataSource, setDataSource] = useState([] as any);                    // 全部数据 - dataSource
-  const [targetKeys, setTargetKeys] = useState([] as any);                    // 右侧穿梭框内的数据
-  const [sourceSelectedKeys, setSourceSelectedKeys] = useState([] as any);    // 左侧穿梭框被勾选的数据
-  const [targetSelectedKeys, setTargetSelectedKeys] = useState([] as any);    // 右侧穿梭框被勾选的数据
-  const [sourcePage, setSourcePage] = useState(1);                            // 左侧穿梭框当前页码
-  const [targetPage, setTargetPage] = useState(1);                            // 右侧穿梭框当前页面
-  const [filterValue, setFilterValue] = useState({'left': '', 'right': ''});  // 搜索框输入内容
+interface DropdownConfigProps {
+  selectAll?: boolean;
+  selectCurrent?: boolean;
+  InvertCurrent?: boolean;
+  selectCount?: number;
+}
 
-  const { 
-    leftColumns, 
-    rightColumns, 
-    dataSource: _dataSource = [], 
-    targetKeys: _targetKeys = [], 
+type DropdownConfigTypes = 'selectAll' | 'selectCurrent' | 'InvertCurrent' | 'selectCount';
+
+const TableTransfer = (props: TableTransferProps) => {
+  const [dataSource, setDataSource] = useState([] as any);                      // 全部数据 - dataSource
+  const [targetKeys, setTargetKeys] = useState([] as any);                      // 右侧穿梭框内的数据
+  const [sourceSelectedKeys, setSourceSelectedKeys] = useState([] as any);      // 左侧穿梭框被勾选的数据
+  const [targetSelectedKeys, setTargetSelectedKeys] = useState([] as any);      // 右侧穿梭框被勾选的数据
+  const [sourcePage, setSourcePage] = useState(1);                              // 左侧穿梭框当前页码
+  const [targetPage, setTargetPage] = useState(1);                              // 右侧穿梭框当前页面
+  const [filterValue, setFilterValue] = useState({ 'left': '', 'right': '' });  // 搜索框输入内容
+
+  const {
+    leftColumns,
+    rightColumns,
+    dataSource: _dataSource = [],
+    targetKeys: _targetKeys = [],
     itemSize = 10,
     selectedKeys: _selectedKeys = [],
-    ...restProps 
+    showSelectAll = true,
+    dropdownConfig = {},
+    ...restProps
   } = props;
 
   useEffect(() => {
     let _data: any = _dataSource.slice(0, _dataSource.length);
     // 默认为title字段处理，传入自定义render时，转化为title属性
-    if(props.render) {
+    if (props.render) {
       _data = _data?.map((record: any) => {
         return Object.assign({}, {
           ...record,
@@ -69,7 +81,7 @@ const TableTransfer = (props: TableTransferProps) => {
   }
 
   // 获取筛选后穿梭框内显示的数据key值数组
-  const getFilterData: any = (direction: 'left'|'right') => {
+  const getFilterData: any = (direction: 'left' | 'right') => {
     const data: any = {
       'left': [],
       'right': new Array(targetKeys.length)
@@ -87,7 +99,7 @@ const TableTransfer = (props: TableTransferProps) => {
   }
 
   // 全选所有
-  const getSelectAll = (direction: 'left'|'right', selectedKeys: any, setSelectedKeys: any) => {
+  const getSelectAll = (direction: string, selectedKeys: any, setSelectedKeys: any) => {
     return () => {
       const keys = getEnabledItemKeys(getFilterData(direction));
       if (keys?.length === selectedKeys.length) {
@@ -99,7 +111,7 @@ const TableTransfer = (props: TableTransferProps) => {
   }
 
   // 全选当页
-  const getSelectAllCurrent = (direction: 'left'|'right', page: number, selectedKeys: any, setSelectedKeys: any) => {
+  const getSelectCurrent = (direction: string, page: number, selectedKeys: any, setSelectedKeys: any) => {
     return () => {
       const keys = getFilterData(direction);
       const currentKeys = getCurrentKeys(keys, page);
@@ -109,7 +121,7 @@ const TableTransfer = (props: TableTransferProps) => {
   }
 
   // 反选当页
-  const getInvertCurrent = (direction: 'left'|'right', page: number, selectedKeys: any, setSelectedKeys: any) => {
+  const getInvertCurrent = (direction: string, page: number, selectedKeys: any, setSelectedKeys: any) => {
     return () => {
       const keys = getFilterData(direction);
       const currentKeys = getCurrentKeys(keys, page);
@@ -119,23 +131,52 @@ const TableTransfer = (props: TableTransferProps) => {
     }
   }
 
-  const { DropdownView: LeftDropdown } = useDropdownView({
-    menuItems: [
-      {title: '全选所有', onClick: getSelectAll('left', sourceSelectedKeys, setSourceSelectedKeys)},
-      {title: '全选当页', onClick: getSelectAllCurrent('left', sourcePage, sourceSelectedKeys, setSourceSelectedKeys)},
-      {title: '反选当页', onClick: getInvertCurrent('left', sourcePage, sourceSelectedKeys, setSourceSelectedKeys)},
-    ],
-    className: 'leftDropdown'
-  });
+  // 选中指定条数
+  const getSelectCount = (direction: string, selectedKeys: any, setSelectedKeys: any) => {
+    return () => {
+      const keys = getEnabledItemKeys(getFilterData(direction));
+      setSelectedKeys(keys.slice(0, 10));
+    }
+  }
 
-  const { DropdownView: RightDropdown } = useDropdownView({
-    menuItems: [
-      {title: '全选所有', onClick: getSelectAll('right', targetSelectedKeys, setTargetSelectedKeys)},
-      {title: '全选当页', onClick: getSelectAllCurrent('right', targetPage, targetSelectedKeys, setTargetSelectedKeys)},
-      {title: '反选当页', onClick: getInvertCurrent('right', targetPage, targetSelectedKeys, setTargetSelectedKeys)},
-    ],
-    className: 'rightDropdown'
-  });
+  const handleDropdownConfig = (direction: string, className: string) => {
+    // dropdownConfig
+    let menuItems: any = [];
+    const codes = Object.keys(dropdownConfig);
+    const attrs: any = {
+      'left': {
+        page: sourcePage,
+        keys: sourceSelectedKeys,
+        setKeys: setSourceSelectedKeys
+      },
+      'right': {
+        page: targetPage,
+        keys: targetSelectedKeys,
+        setKeys: setTargetSelectedKeys
+      }
+    }
+    const count = typeof dropdownConfig.selectCount === 'number' ? dropdownConfig.selectCount : 1000;
+    const config: any = {
+      'selectAll': { title: '全选所有', onClick: getSelectAll(direction, attrs[direction].keys, attrs[direction].setKeys) },
+      'selectCurrent': { title: '全选当页', onClick: getSelectCurrent(direction, attrs[direction].page, attrs[direction].keys, attrs[direction].setKeys) },
+      'invertCurrent': { title: '反选当页', onClick: getInvertCurrent(direction, attrs[direction].page, attrs[direction].keys, attrs[direction].setKeys) },
+      'selectCount': { title: `选择${count}项`, onClick: getSelectCount(direction, attrs[direction].keys, attrs[direction].setKeys) },
+    }
+    codes?.forEach((item: string) => {
+      if (!!dropdownConfig[item as DropdownConfigTypes]) {
+        menuItems.push(config[item]);
+      }
+    });
+
+    return {
+      menuItems,
+      className
+    }
+  }
+
+  const { DropdownView: LeftDropdown } = useDropdownView(handleDropdownConfig('left', 'leftDropdown'));
+
+  const { DropdownView: RightDropdown } = useDropdownView(handleDropdownConfig('right', 'rightDropdown'));
 
   // 数据转移回调
   const onChange = (nextTargetKeys: any, direction: string, moveKeys: string[]) => {
@@ -143,13 +184,13 @@ const TableTransfer = (props: TableTransferProps) => {
 
     // 移动数据时产生的分页变化，需要做额外处理
     const sourceKeys = getContraryKeys(getKeys(dataSource), nextTargetKeys)
-    if(nextTargetKeys.length > 0 && Math.ceil(nextTargetKeys.length / itemSize) < targetPage) {
+    if (nextTargetKeys.length > 0 && Math.ceil(nextTargetKeys.length / itemSize) < targetPage) {
       setTargetPage(targetPage - 1);
     }
-    if(sourceKeys.length > 0 && Math.ceil(sourceKeys.length / itemSize) < sourcePage) {
+    if (sourceKeys.length > 0 && Math.ceil(sourceKeys.length / itemSize) < sourcePage) {
       setSourcePage(sourcePage - 1);
     }
-    if(props.onChange) {
+    if (props.onChange) {
       props.onChange(nextTargetKeys, direction, moveKeys);
     }
   };
@@ -159,23 +200,35 @@ const TableTransfer = (props: TableTransferProps) => {
     setSourceSelectedKeys(sourceSelectedKeys);
     setTargetSelectedKeys(targetSelectedKeys);
 
-    if(props.onSelectChange) {
+    if (props.onSelectChange) {
       props.onSelectChange(sourceSelectedKeys, targetSelectedKeys);
     }
   }
 
   // 搜索回调
-  const onSearch = (direction: 'left'|'right', value: string) => {
-    setFilterValue(Object.assign({}, filterValue, {[direction]: value}));
-    if(props.onSearch) {
+  const onSearch = (direction: 'left' | 'right', value: string) => {
+    setFilterValue(Object.assign({}, filterValue, { [direction]: value }));
+    if (props.onSearch) {
       props.onSearch(direction, value);
     }
   }
 
+  // 是否显示下拉菜单
+  const isShowDropdownFunc = () => {
+    const codes = Object.keys(dropdownConfig);
+    let flag = false;
+    codes?.forEach((item: string) => {
+      if (!!dropdownConfig[item as DropdownConfigTypes]) {
+        flag = true;
+      }
+    });
+    return flag;
+  }
+
   return (
     <div className='TableTransfer'>
-      <LeftDropdown />
-      <RightDropdown />
+      {isShowDropdownFunc() && <LeftDropdown />}
+      {isShowDropdownFunc() && <RightDropdown />}
       <Transfer
         dataSource={dataSource}
         targetKeys={targetKeys}
@@ -188,7 +241,7 @@ const TableTransfer = (props: TableTransferProps) => {
         onChange={onChange}
         onSelectChange={onSelectChange}
         onSearch={onSearch}
-        showSelectAll={false}
+        showSelectAll={!isShowDropdownFunc() && showSelectAll}
       >
         {({
           direction,

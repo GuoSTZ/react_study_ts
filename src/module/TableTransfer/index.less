@@ -17,13 +17,17 @@
     cursor: pointer;
     z-index: 1;
   }
+  .leftDropdown + .ant-transfer .ant-transfer-list-header-selected,
+  .rightDropdown + .ant-transfer .ant-transfer-list-header-selected {
+    padding-left: 16px;
+  }
   .ant-transfer {
     .ant-transfer-list {
       min-width: 250px;
       .ant-transfer-list-header {
-        .ant-transfer-list-header-selected {
-          padding-left: 16px;
-        }
+        // .ant-transfer-list-header-selected {
+        //   padding-left: 16px;
+        // }
       }
       .ant-transfer-list-body {
         height: 100%;
