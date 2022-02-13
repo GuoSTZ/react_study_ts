@@ -99,8 +99,16 @@ const TableTransfer = (props: TableTransferProps) => {
     return data.filter((item: any) => keys?.indexOf(item) === -1);
   }
 
+  // const getContraryPageData = (data: any, keys: any) => {
+  //   return data.filter((item: any) => keys?.indexOf(item) === -1);
+  // }
+
   // 获取当前页的数据key值数组
   const getCurrentKeys = (data: any, page: number) => {
+    return data?.slice((page - 1) * itemSize, page * itemSize);
+  }
+
+  const getCurrentPageData = (data: any, page: number) => {
     return data?.slice((page - 1) * itemSize, page * itemSize);
   }
 
@@ -132,7 +140,7 @@ const TableTransfer = (props: TableTransferProps) => {
       };
       dataSource?.forEach((record: any) => {
         const indexOfKey = targetKeys.indexOf(record.key);
-        const isFiltered = record?.title?.toUpperCase()?.indexOf(filterValue[direction]) !== -1;
+        const isFiltered = record?.title?.toUpperCase()?.includes(filterValue[direction]);
         const isEnabled = !record?.disabled;
         if (isFiltered && isEnabled) {
           if (indexOfKey !== -1) {
@@ -153,21 +161,62 @@ const TableTransfer = (props: TableTransferProps) => {
   // 全选当页
   const getSelectCurrent = (direction: string, page: number, selectedKeys: any, setSelectedKeys: any) => {
     return () => {
-      const keys = getFilterData(direction);
-      const currentKeys = getCurrentKeys(keys, page);
-      const notCurrentSelectedKeys = getContraryKeys(selectedKeys, currentKeys);
-      setSelectedKeys(getEnabledItemKeys([...notCurrentSelectedKeys, ...currentKeys]));
+      const data: any = {
+        'left': [],
+        'right': new Array(targetKeys.length)
+      };
+      dataSource?.forEach((record: any) => {
+        const indexOfKey = targetKeys.indexOf(record.key);
+        const isFiltered = record?.title?.toUpperCase()?.includes(filterValue[direction]);
+        if (isFiltered) {
+          if (indexOfKey !== -1) {
+            data['right'][indexOfKey] = record;
+          } else {
+            data['left'].push(record);
+          }
+        }
+      });
+      const currentPageData = getCurrentPageData(data[direction], page);
+      const currentPageKeys: any = [];
+      currentPageData?.forEach((item: any) => {
+        if(!item.disabled) {
+          currentPageKeys.push(item.key);
+        }
+      });
+      const otherPageKeys = selectedKeys?.filter((item: any) => !currentPageKeys?.includes(item));
+      setSelectedKeys([...otherPageKeys, ...currentPageKeys]);
     }
   }
 
   // 反选当页
   const getInvertCurrent = (direction: string, page: number, selectedKeys: any, setSelectedKeys: any) => {
     return () => {
-      const keys = getFilterData(direction);
-      const currentKeys = getCurrentKeys(keys, page);
-      const notCurrentSelectedKeys = getContraryKeys(selectedKeys, currentKeys);
-      const invertKeys = getContraryKeys(currentKeys, selectedKeys);
-      setSelectedKeys(getEnabledItemKeys([...notCurrentSelectedKeys, ...invertKeys]));
+      const data: any = {
+        'left': [],
+        'right': new Array(targetKeys.length)
+      };
+      dataSource?.forEach((record: any) => {
+        const indexOfKey = targetKeys.indexOf(record.key);
+        const isFiltered = record?.title?.toUpperCase()?.includes(filterValue[direction]);
+        if (isFiltered) {
+          if (indexOfKey !== -1) {
+            data['right'][indexOfKey] = record;
+          } else {
+            data['left'].push(record);
+          }
+        }
+      });
+      const currentPageData = getCurrentPageData(data[direction], page);
+      const currentPageKeys: any = [];
+      currentPageData?.forEach((item: any) => {
+        if(!item.disabled) {
+          currentPageKeys.push(item.key);
+        }
+      });
+      
+      const invertKeys = currentPageKeys?.filter((item: any) => !selectedKeys?.includes(item));
+      const otherPageKeys = selectedKeys?.filter((item: any) => !currentPageKeys?.includes(item));
+      setSelectedKeys([...otherPageKeys, ...invertKeys]);
     }
   }
 
@@ -182,7 +231,7 @@ const TableTransfer = (props: TableTransferProps) => {
       let sum = 0;
       dataSource?.every((record: any) => {
         const indexOfKey = targetKeys.indexOf(record.key);
-        const isFiltered = record?.title?.toUpperCase()?.indexOf(filterValue[direction]) !== -1;
+        const isFiltered = record?.title?.toUpperCase()?.includes(filterValue[direction]);
         const isEnabled = !record?.disabled;
         // 控制无效循环
         if (sum >= count) {
