@@ -116,7 +116,7 @@ const TableTransfer = (props: TableTransferProps) => {
   }
 
   // 获取筛选后穿梭框内显示的数据key值数组
-  const getFilterDataKeys = (direction: string) => {
+  const getFilterDataKeys = (direction: string, count?: number) => {
     const data: any = {
       'left': [],
       'right': new Array(targetKeys.length)
@@ -126,8 +126,10 @@ const TableTransfer = (props: TableTransferProps) => {
       const indexOfKey = targetKeys.indexOf(record.key);
       const isFiltered = record?.title?.toUpperCase()?.includes(filterValue[direction]);
       const isEnabled = !record?.disabled;
-
-      if(sum >= targetKeys?.length) {
+      if(direction === 'left' && typeof count === 'number' && data[direction].length >= count) {
+        return false;
+      }
+      if(direction === 'right' && sum >= targetKeys?.length) {
         return false;
       }
       if (isFiltered && isEnabled) {
@@ -140,6 +142,7 @@ const TableTransfer = (props: TableTransferProps) => {
       }
       return true;
     });
+    // 去除empty
     if(direction === 'right') {
       data[direction] = data[direction]?.filter((item: any) => item ?? !item)
     }
@@ -186,7 +189,7 @@ const TableTransfer = (props: TableTransferProps) => {
   // 选中指定条数
   const getSelectCount = (direction: string, count: number, setSelectedKeys: any) => {
     return () => {
-      const data: any = getFilterDataKeys(direction);
+      const data: any = getFilterDataKeys(direction, count);
       setSelectedKeys(data[direction].slice(0, count));
     }
   }
