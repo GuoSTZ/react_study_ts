@@ -75,81 +75,81 @@ const TableTransfer = (props: TableTransferProps) => {
 
   const getKeys = (data: any) => data?.map((item: any) => item.key);
 
-  // 筛选enabled数据
-  const enabledKeys = dataSource?.map((item: any) => {
-    if (!item.disabled) {
-      return item.key;
-    }
-  });
-
   // 筛选非禁用的数据key
-  const getEnabledItemKeys = (keys: any) => {
-    const itemKeys: any = [];
-    keys?.every((item: any, index: number) => {
-      if (enabledKeys?.indexOf(item) !== -1) {
-        itemKeys.push(item);
+  const getEnabledItemKeys = (data: any) => {
+    const keys: any = [];
+    data?.forEach((item: any) => {
+      if (!item.disabled) {
+        keys.push(item.key);
       }
-      return true;
     });
-    return itemKeys;
+    return keys;
   }
 
-  // 获取另一块数据
   const getContraryKeys = (data: any, keys: any) => {
     return data.filter((item: any) => keys?.indexOf(item) === -1);
   }
 
-  // const getContraryPageData = (data: any, keys: any) => {
-  //   return data.filter((item: any) => keys?.indexOf(item) === -1);
-  // }
-
-  // 获取当前页的数据key值数组
-  const getCurrentKeys = (data: any, page: number) => {
-    return data?.slice((page - 1) * itemSize, page * itemSize);
-  }
-
+  // 获取当页穿梭框显示的数据数组
   const getCurrentPageData = (data: any, page: number) => {
     return data?.slice((page - 1) * itemSize, page * itemSize);
   }
 
-  // 获取筛选后穿梭框内显示的数据key值数组
-  const getFilterData: any = (direction: 'left' | 'right') => {
+  // 获取筛选后穿梭框内显示的数据数组
+  const getFilterData = (direction: string) => {
     const data: any = {
       'left': [],
       'right': new Array(targetKeys.length)
     };
     dataSource?.forEach((record: any) => {
       const indexOfKey = targetKeys.indexOf(record.key);
-      if (record?.title?.toUpperCase()?.includes(filterValue[direction])) {
+      const isFiltered = record?.title?.toUpperCase()?.includes(filterValue[direction]);
+      if (isFiltered) {
+        if (indexOfKey !== -1) {
+          data['right'][indexOfKey] = record;
+        } else {
+          data['left'].push(record);
+        }
+      }
+    });
+    return data;
+  }
+
+  // 获取筛选后穿梭框内显示的数据key值数组
+  const getFilterDataKeys = (direction: string) => {
+    const data: any = {
+      'left': [],
+      'right': new Array(targetKeys.length)
+    };
+    let sum = 0;
+    dataSource?.every((record: any) => {
+      const indexOfKey = targetKeys.indexOf(record.key);
+      const isFiltered = record?.title?.toUpperCase()?.includes(filterValue[direction]);
+      const isEnabled = !record?.disabled;
+
+      if(sum >= targetKeys?.length) {
+        return false;
+      }
+      if (isFiltered && isEnabled) {
         if (indexOfKey !== -1) {
           data['right'][indexOfKey] = record.key;
+          sum += 1;
         } else {
           data['left'].push(record.key);
         }
       }
+      return true;
     });
-    return data[direction];
+    if(direction === 'right') {
+      data[direction] = data[direction]?.filter((item: any) => item ?? !item)
+    }
+    return data;
   }
 
   // 全选所有
   const getSelectAll = (direction: string, selectedKeys: any, setSelectedKeys: any) => {
     return () => {
-      const data: any = {
-        'left': [],
-        'right': new Array(targetKeys.length)
-      };
-      dataSource?.forEach((record: any) => {
-        const indexOfKey = targetKeys.indexOf(record.key);
-        const isFiltered = record?.title?.toUpperCase()?.includes(filterValue[direction]);
-        const isEnabled = !record?.disabled;
-        if (isFiltered && isEnabled) {
-          if (indexOfKey !== -1) {
-            data['right'][indexOfKey] = record.key;
-          } else {
-            data['left'].push(record.key);
-          }
-        }
-      });
+      const data: any = getFilterDataKeys(direction);
       if (data[direction]?.length === selectedKeys.length) {
         setSelectedKeys([]);
       } else {
@@ -161,28 +161,10 @@ const TableTransfer = (props: TableTransferProps) => {
   // 全选当页
   const getSelectCurrent = (direction: string, page: number, selectedKeys: any, setSelectedKeys: any) => {
     return () => {
-      const data: any = {
-        'left': [],
-        'right': new Array(targetKeys.length)
-      };
-      dataSource?.forEach((record: any) => {
-        const indexOfKey = targetKeys.indexOf(record.key);
-        const isFiltered = record?.title?.toUpperCase()?.includes(filterValue[direction]);
-        if (isFiltered) {
-          if (indexOfKey !== -1) {
-            data['right'][indexOfKey] = record;
-          } else {
-            data['left'].push(record);
-          }
-        }
-      });
+      const data = getFilterData(direction);
       const currentPageData = getCurrentPageData(data[direction], page);
-      const currentPageKeys: any = [];
-      currentPageData?.forEach((item: any) => {
-        if(!item.disabled) {
-          currentPageKeys.push(item.key);
-        }
-      });
+      const currentPageKeys: any = getEnabledItemKeys(currentPageData);
+
       const otherPageKeys = selectedKeys?.filter((item: any) => !currentPageKeys?.includes(item));
       setSelectedKeys([...otherPageKeys, ...currentPageKeys]);
     }
@@ -191,29 +173,10 @@ const TableTransfer = (props: TableTransferProps) => {
   // 反选当页
   const getInvertCurrent = (direction: string, page: number, selectedKeys: any, setSelectedKeys: any) => {
     return () => {
-      const data: any = {
-        'left': [],
-        'right': new Array(targetKeys.length)
-      };
-      dataSource?.forEach((record: any) => {
-        const indexOfKey = targetKeys.indexOf(record.key);
-        const isFiltered = record?.title?.toUpperCase()?.includes(filterValue[direction]);
-        if (isFiltered) {
-          if (indexOfKey !== -1) {
-            data['right'][indexOfKey] = record;
-          } else {
-            data['left'].push(record);
-          }
-        }
-      });
+      const data = getFilterData(direction);
       const currentPageData = getCurrentPageData(data[direction], page);
-      const currentPageKeys: any = [];
-      currentPageData?.forEach((item: any) => {
-        if(!item.disabled) {
-          currentPageKeys.push(item.key);
-        }
-      });
-      
+      const currentPageKeys: any = getEnabledItemKeys(currentPageData);
+
       const invertKeys = currentPageKeys?.filter((item: any) => !selectedKeys?.includes(item));
       const otherPageKeys = selectedKeys?.filter((item: any) => !currentPageKeys?.includes(item));
       setSelectedKeys([...otherPageKeys, ...invertKeys]);
@@ -223,31 +186,8 @@ const TableTransfer = (props: TableTransferProps) => {
   // 选中指定条数
   const getSelectCount = (direction: string, count: number, setSelectedKeys: any) => {
     return () => {
-      const data: any = {
-        'left': [],
-        'right': new Array(targetKeys.length)
-      };
-      // 计数，控制无效循环
-      let sum = 0;
-      dataSource?.every((record: any) => {
-        const indexOfKey = targetKeys.indexOf(record.key);
-        const isFiltered = record?.title?.toUpperCase()?.includes(filterValue[direction]);
-        const isEnabled = !record?.disabled;
-        // 控制无效循环
-        if (sum >= count) {
-          return false;
-        }
-        if (isFiltered && isEnabled) {
-          if (indexOfKey !== -1) {
-            data['right'][indexOfKey] = record.key;
-          } else {
-            data['left'].push(record.key);
-          }
-          sum += 1;
-        }
-        return true;
-      });
-      setSelectedKeys(data[direction]);
+      const data: any = getFilterDataKeys(direction);
+      setSelectedKeys(data[direction].slice(0, count));
     }
   }
 
