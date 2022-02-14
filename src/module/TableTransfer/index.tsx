@@ -5,7 +5,7 @@ import { ColumnProps } from 'antd/lib/table';
 import useDropdownView from './useDropdownVIew';
 import './index.less';
 
-export interface TableTransferProps extends TransferProps {
+export interface TableTransferProps extends Omit<TransferProps, "listStyle"> {
   /**
    * 左侧表格列配置
    */
@@ -30,6 +30,10 @@ export interface TableTransferProps extends TransferProps {
    * 允许转移的最大数据量
    */
   maxTargetKeys?: number;
+  /**
+   * 自定义穿梭框样式
+   */
+  listStyle?: any;
 }
 
 const TableTransfer = (props: TableTransferProps) => {
@@ -103,7 +107,7 @@ const TableTransfer = (props: TableTransferProps) => {
     };
     dataSource?.forEach((record: any) => {
       const indexOfKey = targetKeys.indexOf(record.key);
-      const isFiltered = record?.title?.toUpperCase()?.includes(filterValue[direction]);
+      const isFiltered = record?.title?.toUpperCase()?.includes(filterValue[direction]?.toUpperCase());
       if (isFiltered) {
         if (indexOfKey !== -1) {
           data['right'][indexOfKey] = record;
@@ -124,7 +128,7 @@ const TableTransfer = (props: TableTransferProps) => {
     let sum = 0;
     dataSource?.every((record: any) => {
       const indexOfKey = targetKeys.indexOf(record.key);
-      const isFiltered = record?.title?.toUpperCase()?.includes(filterValue[direction]);
+      const isFiltered = record?.title?.toUpperCase()?.includes(filterValue[direction]?.toUpperCase());
       const isEnabled = !record?.disabled;
       if(direction === 'left' && typeof count === 'number' && data[direction].length >= count) {
         return false;
