@@ -19,10 +19,6 @@ export interface TableTransferProps extends Omit<TransferProps, "listStyle"> {
    */
   itemSize?: number;
   /**
-   * 隐藏默认的下拉菜单项
-   */
-  hideDefaultDropdown?: boolean;
-  /**
    * 自定义下拉菜单选取条数
    */
   dropdownSelectCount?: number[];
@@ -37,14 +33,14 @@ export interface TableTransferProps extends Omit<TransferProps, "listStyle"> {
 }
 
 const TableTransfer = (props: TableTransferProps) => {
-  const [dataSource, setDataSource] = useState([] as any);                      // 全部数据 - dataSource
-  const [targetKeys, setTargetKeys] = useState([] as any);                      // 右侧穿梭框内的数据
-  const [sourceSelectedKeys, setSourceSelectedKeys] = useState([] as any);      // 左侧穿梭框被勾选的数据
-  const [targetSelectedKeys, setTargetSelectedKeys] = useState([] as any);      // 右侧穿梭框被勾选的数据
-  const [sourcePage, setSourcePage] = useState(1);                              // 左侧穿梭框当前页码
-  const [targetPage, setTargetPage] = useState(1);                              // 右侧穿梭框当前页面
+  const [dataSource, setDataSource] = useState([] as any);                             // 全部数据 - dataSource
+  const [targetKeys, setTargetKeys] = useState([] as any);                             // 右侧穿梭框内的数据
+  const [sourceSelectedKeys, setSourceSelectedKeys] = useState([] as any);             // 左侧穿梭框被勾选的数据
+  const [targetSelectedKeys, setTargetSelectedKeys] = useState([] as any);             // 右侧穿梭框被勾选的数据
+  const [sourcePage, setSourcePage] = useState(1);                                     // 左侧穿梭框当前页码
+  const [targetPage, setTargetPage] = useState(1);                                     // 右侧穿梭框当前页面
   const [filterValue, setFilterValue] = useState({ 'left': '', 'right': '' } as any);  // 搜索框输入内容
-  const [showMaxError, setShowMaxError] = useState(false);                          // 错误信息显示状态
+  const [showMaxError, setShowMaxError] = useState(false);                             // 错误信息显示状态
 
   const {
     leftColumns,
@@ -54,9 +50,9 @@ const TableTransfer = (props: TableTransferProps) => {
     itemSize = 10,
     selectedKeys: _selectedKeys = [],
     showSelectAll = true,
-    hideDefaultDropdown = false,
     dropdownSelectCount = [],
     maxTargetKeys,
+    className,
     ...restProps
   } = props;
 
@@ -217,17 +213,14 @@ const TableTransfer = (props: TableTransferProps) => {
       { title: '全选所有', onClick: getSelectAll(direction, attrs[direction].keys, attrs[direction].setKeys) },
       { title: '全选当页', onClick: getSelectCurrent(direction, attrs[direction].page, attrs[direction].keys, attrs[direction].setKeys) },
       { title: '反选当页', onClick: getInvertCurrent(direction, attrs[direction].page, attrs[direction].keys, attrs[direction].setKeys) },
-    ]
-
-    if (!hideDefaultDropdown) {
-      menuItems = [].concat(defaultConfig);
-    }
+    ];
+    menuItems.push(...defaultConfig);
 
     const customConfig = dropdownSelectCount?.map((count: number) => {
       const sum = typeof count === 'number' ? count : 0;
       return {
-        title: `选择${count}项`,
-        onClick: getSelectCount(direction, count, attrs[direction].setKeys)
+        title: `选择${sum}项`,
+        onClick: getSelectCount(direction, sum, attrs[direction].setKeys)
       }
     });
     menuItems = menuItems.concat(customConfig)
@@ -296,7 +289,7 @@ const TableTransfer = (props: TableTransferProps) => {
   }
 
   return (
-    <div className={`TableTransfer`}>
+    <div className={`TableTransfer ${className}`}>
       {<LeftDropdown />}
       {<RightDropdown />}
       <Transfer
