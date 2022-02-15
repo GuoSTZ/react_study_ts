@@ -51,11 +51,11 @@ class App extends Component {
       }
     ];
     const mockData: any = [];
-    for (let i = 1; i < 101; i++) {
+    for (let i = 1; i < 5001; i++) {
       mockData.push({
         key: i.toString(),
         title: `content${i}`,
-        disabled: i % 2 === 0
+        // disabled: i % 2 === 0
       });
     }
     return (
@@ -65,9 +65,11 @@ class App extends Component {
           rightColumns={rightTableColumns}
           dataSource={mockData}
           showSearch
-          targetKeys={['1', '2', '3', '4']}
+          // targetKeys={['1', '2', '3', '4']}
           listStyle={{height: 400}}
           itemSize={20}
+          maxTargetKeys={2000}
+          dropdownSelectCount={[2000]}
         />
       </div>
       // <div
