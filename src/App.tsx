@@ -26,7 +26,7 @@ import CheckView from './module/EditTable/check';
 // import TableMenuView from './module/TableMenu/ceshi';
 // import AnimateCssView from './module/AnimateCss';
 // import AnimationView from './module/Animation';
-import { VSelect } from './module/Select';
+import Select from './module/Select';
 import ScreenView from './module/Screen';
 import TransferView, { ListTransfer, Ceshi } from './module/Transfer';
 import { FormView, WrappedDynamicFieldSet } from './module/Form';
@@ -39,9 +39,9 @@ import customSvg from './custom.svg';
 
 class App extends Component {
   render() {
-    const {Option, OptGroup} = VSelect;
+    const {Option, OptGroup} = Select;
     const options = [];
-    for (let i = 0; i < 0; i++) {
+    for (let i = 0; i < 100000; i++) {
       const value = `${i.toString(36)}${i}`;
       options.push({
         value,
@@ -51,11 +51,11 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <VSelect placeholder="请输入内容" style={{width: 400}}>
+        <Select placeholder="请输入内容" style={{width: 400}}>
           {
             options.map((item: any) => <Option value={item.value}>{item.label}</Option>)
           }
-        </VSelect>
+        </Select>
       </div>
     );
   }
