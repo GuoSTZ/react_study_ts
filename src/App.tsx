@@ -19,13 +19,14 @@ import CheckView from './module/EditTable/check';
 // import CardView from './module/CardView';
 // import SelectView from './module/SelectView';
 // import TreeSelectView from './module/TreeSelectView';
-import TableTransfer from './module/TableTransfer';
+// import TableTransfer from './module/TableTransfer';
 // import EchartsView from './module/EchartsView';
 // import LessView from './module/LessView';
 // import { ModalMethodView } from './module/Modal';
 // import TableMenuView from './module/TableMenu/ceshi';
 // import AnimateCssView from './module/AnimateCss';
 // import AnimationView from './module/Animation';
+import { VSelect } from './module/Select';
 import ScreenView from './module/Screen';
 import TransferView, { ListTransfer, Ceshi } from './module/Transfer';
 import { FormView, WrappedDynamicFieldSet } from './module/Form';
@@ -38,52 +39,24 @@ import customSvg from './custom.svg';
 
 class App extends Component {
   render() {
-    const leftTableColumns = [
-      {
-        dataIndex: 'title',
-        title: 'Name',
-      }
-    ];
-    const rightTableColumns = [
-      {
-        dataIndex: 'title',
-        title: 'Name',
-      }
-    ];
-    const mockData: any = [];
-    for (let i = 1; i < 5001; i++) {
-      mockData.push({
-        key: i.toString(),
-        title: `content${i}`,
-        // disabled: i % 2 === 0
+    const {Option, OptGroup} = VSelect;
+    const options = [];
+    for (let i = 0; i < 0; i++) {
+      const value = `${i.toString(36)}${i}`;
+      options.push({
+        value,
+        label: `content${i}`,
+        disabled: i === 10,
       });
     }
     return (
       <div className="App">
-        <TableTransfer
-          leftColumns={leftTableColumns}
-          rightColumns={rightTableColumns}
-          dataSource={mockData}
-          showSearch
-          // targetKeys={['1', '2', '3', '4']}
-          listStyle={{height: 400}}
-          itemSize={20}
-          maxTargetKeys={2000}
-          dropdownSelectCount={[2000]}
-        />
+        <VSelect placeholder="请输入内容" style={{width: 400}}>
+          {
+            options.map((item: any) => <Option value={item.value}>{item.label}</Option>)
+          }
+        </VSelect>
       </div>
-      // <div
-      //   style={{
-      //     margin: 200,
-      //     width: 410,
-      //     height: 400,
-      //     background: `url(${customSvg})`,
-      //     backgroundSize: 'contain',
-      //     backgroundRepeat: 'no-repeat'
-      //   }}
-      // >
-      //   666
-      // </div>
     );
   }
 }
