@@ -19,7 +19,7 @@ import CheckView from './module/EditTable/check';
 // import CardView from './module/CardView';
 // import SelectView from './module/SelectView';
 // import TreeSelectView from './module/TreeSelectView';
-// import TableTransfer from './module/TableTransfer';
+import TableTransfer from './module/TableTransfer';
 // import EchartsView from './module/EchartsView';
 // import LessView from './module/LessView';
 // import { ModalMethodView } from './module/Modal';
@@ -49,13 +49,28 @@ class App extends Component {
         disabled: i === 10,
       });
     }
+    let data = [];
+    for(let i=0;i< 1000; i++) {
+      data.push({
+        title: `content ${i}`,
+        key: i.toString(),
+      })
+    }
     return (
       <div className="App">
-        <Select placeholder="请输入内容" style={{width: 400}}>
+        {/* <Select placeholder="请输入内容" style={{width: 400}}>
           {
             options.map((item: any) => <Option value={item.value}>{item.label}</Option>)
           }
-        </Select>
+        </Select> */}
+        <FormView />
+        {/* <TableTransfer 
+          dataSource={data}
+          leftColumns={[{dataIndex: 'title'}]}
+          rightColumns={[{dataIndex: 'title'}]}
+          showSearch
+          showSelectAll={false}
+        /> */}
       </div>
     );
   }

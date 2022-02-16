@@ -39,7 +39,7 @@ const FormWrap = (props: any) => {
             />,
           )}
         </Form.Item>
-        <Form.Item>
+        {/* <Form.Item>
           {getFieldDecorator('aaa', {
             rules: [{ required: true, message: 'Please input your aaa!' }],
           })(
@@ -54,13 +54,9 @@ const FormWrap = (props: any) => {
               )}
             </Form.Item>
           )}
-        </Form.Item>
-        <Form.Item>
-          {getFieldDecorator('set', {
-            // rules: [{ required: true, message: 'Please!' }],
-          })(
-            <DynamicFieldSet form={form} onChange={props.onChange} />
-          )}
+        </Form.Item> */}
+        <Form.Item label="动态表单测试" labelCol={{span: 4}} wrapperCol={{span: 20}}>
+          <DynamicFieldSet form={form} />
         </Form.Item>
       </Form>
 

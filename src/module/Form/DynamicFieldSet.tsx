@@ -1,9 +1,27 @@
 import React, { useState, forwardRef } from 'react';
 import { Form, Button, Icon, Input } from 'antd';
-import { debounce } from 'lodash';
+import classNames from 'classnames';
+import "./style/DynamicFieldSet.less";
 
-const DynamicFieldSet: any = (props: any, _ref: any) => {
-  const { form, form: { getFieldDecorator, getFieldValue }, name, onChange } = props;
+export interface DynamicFormProps {
+  form: any;
+  name: string;
+  addBtnText?: string;
+  removeBtnText?: string;
+  onChange?: Function;
+  className?: string;
+}
+
+
+const DynamicFieldSet: any = (props: DynamicFormProps, _ref: any) => {
+  const { 
+    form, 
+    form: { getFieldDecorator, getFieldValue }, 
+    name,
+    addBtnText,
+    removeBtnText,
+    className,
+  } = props;
   const _name = name ?? "dynamicFieldSet";
 
   // 用来做计数值
@@ -12,7 +30,7 @@ const DynamicFieldSet: any = (props: any, _ref: any) => {
   const [valueMap, setValueMap] = useState({});
 
   // 添加子项
-  const addItem = () => {
+  const addItem = (key: number) => {
     setKeys(keys.concat([count + 1]));
     setCount(count + 1)
   }
@@ -35,21 +53,44 @@ const DynamicFieldSet: any = (props: any, _ref: any) => {
   // 子项onChange回调
   const itemOnChange = (e: any, name: string) => {
     const new_map = Object.assign({}, valueMap, { [name]: e?.target?.value });
-    onChange && onChange(formatData(new_map));
+    props?.onChange && props?.onChange(formatData(new_map));
     setValueMap(new_map);
+  }
+
+  // 渲染【删除】，【添加】按钮
+  const renderOperationBtn = (length: number, key: number, index: number) => {
+    const addBtn = (
+      <Button type="link" onClick={() => addItem(key)}>
+        {addBtnText ?? "添加"}
+      </Button>
+    );
+    const removeBtn = (
+      <Button type="link" onClick={() => removeItem(key)}>
+        {removeBtnText ?? "删除"}
+      </Button>
+    );
+
+    if(length === 1) {
+      return addBtn;
+    } else if(length === index + 1) {
+      return (
+        <React.Fragment>
+          {addBtn}
+          {removeBtn}
+        </React.Fragment>
+      );
+    } else {
+      return removeBtn;
+    }
   }
 
   // 渲染子项
   const getItem = () => {
     return keys?.map((key: number, index: number) => (
       <Form.Item
-        // {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-        // label={index === 0 ? 'Passengers' : ''}
-        // required={false}
         key={key}
       >
         {getFieldDecorator(`${_name}[${key}]`, {
-          // validateTrigger: ['onChange', 'onBlur'],
           rules: [
             {
               required: true,
@@ -58,14 +99,14 @@ const DynamicFieldSet: any = (props: any, _ref: any) => {
             },
           ],
           preserve: false,
-        })(<Input placeholder="content" onChange={(event: any) => itemOnChange(event, `${_name}[${key}]`)} style={{ width: '60%', marginRight: 8 }} />)}
-        {keys.length > 1 ? (
-          <Icon
-            className="dynamic-delete-button"
-            type="minus-circle-o"
-            onClick={() => removeItem(key)}
+        })(
+          <Input
+            className='DynamicFieldSet-input'
+            placeholder="content" 
+            onChange={(event: any) => itemOnChange(event, `${_name}[${key}]`)} 
           />
-        ) : null}
+        )}
+        {  renderOperationBtn(keys.length, key, index) }
       </Form.Item>
     ))
   }
@@ -88,15 +129,12 @@ const DynamicFieldSet: any = (props: any, _ref: any) => {
   };
 
   return (
-    <div ref={_ref}>
+    <div className={classNames("DynamicFieldSet", className)} ref={_ref}>
       {getItem()}
-      <Form.Item>
-        <Button type="dashed" onClick={addItem} style={{ width: '100%' }}>
-          <Icon type="plus" /> Add field
-        </Button>
-      </Form.Item>
     </div>
   )
 }
 
-export default forwardRef(DynamicFieldSet) as any;
+const DynamicForm: any = forwardRef(DynamicFieldSet);
+
+export default DynamicForm;
