@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Form, Input, Icon, Button, List, Checkbox } from 'antd';
-import DynamicFieldSet from './DynamicFieldSet';
+import { Form, Input, Icon, Button, List, Checkbox, Select } from 'antd';
+import DynamicForm from './DynamicForm';
 import './style/Form.less';
 
 const FormWrap = (props: any) => {
@@ -26,40 +26,46 @@ const FormWrap = (props: any) => {
     });
   };
 
+  const validateTest = (rules: any, value: any, callback: any) => {
+    const { field, key } = rules;
+    console.log(form.getFieldValue(`data`), form.getFieldValue(`data.${key}.select`));
+    callback();
+  }
+
   return (
     <div className='wrap'>
       <Form className='normal-form'>
-        <Form.Item>
-          {getFieldDecorator('username', {
-            rules: [{ required: true, message: 'Please input your username!' }],
-          })(
-            <Input
-              prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-              placeholder="Username"
-            />,
-          )}
-        </Form.Item>
-        {/* <Form.Item>
-          {getFieldDecorator('aaa', {
-            rules: [{ required: true, message: 'Please input your aaa!' }],
-          })(
-            <Form.Item>
-              {getFieldDecorator('bbb', {
-                rules: [{ required: true, message: 'Please input your bbb!' }],
-              })(
-                <Input
-                  prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                  placeholder="bbb"
-                />,
-              )}
-            </Form.Item>
-          )}
-        </Form.Item> */}
-        <Form.Item label="动态表单测试" labelCol={{span: 4}} wrapperCol={{span: 20}}>
-          <DynamicFieldSet form={form} />
-        </Form.Item>
-      </Form>
 
+        <DynamicForm className="customForm" name="data" form={form} max={3} >
+          {
+            (key: number) => (
+              <div className='aaa'>
+                <Form.Item>
+                  {getFieldDecorator(`data.${key}.input`, {
+                    rules: [
+                      { required: true, message: '请输入内容!' },
+                      // { validator: validateTest, key }
+                    ]
+                  })(
+                    <Input placeholder="请输入" />
+                  )}
+                </Form.Item>
+
+                <Form.Item>
+                  {getFieldDecorator(`data.${key}.select`, {
+                    rules: [{ required: true, message: '请选择内容!' }],
+                  })(
+                    <Select placeholder="请选择">
+                      <Select.Option value={1}>aaa</Select.Option>
+                      <Select.Option value={2}>bbb</Select.Option>
+                    </Select>
+                  )}
+                </Form.Item>
+              </div>
+            )
+          }
+        </DynamicForm>
+      </Form>
 
       <Button onClick={handleSubmit}>
         获取数据

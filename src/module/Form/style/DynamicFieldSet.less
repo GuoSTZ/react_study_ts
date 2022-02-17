@@ -1,6 +1,11 @@
-.DynamicFieldSet {
-  .DynamicFieldSet-input {
-    width: calc( 100% - 2*60px - 8px );
-    margin-right: 8px;
+.dynamicForm {
+  .dynamicForm-item {
+    display: flex;
+    > div:nth-of-type(1) {
+      flex: 1;
+    }
+    .dynamicForm-btn {
+      flex: 0 120px;
+    }
   }
 }
