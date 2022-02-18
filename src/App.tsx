@@ -70,6 +70,8 @@ class App extends Component {
           rightColumns={[{dataIndex: 'title'}]}
           showSearch
           showSelectAll={false}
+          maxTargetKeys={200}
+          dropdownSelectCount={[100]}
         /> */}
       </div>
     );

@@ -54,7 +54,7 @@ const FormWrap = (props: any) => {
           initialValue={[{ input: "123", select: 1 }, { input: "12356788", select: 2 }]}
         >
           {
-            ({ name, key, index, values }: FormListFieldProps) => (
+            ({ name, fieldName, key, index, values }: FormListFieldProps) => (
               <Form.Item
                 key={key}
                 {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
@@ -62,8 +62,8 @@ const FormWrap = (props: any) => {
               >
                 <Row>
                   <Col span={12}>
-                    <Form.Item key={key} wrapperCol={{ span: 23 }}>
-                      {getFieldDecorator(`${name}.input`, {
+                    <Form.Item wrapperCol={{ span: 23 }}>
+                      {getFieldDecorator(`${fieldName}.input`, {
                         initialValue: values["input"],
                         rules: [
                           { required: true, message: '请输入内容!' },
@@ -74,8 +74,8 @@ const FormWrap = (props: any) => {
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item key={key} wrapperCol={{ span: 23 }}>
-                      {getFieldDecorator(`${name}.select`, {
+                    <Form.Item wrapperCol={{ span: 23 }}>
+                      {getFieldDecorator(`${fieldName}.select`, {
                         initialValue: values["select"],
                         rules: [{ required: true, message: '请选择内容!' }],
                       })(
