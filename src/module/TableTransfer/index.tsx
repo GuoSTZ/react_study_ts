@@ -30,6 +30,10 @@ export interface TableTransferProps extends Omit<TransferProps, "listStyle"> {
    * 自定义穿梭框样式
    */
   listStyle?: any;
+  /**
+   * 自定义报错信息
+   */
+  maxErrorMsg?: string;
 }
 
 const TableTransfer = (props: TableTransferProps) => {
@@ -53,6 +57,7 @@ const TableTransfer = (props: TableTransferProps) => {
     dropdownSelectCount = [],
     maxTargetKeys,
     className,
+    maxErrorMsg,
     ...restProps
   } = props;
 
@@ -249,8 +254,12 @@ const TableTransfer = (props: TableTransferProps) => {
         // 计算当前仍可以移动到右侧穿梭框的数据长度
         const len = maxTargetKeys - targetKeys.length;
         setSourceSelectedKeys(moveKeys.slice(len, moveKeys.length));
-        setTargetKeys([...targetKeys, ...moveKeys.slice(0, len)]);
+        const newTargetKeys = [...targetKeys, ...moveKeys.slice(0, len)];
+        setTargetKeys(newTargetKeys);
         setShowMaxError(true);
+        if (props.onChange) {
+          props.onChange(newTargetKeys, direction, moveKeys);
+        }
         return;
       }
     }
@@ -350,7 +359,7 @@ const TableTransfer = (props: TableTransferProps) => {
         }}
       </Transfer>
       <div className={`helpText ${showMaxError ? "helpTextIn" : "helpTextOut"}`}>
-        资产成员最多{maxTargetKeys}项
+        { maxErrorMsg ?? `最多${maxTargetKeys}项`}
       </div>
     </div>
   )
