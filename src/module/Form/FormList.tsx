@@ -1,6 +1,5 @@
-import React, { useState, forwardRef, PropsWithChildren } from 'react';
+import React, { useState, forwardRef, useEffect } from 'react';
 import { Form, Button, Icon, Input } from 'antd';
-import classNames from 'classnames';
 import "./style/DynamicFieldSet.less";
 
 export interface DynamicFormProps {
@@ -8,48 +7,59 @@ export interface DynamicFormProps {
   form: any;
   addBtnText?: string | React.ReactNode;
   removeBtnText?: string | React.ReactNode;
-  className?: string;
   max?: number;
-  addWithValidate?: boolean;
+  initialValue?: any[];
+  children: (field: FormListFieldProps) => React.ReactNode;
 }
 
-const DynamicFieldSet: any = (props: PropsWithChildren<DynamicFormProps>, _ref: any) => {
+export interface FormListFieldProps {
+  name: string;
+  key: number;
+  index: number;
+  values?: any;
+}
+
+const DynamicFieldSet: any = (props: DynamicFormProps, _ref: any) => {
   const {
     name,
     form,
     addBtnText,
     removeBtnText,
-    className,
     max,
-    addWithValidate = true
+    initialValue = []
   } = props;
 
   const [count, setCount] = useState(0 as number);   // 用来做计数值
   const [keys, setKeys] = useState([0] as number[]);
 
+  useEffect(() => {
+    const len = initialValue?.length || 0; 
+    if(len > 0) {
+      setCount(len);
+      const new_keys = [];
+      for(let i=0; i< len; i++) {
+        new_keys.push(i);
+      }
+      setKeys(new_keys);
+    }
+  }, []);
+
   // 添加子项
   const addItem = (key: number) => {
     const obj = form.getFieldValue(name) || {};
-    let fields = Object.keys(obj[0])?.map((item: string) => `${name}.${key}.${item}`);
-    // 添加子项时，是否校验当前行规则
-    if(addWithValidate) {
-      form.validateFields(fields, (error: any, values: any) => {
-        if(!error) {
-          setKeys(keys.concat([count + 1]));
-          setCount(count + 1);
-        }
-      })
-    } else {
-      setKeys(keys.concat([count + 1]));
-      setCount(count + 1);
-    }
+    const index = keys.indexOf(key);
+    let fields = Object.keys(obj[0])?.map((item: string) => `${name}.${index}.${item}`);
+    // 添加子项前，校验当前行规则
+    form.validateFields(fields, (error: any, values: any) => {
+      if (!error && (!max || keys.length < max)) {
+        setKeys(keys.concat([count + 1]));
+        setCount(count + 1);
+      }
+    })
   }
 
   // 删除子项
   const removeItem = (key: number) => {
-    if (keys?.length < 2) {
-      return;
-    }
     const new_keys = keys?.filter((item: number) => item !== key);
     setKeys(new_keys);
   }
@@ -74,7 +84,7 @@ const DynamicFieldSet: any = (props: PropsWithChildren<DynamicFormProps>, _ref: 
     } else if (length === index + 1) { // 最后一项
       add = addBtn;
       remove = removeBtn;
-      if(length === max) { // 达到最大数量限制时
+      if (length === max) { // 达到最大数量限制时
         add = null;
       }
     } else { // 中间项
@@ -82,7 +92,7 @@ const DynamicFieldSet: any = (props: PropsWithChildren<DynamicFormProps>, _ref: 
     }
 
     return (
-      <div className='dynamicForm-btn'>
+      <div className='FormList-btn'>
         {add}
         {remove}
       </div>
@@ -91,22 +101,29 @@ const DynamicFieldSet: any = (props: PropsWithChildren<DynamicFormProps>, _ref: 
 
   // 渲染子项
   const getItem = () => {
-    console.log(props.children, '==')
-    return keys?.map((key: number, index: number) => (
-      <div key={key} className="dynamicForm-item">
-        {typeof props.children === 'function' ? props.children(key) : null }
-        {renderOperationBtn(keys.length, key, index)}
-      </div>
-    ))
+    return keys?.map((key: number, index: number) => {
+      const field = { 
+        name: `${name}.${index}`, 
+        key, 
+        index, 
+        values: initialValue[key] || {} 
+      };
+      return (
+        <div key={key} className="FormList-Item">
+          {typeof props.children === 'function' ? props.children(field) : null}
+          {renderOperationBtn(keys.length, key, index)}
+        </div>
+      )
+    })
   }
 
   return (
-    <div className={classNames("dynamicForm", className)} ref={_ref}>
+    <div className="FormList" ref={_ref}>
       {getItem()}
     </div>
   )
 }
 
-const DynamicForm: any = forwardRef(DynamicFieldSet);
+const FormList: any = forwardRef(DynamicFieldSet);
 
-export default DynamicForm;
+export default FormList;
