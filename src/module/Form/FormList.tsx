@@ -1,10 +1,9 @@
-import React, { useState, forwardRef, useEffect, PropsWithChildren } from 'react';
-import { Button } from 'antd';
-import "./style/FormList.less";
+import React, { useState, forwardRef, useEffect, ReactNode } from 'react';
+import "./style/index.less";
 
 export interface FormListProps {
   /**
-   * 表单名称，控制动态子项name
+   * 表单名称，控制子表单项name
    */
   name: string;
   /**
@@ -14,11 +13,11 @@ export interface FormListProps {
   /**
    * 自定义添加按钮
    */
-  addBtnNode?: string | React.ReactNode;
+  addNode?: string | ReactNode;
   /**
    * 自定义删除按钮
    */
-  removeBtnNode?: string | React.ReactNode;
+  removeNode?: string | ReactNode;
   /**
    * 支持最大子项数量限制
    */
@@ -28,9 +27,9 @@ export interface FormListProps {
    */
   initialValue?: any[];
   /**
-   * 子项渲染方法
+   * 子表单项渲染方法
    */
-  children: (field: FormListFieldProps) => React.ReactNode;
+  children: (field: FormListFieldProps, operation: FormListOperationProps) => ReactNode;
 }
 
 export interface FormListFieldProps {
@@ -46,12 +45,17 @@ export interface FormListFieldProps {
   values?: any;
 }
 
+export interface FormListOperationProps {
+  AddNode: () => ReactNode;
+  RemoveNode: () => ReactNode;
+}
+
 const DynamicFieldSet: any = (props: FormListProps, _ref: any) => {
   const {
     name,
     form,
-    addBtnNode = "添加",
-    removeBtnNode = "删除",
+    addNode = "添加",
+    removeNode = "删除",
     max,
     initialValue = []
   } = props;
@@ -72,16 +76,23 @@ const DynamicFieldSet: any = (props: FormListProps, _ref: any) => {
     }
   }, []);
 
-  // 添加子项
-  const addItem = (key: number) => {
+  const getFileds = (key: number) => {
     const obj = form.getFieldValue(name) || {};
     const index = keys.indexOf(key);
-    if(obj[0] === undefined) {
-      console.warn("请正确设置FormList组件 name 属性以及动态子项表单名称")
+    let fields = [];
+    // 子项name设置为filedName.xxx时
+    if(Object.prototype.toString.call(obj[index]) === '[Object Object]') { 
+      fields = Object.keys(obj[index] || {})?.map((item: string) => `${name}.${index}.${item}`);
+    } else { // 子项name设置为filedName时
+      fields = [`${name}.${index}`];
     }
-    let fields = Object.keys(obj[0] || {})?.map((item: string) => `${name}.${index}.${item}`);
+    return fields;
+  }
+
+  // 添加子项
+  const addItem = (key: number) => {
     // 添加子项前，校验当前行规则
-    form.validateFields(fields, (error: any, values: any) => {
+    form?.validateFields(getFileds(key), (error: any, values: any) => {
       if (!error && (!max || keys.length < max)) {
         setKeys(keys.concat([count + 1]));
         setCount(count + 1);
@@ -91,19 +102,43 @@ const DynamicFieldSet: any = (props: FormListProps, _ref: any) => {
 
   // 删除子项
   const removeItem = (key: number) => {
+    // 删除节点时，被删除行的数据会出现遗留现象，因为下一行控件的id变成了被删除行控件的id
+    // 将下一个节点的值填入到当前删除的节点位置
+    // 替代解决方案，不使用索引值作为控件id，使用key值作为控件id，这样就不需要手动设置值
+    const fields = getFileds(key);
+    const index = keys.indexOf(key);
+    fields?.map((item: string) => {
+      let array: any = item?.split(".");
+      array?.splice(1, 1, index+1);
+      form?.setFieldsValue({[item]: form.getFieldValue(array.join("."))});
+    })
     const new_keys = keys?.filter((item: number) => item !== key);
     setKeys(new_keys);
   }
 
   // 处理自定义按钮
   const fixedButton = (key: number) => {
-    const addBtn = React.isValidElement(addBtnNode)
-      ? React.cloneElement(addBtnNode as any, { onClick: () => addItem(key) })
-      : (<Button type="link" onClick={() => addItem(key)}>{addBtnNode}</Button>);
+    const addNodeProps = (addNode as any)?.props;
+    const removeNodeProps = (removeNode as any)?.props;
+    const addBtn = React.isValidElement(addNode)
+      ? React.cloneElement(addNode as any, {
+          className: `FormList-add ${addNodeProps.className}`,
+          onClick: () => {
+            addItem(key);
+            addNodeProps?.onClick && addNodeProps?.onClick();
+          }
+        })
+      : <a className='FormList-add' onClick={() => addItem(key)}>{addNode}</a>;
       
-    const removeBtn = React.isValidElement(removeBtnNode)
-      ? React.cloneElement(removeBtnNode as any, { onClick: () => removeItem(key) })
-      : (<Button type="link" onClick={() => addItem(key)}>{removeBtnNode}</Button>);
+    const removeBtn = React.isValidElement(removeNode)
+      ? React.cloneElement(removeNode as any, {
+          className: `FormList-remove ${removeNodeProps?.className}`,
+          onClick: () => {
+            removeItem(key);
+            removeNodeProps?.onClick && removeNodeProps?.onClick();
+          }
+        })
+      : <a className='FormList-remove' onClick={() => removeItem(key)}>{removeNode}</a>;
 
     return {
       addBtn,
@@ -129,12 +164,7 @@ const DynamicFieldSet: any = (props: FormListProps, _ref: any) => {
       remove = removeBtn;
     }
 
-    return (
-      <div className='FormList-btn'>
-        {add}
-        {remove}
-      </div>
-    )
+    return { add, remove };
   }
 
   // 渲染子项
@@ -147,12 +177,12 @@ const DynamicFieldSet: any = (props: FormListProps, _ref: any) => {
         index,
         values: initialValue[key] || {}
       };
-      return (
-        <div key={key} className="FormList-Item">
-          {typeof props.children === 'function' ? props.children(field) : null}
-          {renderOperationBtn(keys.length, key, index)}
-        </div>
-      )
+      const { add, remove } = renderOperationBtn(keys.length, key, index);
+      const operation = {
+        AddNode: () => add,
+        RemoveNode: () => remove,
+      }
+      return typeof props.children === 'function' ? props.children(field, operation) : null;
     })
   }
 

@@ -43,56 +43,90 @@ const FormWrap = (props: any) => {
     },
   };
 
+  const onSubmit = (e: any) => {
+    e.preventDefault();
+    props.form.validateFields((err: any, values: any) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+      }
+    });
+  };
+
   return (
     <div className='wrap'>
-      <Form className='normal-form'>
-
-        <FormList
-          name="data"
-          form={form} 
-          max={3}
-          initialValue={[{ input: "123", select: 1 }, { input: "12356788", select: 2 }]}
-        >
-          {
-            ({ name, fieldName, key, index, values }: FormListFieldProps) => (
-              <Form.Item
-                key={key}
-                {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-                label={index === 0 ? "动态表单测试" : ""}
-              >
-                <Row>
-                  <Col span={12}>
-                    <Form.Item wrapperCol={{ span: 23 }}>
-                      {getFieldDecorator(`${fieldName}.input`, {
-                        initialValue: values["input"],
-                        rules: [
-                          { required: true, message: '请输入内容!' },
-                        ]
-                      })(
-                        <Input placeholder="请输入" />
-                      )}
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item wrapperCol={{ span: 23 }}>
-                      {getFieldDecorator(`${fieldName}.select`, {
-                        initialValue: values["select"],
-                        rules: [{ required: true, message: '请选择内容!' }],
-                      })(
-                        <Select placeholder="请选择">
-                          <Select.Option value={1}>aaa</Select.Option>
-                          <Select.Option value={2}>bbb</Select.Option>
-                        </Select>
-                      )}
-                    </Form.Item>
-                  </Col>
-                </Row>
-
-              </Form.Item>
+      <Form className='normal-form' onSubmit={onSubmit}>
+        <FormList name="ceshi" form={props.form}>
+          {(field: any, operation: any) => {
+            const { name, fieldName, key, index, values } = field;
+            const { AddNode, RemoveNode } = operation;
+            return (
+              <>
+                <Form.Item
+                  key={key}
+                  label={"姓名"}
+                  {...formItemLayout}>
+                  <Row>
+                    <Col span={10}>
+                      <Form.Item>
+                        {getFieldDecorator(`${fieldName}.firstName`, {
+                          initialValue: values['firstName'],
+                          key,
+                          rules: [
+                            { required: true, message: "请输入姓" }
+                          ]
+                        })(
+                          <Input placeholder="姓" />
+                        )}
+                      </Form.Item>
+                    </Col>
+                    <Col span={10}>
+                      <Form.Item>
+                        {getFieldDecorator(`${fieldName}.lastName`, {
+                          initialValue: values['lastName'],
+                          key,
+                          rules: [
+                            { required: true, message: "请输入名" }
+                          ]
+                        })(
+                          <Input placeholder="名" />
+                        )}
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </Form.Item>
+                <Form.Item
+                  key={key}
+                  label={"年龄"}
+                  {...formItemLayout}>
+                  <Row>
+                    <Col span={20}>
+                      <Form.Item>
+                        {getFieldDecorator(`${fieldName}.age`, {
+                          initialValue: values['age'],
+                          key,
+                          rules: [
+                            { required: true, message: "请输入年龄" }
+                          ]
+                        })(
+                          <Input placeholder="年龄" />
+                        )}
+                      </Form.Item>
+                    </Col>
+                    <Col span={3}>
+                      <AddNode />
+                      <RemoveNode />
+                    </Col>
+                  </Row>
+                </Form.Item>
+              </>
             )
-          }
+          }}
         </FormList>
-
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
       </Form>
 
       <Button onClick={handleSubmit}>
