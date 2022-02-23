@@ -27,6 +27,8 @@ import TableTransfer from './module/TableTransfer';
 // import AnimateCssView from './module/AnimateCss';
 // import AnimationView from './module/Animation';
 import Select from './module/Select';
+import VirtualSelect from './module/Select/VirtualSelect';
+import SuperSelect from './module/Select/ceshi';
 import ScreenView from './module/Screen';
 import TransferView, { ListTransfer, Ceshi } from './module/Transfer';
 import { FormView, WrappedDynamicFieldSet } from './module/Form';
@@ -41,7 +43,7 @@ class App extends Component {
   render() {
     const {Option, OptGroup} = Select;
     const options = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 5000; i++) {
       const value = `${i.toString(36)}${i}`;
       options.push({
         value,
@@ -58,12 +60,17 @@ class App extends Component {
     }
     return (
       <div className="App">
-        {/* <Select placeholder="请输入内容" style={{width: 400}}>
+        <SuperSelect placeholder="请输入内容" style={{width: 400}}>
           {
-            options.map((item: any) => <Option value={item.value}>{item.label}</Option>)
+            options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
           }
-        </Select> */}
-        <FormView />
+        </SuperSelect>
+        <VirtualSelect placeholder="请输入内容" style={{width: 400}}>
+          {
+            options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
+          }
+        </VirtualSelect>
+        {/* <FormView /> */}
         {/* <TableTransfer 
           dataSource={data}
           leftColumns={[{dataIndex: 'title'}]}
