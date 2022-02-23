@@ -41,7 +41,7 @@ class App extends Component {
   render() {
     const {Option, OptGroup} = Select;
     const options = [];
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < 100; i++) {
       const value = `${i.toString(36)}${i}`;
       options.push({
         value,

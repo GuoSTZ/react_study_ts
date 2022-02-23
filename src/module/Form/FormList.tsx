@@ -1,4 +1,6 @@
 import React, { useState, forwardRef, useEffect, ReactNode } from 'react';
+import { Form, Input } from 'antd';
+import useErrorList from './useErrorList';
 import "./style/index.less";
 
 export interface FormListProps {
@@ -62,6 +64,8 @@ const DynamicFieldSet: any = (props: FormListProps, _ref: any) => {
 
   const [count, setCount] = useState(0 as number);   // 用来做计数值
   const [keys, setKeys] = useState([0] as number[]);
+  const [errors, setErrors] = useState([] as ReactNode[]);
+  const [ErrorList] = useErrorList();
 
   useEffect(() => {
     // 数据回填处理
@@ -81,7 +85,7 @@ const DynamicFieldSet: any = (props: FormListProps, _ref: any) => {
     const index = keys.indexOf(key);
     let fields = [];
     // 子项name设置为filedName.xxx时
-    if(Object.prototype.toString.call(obj[index]) === '[Object Object]') { 
+    if (Object.prototype.toString.call(obj[index]) === '[Object Object]') {
       fields = Object.keys(obj[index] || {})?.map((item: string) => `${name}.${index}.${item}`);
     } else { // 子项name设置为filedName时
       fields = [`${name}.${index}`];
@@ -93,11 +97,16 @@ const DynamicFieldSet: any = (props: FormListProps, _ref: any) => {
   const addItem = (key: number) => {
     // 添加子项前，校验当前行规则
     form?.validateFields(getFileds(key), (error: any, values: any) => {
-      if (!error && (!max || keys.length < max)) {
-        setKeys(keys.concat([count + 1]));
-        setCount(count + 1);
+      if (!error) {
+        if(!max || keys.length < max) {
+          setKeys(keys.concat([count + 1]));
+          setCount(count + 1);
+        } else {
+          setErrors([`最多${max}项`]);
+        }
       }
-    })
+      
+    });
   }
 
   // 删除子项
@@ -109,11 +118,14 @@ const DynamicFieldSet: any = (props: FormListProps, _ref: any) => {
     const index = keys.indexOf(key);
     fields?.map((item: string) => {
       let array: any = item?.split(".");
-      array?.splice(1, 1, index+1);
-      form?.setFieldsValue({[item]: form.getFieldValue(array.join("."))});
+      array?.splice(1, 1, index + 1);
+      form?.setFieldsValue({ [item]: form.getFieldValue(array.join(".")) });
     })
     const new_keys = keys?.filter((item: number) => item !== key);
     setKeys(new_keys);
+    if(max && new_keys.length <= max) {
+      setErrors([]);
+    }
   }
 
   // 处理自定义按钮
@@ -122,22 +134,22 @@ const DynamicFieldSet: any = (props: FormListProps, _ref: any) => {
     const removeNodeProps = (removeNode as any)?.props;
     const addBtn = React.isValidElement(addNode)
       ? React.cloneElement(addNode as any, {
-          className: `FormList-add ${addNodeProps.className}`,
-          onClick: () => {
-            addItem(key);
-            addNodeProps?.onClick && addNodeProps?.onClick();
-          }
-        })
+        className: `FormList-add ${addNodeProps.className}`,
+        onClick: () => {
+          addItem(key);
+          addNodeProps?.onClick && addNodeProps?.onClick();
+        }
+      })
       : <a className='FormList-add' onClick={() => addItem(key)}>{addNode}</a>;
-      
+
     const removeBtn = React.isValidElement(removeNode)
       ? React.cloneElement(removeNode as any, {
-          className: `FormList-remove ${removeNodeProps?.className}`,
-          onClick: () => {
-            removeItem(key);
-            removeNodeProps?.onClick && removeNodeProps?.onClick();
-          }
-        })
+        className: `FormList-remove ${removeNodeProps?.className}`,
+        onClick: () => {
+          removeItem(key);
+          removeNodeProps?.onClick && removeNodeProps?.onClick();
+        }
+      })
       : <a className='FormList-remove' onClick={() => removeItem(key)}>{removeNode}</a>;
 
     return {
@@ -157,9 +169,6 @@ const DynamicFieldSet: any = (props: FormListProps, _ref: any) => {
     } else if (length === index + 1) { // 最后一项
       add = addBtn;
       remove = removeBtn;
-      if (length === max) { // 达到最大数量限制时
-        add = null;
-      }
     } else { // 中间项
       remove = removeBtn;
     }
@@ -185,10 +194,12 @@ const DynamicFieldSet: any = (props: FormListProps, _ref: any) => {
       return typeof props.children === 'function' ? props.children(field, operation) : null;
     })
   }
-
   return (
     <div className="FormList" ref={_ref}>
       {getItem()}
+      <Form.Item>
+        <ErrorList errors={errors}/>
+      </Form.Item>
     </div>
   )
 }

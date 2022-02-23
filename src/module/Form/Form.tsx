@@ -55,83 +55,65 @@ const FormWrap = (props: any) => {
   return (
     <div className='wrap'>
       <Form className='normal-form' onSubmit={onSubmit}>
-        <FormList name="ceshi" form={props.form}>
+        <FormList
+          name="ceshi"
+          form={props.form}
+          max={2}
+        >
           {(field: any, operation: any) => {
             const { name, fieldName, key, index, values } = field;
             const { AddNode, RemoveNode } = operation;
             return (
-              <>
-                <Form.Item
-                  key={key}
-                  label={"姓名"}
-                  {...formItemLayout}>
-                  <Row>
-                    <Col span={10}>
-                      <Form.Item>
-                        {getFieldDecorator(`${fieldName}.firstName`, {
-                          initialValue: values['firstName'],
-                          key,
-                          rules: [
-                            { required: true, message: "请输入姓" }
-                          ]
-                        })(
-                          <Input placeholder="姓" />
-                        )}
-                      </Form.Item>
-                    </Col>
-                    <Col span={10}>
-                      <Form.Item>
-                        {getFieldDecorator(`${fieldName}.lastName`, {
-                          initialValue: values['lastName'],
-                          key,
-                          rules: [
-                            { required: true, message: "请输入名" }
-                          ]
-                        })(
-                          <Input placeholder="名" />
-                        )}
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </Form.Item>
-                <Form.Item
-                  key={key}
-                  label={"年龄"}
-                  {...formItemLayout}>
-                  <Row>
-                    <Col span={20}>
-                      <Form.Item>
-                        {getFieldDecorator(`${fieldName}.age`, {
-                          initialValue: values['age'],
-                          key,
-                          rules: [
-                            { required: true, message: "请输入年龄" }
-                          ]
-                        })(
-                          <Input placeholder="年龄" />
-                        )}
-                      </Form.Item>
-                    </Col>
-                    <Col span={3}>
-                      <AddNode />
-                      <RemoveNode />
-                    </Col>
-                  </Row>
-                </Form.Item>
-              </>
+              <Form.Item
+                label={"姓名"}
+                key={key}
+                {...formItemLayout}>
+                <Row>
+                  <Col span={10}>
+                    <Form.Item>
+                      {getFieldDecorator(`${fieldName}.firstName`, {
+                        initialValue: values['firstName'],
+                        key,
+                        // rules: [
+                        //   { required: true, message: "请输入姓" }
+                        // ]
+                      })(
+                        <Input placeholder="姓" />
+                      )}
+                    </Form.Item>
+                  </Col>
+                  <Col span={10}>
+                    <Form.Item>
+                      {getFieldDecorator(`${fieldName}.lastName`, {
+                        initialValue: values['lastName'],
+                        key,
+                        // rules: [
+                        //   { required: true, message: "请输入名" }
+                        // ]
+                      })(
+                        <Input placeholder="名" />
+                      )}
+                    </Form.Item>
+                  </Col>
+                  <Col span={3}>
+                    <AddNode />
+                    <RemoveNode />
+                  </Col>
+                </Row>
+              </Form.Item>
             )
           }}
         </FormList>
-        <Form.Item>
+        <Form.Item wrapperCol={{ offset: 4 }}>
           <Button type="primary" htmlType="submit">
             Submit
           </Button>
         </Form.Item>
       </Form>
 
-      <Button onClick={handleSubmit}>
+      {/* <Button onClick={handleSubmit}>
         获取数据
-      </Button>
+      </Button> */}
       {/* <List
         className='wrap-list'
         dataSource={formData}
