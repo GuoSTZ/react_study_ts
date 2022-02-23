@@ -25,6 +25,10 @@ export interface FormListProps {
    */
   max?: number;
   /**
+   * 最大子项数量限制信息提示自定义
+   */
+  maxErrorMsg?: string;
+  /**
    * 初始值设定
    */
   initialValue?: any[];
@@ -59,6 +63,7 @@ const DynamicFieldSet: any = (props: FormListProps, _ref: any) => {
     addNode = "添加",
     removeNode = "删除",
     max,
+    maxErrorMsg,
     initialValue = []
   } = props;
 
@@ -102,7 +107,7 @@ const DynamicFieldSet: any = (props: FormListProps, _ref: any) => {
           setKeys(keys.concat([count + 1]));
           setCount(count + 1);
         } else {
-          setErrors([`最多${max}项`]);
+          setErrors([ maxErrorMsg || `最多${max}项` ]);
         }
       }
       
