@@ -2,6 +2,7 @@ import React, { useState, useEffect, ReactNode, useRef } from 'react';
 import { Select } from 'antd';
 import { SelectProps, OptionProps } from 'antd/lib/select';
 import DropdownRender from './DropdownRender';
+import DropdownRender2 from './DropdownRender_class';
 import './index.less';
 
 export interface VirtualSelectProps extends SelectProps {
@@ -98,9 +99,9 @@ const VirtualSelect = (props: VirtualSelectProps) => {
   }
 
   // 重渲染下拉菜单
-  const refreshDropdown = () => {
+  const refreshDropdown = (height?: number) => {
     const { start, end } = handleItemIndex();
-    cref.current?.initialDropdown && cref.current?.initialDropdown(start, end, getAllHeight());
+    cref.current?.initialDropdown && cref.current?.initialDropdown(start, end, height ?? getAllHeight());
   }
 
   // 滚动监听事件
@@ -138,7 +139,7 @@ const VirtualSelect = (props: VirtualSelectProps) => {
   const renderDropdown = (menuNode: ReactNode, props: any) => {
     const { start, end } = handleItemIndex();
     return (
-      <DropdownRender 
+      <DropdownRender2 
         start={start}
         end={end}
         allHeight={getAllHeight()}
@@ -152,15 +153,16 @@ const VirtualSelect = (props: VirtualSelectProps) => {
   const onSearch = (value: string) => {
     const { onSearch: _onSearch, showSearch, filterOption } = props;
     let result: any = undefined;
-    if(showSearch && !!value) {
+    if(showSearch) {
       if(typeof filterOption === "function") {
         result = children?.filter((item: any) => filterOption(value, item));
       }
       if(!filterOption) {
         result = children?.filter((item: any) => customFilterOption(value, item));
       }
+      console.log(result, '===')
       setFilterChildList(result);
-      refreshDropdown();
+      refreshDropdown(result?.length * ITEM_SIZE || 100);
     }
     _onSearch && _onSearch(value);
   }
@@ -182,7 +184,7 @@ const VirtualSelect = (props: VirtualSelectProps) => {
       {...restProps}
       className={`VirtualSelect ${className}`}
       dropdownClassName={`VirtualSelect-dropdown ${dropdownClassName}`}
-      // onSearch={debounce(onSearch, 500)}
+      onSearch={debounce(onSearch, 500)}
       dropdownStyle={customDropdownStyle}
       dropdownRender={renderDropdown}
       onDropdownVisibleChange={onDropdownVisibleChange}
