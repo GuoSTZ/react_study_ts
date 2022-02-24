@@ -18,12 +18,12 @@ const VirtualSelect = (props: VirtualSelectProps) => {
   const [end, setEnd] = useState(100);
   const [scrollTop, setScrollTop] = useState(0);
   
-  const [DropdownRender] = useDropdownRender({
-    start, 
-    end, 
-    allHeight: itemHeight * props.children.length, 
-    itemHeight
-  });
+  // const [DropdownRender] = useDropdownRender({
+  //   start, 
+  //   end, 
+  //   allHeight: itemHeight * props.children.length, 
+  //   itemHeight
+  // });
 
   const handleScroll = (e: any) => {
     const { target } = e;
@@ -82,7 +82,7 @@ const VirtualSelect = (props: VirtualSelectProps) => {
       dropdownMenuStyle={{height: 3200, maxHeight: 3200, transform: `translateY(${scrollTop}px)`}}
       // style={{maxHeight: 256}}
       dropdownStyle={{maxHeight: 256, overflow: 'auto'}}
-      dropdownRender={DropdownRender}
+      // dropdownRender={DropdownRender}
     >
       {
         Children?.map(props?.children.slice(start, end), (child: any, index: number) => {

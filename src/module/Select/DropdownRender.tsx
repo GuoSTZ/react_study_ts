@@ -1,13 +1,14 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 
-const useDropdownRender = (startIndex: number, endIndex: number, all: number, itemHeight: number) => {
+const DropdownRender = (props: any) => {
   const [start, setStart] = useState(0);
   const [end, setEnd] = useState(0);
-  const [allHeight, setAllHeight] = useState(0);
+  const [allHeight, setAllHeight] = useState(100);
 
   useEffect(() => {
-    initialDropdown(startIndex, endIndex, all);
-  }, [startIndex, endIndex, all]);
+    console.log(props.start, props.end, props.allHeight, '===')
+    initialDropdown(props.start, props.end, props.allHeight);
+  }, [props.start, props.end, props.allHeight]);
 
   // 初始化
   const initialDropdown = (start: number, end: number, allHeight: number) => {
@@ -17,7 +18,8 @@ const useDropdownRender = (startIndex: number, endIndex: number, all: number, it
   }
 
   // 设定下拉菜单中选项的样式
-  const handleItemStyle = (idx: number): any => {
+  const handleItemStyle = (idx: number) => {
+    const { itemHeight } = props;
     return {
       position: "absolute",
       top: itemHeight * idx,
@@ -50,8 +52,6 @@ const useDropdownRender = (startIndex: number, endIndex: number, all: number, it
       }
     })
   };
-
-  return [ DropdownRender ];
 }
 
-export default useDropdownRender;
+export default DropdownRender;

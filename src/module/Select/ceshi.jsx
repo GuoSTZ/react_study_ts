@@ -176,6 +176,8 @@ export default class SuperSelect extends PureComponent {
     this.prevScrollTop = this.scrollTop;
     // 重新渲染列表组件 Wrap
     const allHeight = this.allList.length * this.ITEM_HEIGHT || 100;
+    console.log(allHeight, startIndex, endIndex, '==')
+
     this.wrap.reactList(allHeight, startIndex, endIndex);
   };
 
