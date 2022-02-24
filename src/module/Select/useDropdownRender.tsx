@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const useDropdownRender = (startIndex: number, endIndex: number, all: number, itemHeight: number) => {
   const [start, setStart] = useState(0);
@@ -31,7 +31,7 @@ const useDropdownRender = (startIndex: number, endIndex: number, all: number, it
       menuItems: menuNode.props.menuItems
         .slice(start, end)
         .map((item: any, idx: number) => {
-          const index = (start || 0) + Number(idx);
+          const index = start + idx;
           const style = handleItemStyle(index);
 
           // 未搜到数据提示高度使用默认高度
@@ -51,7 +51,7 @@ const useDropdownRender = (startIndex: number, endIndex: number, all: number, it
     })
   };
 
-  return [ DropdownRender ];
+  return [DropdownRender];
 }
 
 export default useDropdownRender;

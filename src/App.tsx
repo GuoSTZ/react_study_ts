@@ -27,7 +27,7 @@ import TableTransfer from './module/TableTransfer';
 // import AnimateCssView from './module/AnimateCss';
 // import AnimationView from './module/Animation';
 import Select from './module/Select';
-import VirtualSelect from './module/Select/VirtualSelect';
+import VirtualSelect from './module/Select/components/VirtualSelect';
 import SuperSelect from './module/Select/ceshi';
 import ScreenView from './module/Screen';
 import TransferView, { ListTransfer, Ceshi } from './module/Transfer';
@@ -43,7 +43,7 @@ class App extends Component {
   render() {
     const {Option, OptGroup} = Select;
     const options = [];
-    for (let i = 0; i < 500; i++) {
+    for (let i = 1; i < 5001; i++) {
       const value = `${i.toString(36)}${i}`;
       options.push({
         value,
@@ -60,12 +60,20 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <SuperSelect placeholder="请输入内容" style={{width: 400}}>
+        <SuperSelect placeholder="请选择内容" style={{width: 400}} showSearch>
           {
             options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
           }
         </SuperSelect>
-        <VirtualSelect placeholder="请输入内容" style={{width: 400}}>
+        <VirtualSelect 
+          placeholder="请选择内容" 
+          style={{width: 400}}
+          showSearch
+          // filterOption={(value: string, option: any) => 
+          //   option?.props?.children?.toUpperCase()?.includes(value?.toUpperCase())  
+          // }
+          optionFilterProp="children"
+        >
           {
             options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
           }
