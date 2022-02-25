@@ -10,6 +10,7 @@ export default class DropdownRender2 extends React.Component<any, any> {
       end,
       allHeight
     }
+    this.initialDropdown = this.initialDropdown.bind(this)
   }
 
   // 设定下拉菜单中选项的样式

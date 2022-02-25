@@ -28,6 +28,7 @@ import TableTransfer from './module/TableTransfer';
 // import AnimationView from './module/Animation';
 import Select from './module/Select';
 import VirtualSelect from './module/Select/components/VirtualSelect';
+import VirtualSelect_class from './module/Select/components/VirtualSelect_class';
 import SuperSelect from './module/Select/ceshi';
 import ScreenView from './module/Screen';
 import TransferView, { ListTransfer, Ceshi } from './module/Transfer';
@@ -43,8 +44,8 @@ class App extends Component {
   render() {
     const {Option, OptGroup} = Select;
     const options = [];
-    for (let i = 1; i < 5001; i++) {
-      const value = `${i.toString(36)}${i}`;
+    for (let i = 1; i < 10001; i++) {
+      const value = i;
       options.push({
         value,
         label: `content${i}`,
@@ -60,12 +61,12 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <SuperSelect placeholder="请选择内容" style={{width: 400}} showSearch>
+        <SuperSelect placeholder="请选择内容" style={{width: 400}} showSearch value={100}>
           {
             options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
           }
         </SuperSelect>
-        <VirtualSelect 
+        {/* <VirtualSelect 
           placeholder="请选择内容" 
           style={{width: 400}}
           showSearch
@@ -77,7 +78,17 @@ class App extends Component {
           {
             options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
           }
-        </VirtualSelect>
+        </VirtualSelect> */}
+        <VirtualSelect_class 
+          placeholder="请选择内容" 
+          style={{width: 400}}
+          showSearch
+          optionFilterProp="children"
+        >
+          {
+            options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
+          }
+        </VirtualSelect_class>
         {/* <FormView /> */}
         {/* <TableTransfer 
           dataSource={data}

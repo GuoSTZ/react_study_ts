@@ -60,12 +60,12 @@ const VirtualSelect = (props: VirtualSelectProps) => {
 
   // 防抖
   const debounce = (fn: Function, delay: number) => {
-    var timer: any = null;
+    var dtimer: any = null;
     return function(value: string) {
-      if (timer) {
-        clearTimeout(timer);
+      if (dtimer) {
+        clearTimeout(dtimer);
       }
-      timer = setTimeout(() => {
+      dtimer = setTimeout(() => {
         fn(value);
       }, delay);
     };
@@ -76,7 +76,7 @@ const VirtualSelect = (props: VirtualSelectProps) => {
     return filterChildList || childList;
   }
 
-  // 获取总高度
+  // 获取总高度，数据为空时，设置为100
   const getAllHeight = () => {
     return getChildList().length * ITEM_HEIGHT || 100;
   }
@@ -94,7 +94,7 @@ const VirtualSelect = (props: VirtualSelectProps) => {
   const shouldRefreshDropdown = (): boolean => {
     currScrollTop = scrollDropdown ? scrollDropdown.scrollTop : 0;
     let height = Math.abs(currScrollTop - prevScrollTop);
-
+    console.log(filterChildList, '===')
     return height > height_to_refresh;
   }
 
@@ -125,14 +125,16 @@ const VirtualSelect = (props: VirtualSelectProps) => {
 
   // 下拉菜单展开/收起 回调
   const onDropdownVisibleChange = (visible: boolean) => {
+    const { onDropdownVisibleChange: _onDropdownVisibleChange } = props;
     if (visible) {
       // 下拉菜单展开时，确保能够获取到元素并绑定监听事件
       if (!timer) {
-        timer = setTimeout(() => addEvent());
+        timer = setTimeout(() => addEvent(), 0);
       } else {
         refreshDropdown();
       }
     }
+    _onDropdownVisibleChange && _onDropdownVisibleChange(visible);
   }
 
   // 自定义下拉菜单
@@ -160,12 +162,29 @@ const VirtualSelect = (props: VirtualSelectProps) => {
       if(!filterOption) {
         result = children?.filter((item: any) => customFilterOption(value, item));
       }
-      console.log(result, '===')
-      setFilterChildList(result);
-      refreshDropdown(result?.length * ITEM_SIZE || 100);
+      console.log(!value ? undefined : result, '==*****')
+      setFilterChildList(!value ? undefined : result);
+      // refreshDropdown(result?.length * ITEM_HEIGHT || 100);
+      onDropdownVisibleChange(true);
     }
     _onSearch && _onSearch(value);
   }
+
+    // 在搜索重新计算下拉滚动条高度
+    const onChange = (value: string, opt: any) => {
+      const { showSearch, onChange: _onChange, autoClearSearchValue, mode } = props;
+      const multipleModes: any =  ["multiple", "tags"];
+      if (showSearch || multipleModes.includes(mode)) {
+        // 搜索模式下选择后是否需要重置搜索状态
+        if (autoClearSearchValue !== false) {
+          setFilterChildList(undefined);
+          refreshDropdown();
+        }
+      }
+  
+      // this.setState({ value });
+      _onChange && _onChange(value, opt);
+    };
 
   // 自定义过滤方法，默认大小写不匹配
   const customFilterOption = (value: string, option: any) => {
@@ -184,7 +203,7 @@ const VirtualSelect = (props: VirtualSelectProps) => {
       {...restProps}
       className={`VirtualSelect ${className}`}
       dropdownClassName={`VirtualSelect-dropdown ${dropdownClassName}`}
-      onSearch={debounce(onSearch, 500)}
+      onSearch={onSearch}
       dropdownStyle={customDropdownStyle}
       dropdownRender={renderDropdown}
       onDropdownVisibleChange={onDropdownVisibleChange}
