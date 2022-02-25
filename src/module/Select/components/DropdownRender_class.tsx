@@ -1,7 +1,7 @@
 import React from "react";
 
 
-export default class DropdownRender2 extends React.Component<any, any> {
+export default class DropdownRender_class extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     const { start, end, allHeight } = props;
@@ -41,8 +41,8 @@ export default class DropdownRender2 extends React.Component<any, any> {
         .map((item: any, idx: number) => {
           const index = start + idx;
           const style = this.handleItemStyle(index);
-  
-          // 未搜到数据提示高度使用默认高度
+          
+          // 为空时
           if (item.key === "NOT_FOUND") {
             delete style.height;
           }

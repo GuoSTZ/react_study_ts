@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ReactNode, useRef, KeyboardEvent } from 'react';
 import { Select } from 'antd';
 import { SelectProps, OptionProps } from 'antd/lib/select';
-import DropdownRender2 from './DropdownRender_class';
+import DropdownRender_class from './DropdownRender_class';
 import './index.less';
 
 export interface VirtualSelectProps extends SelectProps {
@@ -13,7 +13,7 @@ type FilterChildListType = undefined | any[];
 interface VirtualSelectState {
   childList: any[];
   filterChildList: FilterChildListType;
-  value?: string;
+  key?: string;
 }
 
 const Option = Select.Option;
@@ -45,7 +45,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     this.state = {
       childList: props.children || [],
       filterChildList: undefined,
-      value: undefined
+      key: undefined
     }
     this.ITEM_HEIGHT = ITEM_HEIGHT_CONFIG[props.size || "default"]
     this.height_to_refresh = this.ITEM_HEIGHT * ITEM_SIZE / 3;
@@ -69,8 +69,8 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     return this.getChildList().length * this.ITEM_HEIGHT || 100;
   }
 
-  handleItemIndex() {
-    const index = Math.floor(this.currScrollTop / this.ITEM_HEIGHT);
+  handleItemIndex(initialValue?: number) {
+    const index = initialValue ?? Math.floor(this.currScrollTop / this.ITEM_HEIGHT);
     let start = index - ITEM_SIZE < 0 ? 0 : index - ITEM_SIZE / 2;
     // 记录滚动高度
     this.prevScrollTop = this.currScrollTop;
@@ -88,7 +88,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
   // 重渲染下拉菜单
   refreshDropdown() {
     const { start, end } = this.handleItemIndex();
-    this.cref?.initialDropdown && this.cref?.initialDropdown(start, end, this.getAllHeight());
+    this.cref?.initialDropdown && this.cref?.initialDropdown(start, end + ITEM_SIZE, this.getAllHeight());
   }
 
   // 滚动监听事件
@@ -160,6 +160,25 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     this.scrollKey && this.scrollKey.removeEventListener("keydown", this.onKeyDown.bind(this), false);
   }
 
+  // 控件有值时，滚动到相应的位置
+  scrollWithValue() {
+    const { key } = this.state;
+    if(key) {
+      const { start, end } = this.handleItemIndex(Number(key));
+      const itemTop = Number(key) * this.ITEM_HEIGHT;
+      console.log(start, end, key, this.currScrollTop, itemTop, this.currScrollTop - itemTop, '===')
+      this.cref?.initialDropdown && this.cref?.initialDropdown(start, end + ITEM_SIZE, this.getAllHeight());
+      if(this.currScrollTop === 0) {
+        console.log(6666)
+        this.scrollDropdown.scrollTo(0, itemTop);
+      } else if(this.currScrollTop - itemTop > 0) {
+        this.scrollDropdown.scrollTo(0, itemTop);
+      } else {
+        this.scrollDropdown.scrollTo(0, itemTop - DROPDOWN_HEIGHT + this.ITEM_HEIGHT);
+      }
+    }
+  }
+
   // 下拉菜单展开/收起 回调
   onDropdownVisibleChange(visible: boolean) {
     const { onDropdownVisibleChange: _onDropdownVisibleChange } = this.props;
@@ -168,8 +187,10 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
       if (!this.timer) {
         this.timer = setTimeout(() => this.addEvent(), 0);
       } else {
-        this.refreshDropdown();
+        this.state.key ? this.scrollWithValue() : this.refreshDropdown();
       }
+    } else {
+      this.scrollWithValue();
     }
     _onDropdownVisibleChange && _onDropdownVisibleChange(visible);
   }
@@ -178,7 +199,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
   renderDropdown(menuNode: ReactNode, props: any) {
     const { start, end } = this.handleItemIndex();
     return (
-      <DropdownRender2
+      <DropdownRender_class
         start={start}
         end={end}
         allHeight={this.getAllHeight()}
@@ -200,10 +221,15 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
       if (!filterOption) {
         result = children?.filter((item: any) => this.customFilterOption(value, item));
       }
+      // 做搜索时，如果向下滚动一定高度，此时scrollTop一直在变大
+      // 到一定程度后，会导致计算出来的start和end的值都大于过滤后的数据的总高度
+      // 这样会演变成过滤数组存在，但是在模板组件内切割出来的数据为空，最终无法显示下拉菜单
+      // 目前处理为，每一次搜索，都滑动回顶部
+      this.scrollDropdown.scrollTo(0, 0);
       this.setState({
         filterChildList: !value ? undefined : result
       }, () => {
-        this.onDropdownVisibleChange(true);
+        this.refreshDropdown();
       });
     }
     _onSearch && _onSearch(value);
@@ -219,11 +245,11 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
         this.setState({
           filterChildList: undefined
         }, () => {
-          this.onDropdownVisibleChange(true);
+          this.refreshDropdown();
         });
       }
     }
-    this.setState({value});
+    this.setState({key: option.key});
     _onChange && _onChange(value, option);
   };
 

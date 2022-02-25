@@ -5,7 +5,7 @@ import {
   Route,
   Redirect
 } from 'react-router-dom';
-// import { Button } from 'antd';
+import { Select } from 'antd';
 // import EditTableView from './module/EditTable';
 import CheckView from './module/EditTable/check';
 // import DisabledButton from './module/Button/DisabledButton';
@@ -26,7 +26,7 @@ import TableTransfer from './module/TableTransfer';
 // import TableMenuView from './module/TableMenu/ceshi';
 // import AnimateCssView from './module/AnimateCss';
 // import AnimationView from './module/Animation';
-import Select from './module/Select';
+// import Select from './module/Select';
 import VirtualSelect from './module/Select/components/VirtualSelect';
 import VirtualSelect_class from './module/Select/components/VirtualSelect_class';
 import SuperSelect from './module/Select/ceshi';
@@ -44,9 +44,15 @@ class App extends Component {
   render() {
     const {Option, OptGroup} = Select;
     const options = [];
+    const options2 = [];
     for (let i = 1; i < 10001; i++) {
       const value = i;
       options.push({
+        value,
+        label: `content${i}`,
+        disabled: i === 10,
+      });
+      i< 500 && options2.push({
         value,
         label: `content${i}`,
         disabled: i === 10,
@@ -61,9 +67,14 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <SuperSelect placeholder="请选择内容" style={{width: 400}} showSearch value={100}>
+        <Select placeholder="请选择内容" style={{width: 400}} showSearch mode="multiple">
           {
-            options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
+            options2.map((item: any, index: number) => <Option value={item.value} key={index+10}>{item.label}</Option>)
+          }
+        </Select>
+        <SuperSelect placeholder="请选择内容" style={{width: 400}} showSearch mode="multiple">
+          {
+            options.map((item: any, index: number) => <Option value={item.value} key={index+10}>{item.label}</Option>)
           }
         </SuperSelect>
         {/* <VirtualSelect 
@@ -84,6 +95,7 @@ class App extends Component {
           style={{width: 400}}
           showSearch
           optionFilterProp="children"
+          mode="multiple"
         >
           {
             options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
