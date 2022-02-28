@@ -1,11 +1,10 @@
-import React, { useState, useEffect, ReactNode, useRef, KeyboardEvent } from 'react';
+import React, { ReactNode } from 'react';
 import { Select } from 'antd';
 import { SelectProps, OptionProps } from 'antd/lib/select';
 import DropdownRender_class from './DropdownRender_class';
-import './index.less';
 
 export interface VirtualSelectProps extends SelectProps {
-  children: any[];
+  children?: ReactNode[];
 }
 
 type FilterChildListType = undefined | any[];
@@ -34,11 +33,17 @@ const MULTIPLEMODES: any = ["multiple", "tags"];
 const DROPDOWN_HEIGHT = 256;
 
 export default class VirtualSelect_class extends React.Component<VirtualSelectProps, VirtualSelectState> {
+  // 子项高度
   private ITEM_HEIGHT: number;
+  // 下拉菜单DOM节点
   private scrollDropdown: any = null;
+  // 键盘上下键
   private scrollKey: any = null;
+  // 当前滚动高度
   private currScrollTop: number = 0;
+  // 上一次滚动高度
   private prevScrollTop: number = 0;
+  // 滚动后刷新所需要的滚动高度
   private height_to_refresh: number;
   private cref: any = null;
   private timer: any = null;
@@ -55,12 +60,23 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     this.cref = React.createRef();
   }
   componentDidMount() {
+    
+  }
 
+  componentDidUpdate(prevProps: any, prevState: any) {
+    const { children } = this.props;
+    if (prevProps.children !== children) {
+      this.setState({
+        childList: children || [],
+        filterChildList: undefined
+      });
+    }
   }
 
   componentWillUnmount() {
     this.removeEvent();
   }
+
   // 区分是否存在搜索情况
   getChildList() {
     const { childList, filterChildList } = this.state;
@@ -124,6 +140,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
         return;
       }
       // 处于最后一行时，向下移动，要到第一行
+      console.log(this.currScrollTop, offsetTop, this.getAllHeight(), '===')
       if (down && this.currScrollTop - offsetTop > DROPDOWN_HEIGHT) {
         this.scrollDropdown.scrollTo(0, 0);
         return;
@@ -142,7 +159,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
           this.scrollDropdown.scrollTo(0, times * this.ITEM_HEIGHT);
         }
         if (diff >= DROPDOWN_HEIGHT) {
-          this.scrollDropdown.scrollTo(0, this.currScrollTop + this.ITEM_HEIGHT);
+          this.scrollDropdown.scrollTo(0, offsetTop - DROPDOWN_HEIGHT + this.ITEM_HEIGHT);
         }
       }
     }, 0)
@@ -163,7 +180,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     this.scrollKey && this.scrollKey.removeEventListener("keydown", this.onKeyDown.bind(this), false);
   }
 
-  // 单选条件下，控件有值时，滚动到相应的位置
+  // 滚动到相应的位置
   scrollWithValue(key: number) {
     const { start, end } = this.handleItemIndex(key);
     const itemTop = key * this.ITEM_HEIGHT;

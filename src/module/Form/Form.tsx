@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Icon, Button, List, Checkbox, Select, Row, Col } from 'antd';
 import FormList, { FormListFieldProps } from './FormList';
+import VirtualSelect_class from '../Select/components/VirtualSelect_class';
 import './style/Form.less';
 
 const FormWrap = (props: any) => {
@@ -52,13 +53,58 @@ const FormWrap = (props: any) => {
     });
   };
 
+  const renderItem = (it: any, idx: number) => {
+    return (
+      <Select.Option key={idx} value={it.value}>
+        {it.label}
+      </Select.Option>
+    );
+  }
+
+  const renderChildNode = (childData: any[]) => {
+    return childData.map((it: any, idx: number) => {
+      return renderItem(it, idx);
+    });
+  }
+
+  const renderFields = (element: React.ReactElement) => {
+    const {defaultValue, children, ...otherProps} = element.props;
+    let containerToProps = {
+      getPopupContainer: (triggerNode: any) => triggerNode.parentNode
+    };
+    const elementProps = Object.assign(
+      {},
+      otherProps,
+      containerToProps,
+    );
+    console.log(
+      elementProps,
+      renderChildNode([{label: "aaa", value: 11}])
+    )
+    return React.createElement(
+      element.type,
+      elementProps,
+      renderChildNode([{label: "aaa", value: 11}])
+    );
+  }
+
   return (
     <div className='wrap'>
       <Form className='normal-form' onSubmit={onSubmit}>
+        <Form.Item label="测试中" labelCol={{span: 4}} wrapperCol={{span: 20}}>
+          {getFieldDecorator('virtual_select', {
+            // rules: [
+            //   { required: true, message: "请输入内容" }
+            // ]
+          })(
+            renderFields(<VirtualSelect_class placeholder="ceshi" />)
+          )}
+        </Form.Item>
         <FormList
           name="ceshi"
           form={props.form}
-          max={2}
+          max={5}
+          initialValue={[{firstName: undefined, lastName: "aa"}, {firstName: "qq", lastName: "bb"}]}
         >
           {(field: any, operation: any) => {
             const { name, fieldName, key, index, values } = field;
@@ -72,11 +118,11 @@ const FormWrap = (props: any) => {
                   <Col span={10}>
                     <Form.Item>
                       {getFieldDecorator(`${fieldName}.firstName`, {
-                        initialValue: values['firstName'],
+                        initialValue: values?.firstName,
                         key,
-                        // rules: [
-                        //   { required: true, message: "请输入姓" }
-                        // ]
+                        rules: [
+                          { required: true, message: "请输入姓" }
+                        ]
                       })(
                         <Input placeholder="姓" />
                       )}
@@ -85,7 +131,7 @@ const FormWrap = (props: any) => {
                   <Col span={10}>
                     <Form.Item>
                       {getFieldDecorator(`${fieldName}.lastName`, {
-                        initialValue: values['lastName'],
+                        initialValue: values?.lastName,
                         key,
                         // rules: [
                         //   { required: true, message: "请输入名" }

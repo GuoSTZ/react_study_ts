@@ -67,29 +67,6 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <Select placeholder="请选择内容" style={{width: 400}} showSearch>
-          {
-            options2.map((item: any, index: number) => <Option value={item.value} key={index+10}>{item.label}</Option>)
-          }
-        </Select>
-        <SuperSelect placeholder="请选择内容" style={{width: 400}} showSearch>
-          {
-            options.map((item: any, index: number) => <Option value={item.value} key={index+10}>{item.label}</Option>)
-          }
-        </SuperSelect>
-        {/* <VirtualSelect 
-          placeholder="请选择内容" 
-          style={{width: 400}}
-          showSearch
-          // filterOption={(value: string, option: any) => 
-          //   option?.props?.children?.toUpperCase()?.includes(value?.toUpperCase())  
-          // }
-          optionFilterProp="children"
-        >
-          {
-            options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
-          }
-        </VirtualSelect> */}
         <VirtualSelect_class 
           placeholder="请选择内容" 
           style={{width: 400}}
