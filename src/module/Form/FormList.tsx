@@ -56,7 +56,7 @@ export interface FormListOperationProps {
   RemoveNode: () => ReactNode;
 }
 
-const DynamicFieldSet: any = (props: FormListProps, _ref: any) => {
+const DynamicFieldSet = (props: FormListProps, _ref: any) => {
   const {
     name,
     form,
@@ -100,30 +100,26 @@ const DynamicFieldSet: any = (props: FormListProps, _ref: any) => {
 
   // 添加子项
   const addItem = (key: number) => {
-    // 添加子项前，校验当前行规则
-    form?.validateFields(getFileds(key), (error: any, values: any) => {
-      if (!error) {
-        if(!max || keys.length < max) {
-          setKeys(keys.concat([count + 1]));
-          setCount(count + 1);
-        } else {
-          setErrors([ maxErrorMsg || `最多${max}项` ]);
-        }
-      }
-      
-    });
+    if(!max || keys.length < max) {
+      setKeys(keys.concat([count + 1]));
+      setCount(count + 1);
+    } else {
+      setErrors([ maxErrorMsg || `最多${max}项` ]);
+    }
   }
 
   // 删除子项
   const removeItem = (key: number) => {
     // 删除节点时，被删除行的数据会出现遗留现象，因为下一行控件的id变成了被删除行控件的id
-    // 将下一个节点的值填入到当前删除的节点位置
+    // 故需要将下一个节点的值填入到当前删除的节点位置
     // 替代解决方案，不使用索引值作为控件id，使用key值作为控件id，这样就不需要手动设置值
     const fields = getFileds(key);
     const index = keys.indexOf(key);
     fields?.map((item: string) => {
       let array: any = item?.split(".");
-      array?.splice(1, 1, index + 1);
+      // 获取fieldName中索引index所在的位置
+      const idx = array.indexOf(index.toString());
+      array?.splice(idx, 1, index + 1);
       form?.setFieldsValue({ [item]: form.getFieldValue(array.join(".")) });
     })
     const new_keys = keys?.filter((item: number) => item !== key);
@@ -189,7 +185,7 @@ const DynamicFieldSet: any = (props: FormListProps, _ref: any) => {
         fieldName: `${name}.${index}`,
         key,
         index,
-        values: initialValue[key] || {}
+        values: initialValue[key]
       };
       const { add, remove } = renderOperationBtn(keys.length, key, index);
       const operation = {
@@ -209,6 +205,6 @@ const DynamicFieldSet: any = (props: FormListProps, _ref: any) => {
   )
 }
 
-const FormList = forwardRef<FormListProps, any>(DynamicFieldSet);
+const FormList = forwardRef<FormListProps, FormListProps>(DynamicFieldSet);
 
 export default FormList;
