@@ -27,6 +27,9 @@ const ITEM_HEIGHT_CONFIG = {
   large: 40,
   default: 32
 };
+
+// 下拉框mode
+const MULTIPLEMODES: any = ["multiple", "tags"];
 // 下拉菜单高度
 const DROPDOWN_HEIGHT = 256;
 
@@ -69,8 +72,8 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     return this.getChildList().length * this.ITEM_HEIGHT || 100;
   }
 
-  handleItemIndex(initialValue?: number) {
-    const index = initialValue ?? Math.floor(this.currScrollTop / this.ITEM_HEIGHT);
+  handleItemIndex(initialIndex?: number) {
+    const index = initialIndex ?? Math.floor(this.currScrollTop / this.ITEM_HEIGHT);
     let start = index - ITEM_SIZE < 0 ? 0 : index - ITEM_SIZE / 2;
     // 记录滚动高度
     this.prevScrollTop = this.currScrollTop;
@@ -88,7 +91,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
   // 重渲染下拉菜单
   refreshDropdown() {
     const { start, end } = this.handleItemIndex();
-    this.cref?.initialDropdown && this.cref?.initialDropdown(start, end + ITEM_SIZE, this.getAllHeight());
+    this.cref?.initialDropdown && this.cref?.initialDropdown(start, end, this.getAllHeight());
   }
 
   // 滚动监听事件
@@ -160,37 +163,34 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     this.scrollKey && this.scrollKey.removeEventListener("keydown", this.onKeyDown.bind(this), false);
   }
 
-  // 控件有值时，滚动到相应的位置
-  scrollWithValue() {
-    const { key } = this.state;
-    if(key) {
-      const { start, end } = this.handleItemIndex(Number(key));
-      const itemTop = Number(key) * this.ITEM_HEIGHT;
-      console.log(start, end, key, this.currScrollTop, itemTop, this.currScrollTop - itemTop, '===')
-      this.cref?.initialDropdown && this.cref?.initialDropdown(start, end + ITEM_SIZE, this.getAllHeight());
-      if(this.currScrollTop === 0) {
-        console.log(6666)
+  // 单选条件下，控件有值时，滚动到相应的位置
+  scrollWithValue(key: number) {
+    const { start, end } = this.handleItemIndex(key);
+    const itemTop = key * this.ITEM_HEIGHT;
+    this.cref?.initialDropdown && this.cref?.initialDropdown(start, end, this.getAllHeight(), () => {
+      // 当选中元素处于下拉菜单上方不可见区域或处于上方半遮挡
+      if(this.currScrollTop - itemTop >= 0) {  
         this.scrollDropdown.scrollTo(0, itemTop);
-      } else if(this.currScrollTop - itemTop > 0) {
-        this.scrollDropdown.scrollTo(0, itemTop);
-      } else {
+      } else if(itemTop - this.currScrollTop >= DROPDOWN_HEIGHT - this.ITEM_HEIGHT) { // 当选中元素处于下拉菜单下方不可见区域或处于下方半遮挡时
         this.scrollDropdown.scrollTo(0, itemTop - DROPDOWN_HEIGHT + this.ITEM_HEIGHT);
       }
-    }
+    });
   }
 
   // 下拉菜单展开/收起 回调
   onDropdownVisibleChange(visible: boolean) {
-    const { onDropdownVisibleChange: _onDropdownVisibleChange } = this.props;
+    const { onDropdownVisibleChange: _onDropdownVisibleChange, mode } = this.props;
+    const { key } = this.state;
     if (visible) {
       // 下拉菜单展开时，确保能够获取到元素并绑定监听事件
       if (!this.timer) {
         this.timer = setTimeout(() => this.addEvent(), 0);
       } else {
-        this.state.key ? this.scrollWithValue() : this.refreshDropdown();
+        // 单选配置，且已经有选中值时
+        !MULTIPLEMODES.includes(mode) && key 
+          ? this.scrollWithValue(Number(key)) 
+          : this.refreshDropdown();
       }
-    } else {
-      this.scrollWithValue();
     }
     _onDropdownVisibleChange && _onDropdownVisibleChange(visible);
   }
@@ -238,8 +238,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
   // 选中选项后，清除搜索条件，重新计算下拉框高度
   onChange(value: any, option: any) {
     const { showSearch, onChange: _onChange, autoClearSearchValue, mode } = this.props;
-    const multipleModes: any = ["multiple", "tags"];
-    if (showSearch || multipleModes.includes(mode)) {
+    if (showSearch || MULTIPLEMODES.includes(mode)) {
       // 在选中选项后，清空输入框内容
       if (autoClearSearchValue !== false) {
         this.setState({

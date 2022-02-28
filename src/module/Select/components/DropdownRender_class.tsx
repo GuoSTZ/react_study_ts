@@ -24,11 +24,13 @@ export default class DropdownRender_class extends React.Component<any, any> {
     };
   }
 
-  initialDropdown(start: number, end: number, allHeight: number) {
+  initialDropdown(start: number, end: number, allHeight: number, callback: any) {
     this.setState({
       start,
       end,
       allHeight
+    }, () => {
+      callback && callback();
     });
   }
 

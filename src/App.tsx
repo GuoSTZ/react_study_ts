@@ -67,12 +67,12 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <Select placeholder="请选择内容" style={{width: 400}} showSearch mode="multiple">
+        <Select placeholder="请选择内容" style={{width: 400}} showSearch>
           {
             options2.map((item: any, index: number) => <Option value={item.value} key={index+10}>{item.label}</Option>)
           }
         </Select>
-        <SuperSelect placeholder="请选择内容" style={{width: 400}} showSearch mode="multiple">
+        <SuperSelect placeholder="请选择内容" style={{width: 400}} showSearch>
           {
             options.map((item: any, index: number) => <Option value={item.value} key={index+10}>{item.label}</Option>)
           }
@@ -95,7 +95,7 @@ class App extends Component {
           style={{width: 400}}
           showSearch
           optionFilterProp="children"
-          mode="multiple"
+          // mode="multiple"
         >
           {
             options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
