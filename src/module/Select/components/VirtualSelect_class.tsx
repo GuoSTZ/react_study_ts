@@ -59,6 +59,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     this.height_to_refresh = this.ITEM_HEIGHT * ITEM_SIZE / 3;
     this.cref = React.createRef();
   }
+
   componentDidMount() {
     
   }
@@ -131,35 +132,43 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
 
       if (!currentItem) return;
       const offsetTop = currentItem.offsetTop;
+      // 每页展示的条数
+      const count = DROPDOWN_HEIGHT / this.ITEM_HEIGHT;
+      const diff = offsetTop - this.currScrollTop;
 
       /**要注意的是，处于最后一项向下移动时，并不是直接回到第一项，同理，第一项向上移动时，也不是直接到最后一项 */
+      console.log("up: ", up, "down: ", down, this.prevScrollTop, this.currScrollTop, offsetTop, this.getAllHeight(), '===')
 
-      // 处于第一行时，向上移动，要到最后一行
-      if (up && offsetTop - this.currScrollTop > DROPDOWN_HEIGHT) {
-        this.scrollDropdown.scrollTo(0, this.getAllHeight() - DROPDOWN_HEIGHT);
-        return;
-      }
-      // 处于最后一行时，向下移动，要到第一行
-      console.log(this.currScrollTop, offsetTop, this.getAllHeight(), '===')
-      if (down && this.currScrollTop - offsetTop > DROPDOWN_HEIGHT) {
-        this.scrollDropdown.scrollTo(0, 0);
-        return;
-      }
-
-      const diff = offsetTop - this.currScrollTop;
-      // 向上移动
-      if (up && diff < 0) {
-        this.scrollDropdown.scrollTo(0, offsetTop);
-      }
-      // 向下移动
-      if (down) {
+      // 向下滚动
+      if(down) {
+        const down_height = (count - 1) * this.ITEM_HEIGHT;
+        // this.scrollDropdown.scrollTo(0, offsetTop - down_height);
+        // 处于全部数据的底部时
+        if(diff < 0 && this.currScrollTop - this.prevScrollTop <= DROPDOWN_HEIGHT) {
+          this.scrollDropdown.scrollTo(0, 0);
+          return;
+        }
         // 当下拉菜单中的最后一项显示不完整时，显示完全该项
         if (DROPDOWN_HEIGHT - this.ITEM_HEIGHT < diff && diff < DROPDOWN_HEIGHT) {
           const times = Math.ceil(Math.abs(offsetTop - DROPDOWN_HEIGHT) / this.ITEM_HEIGHT) + 1;
           this.scrollDropdown.scrollTo(0, times * this.ITEM_HEIGHT);
         }
-        if (diff >= DROPDOWN_HEIGHT) {
-          this.scrollDropdown.scrollTo(0, offsetTop - DROPDOWN_HEIGHT + this.ITEM_HEIGHT);
+        // 处于可视下拉菜单区域的底部时
+        if(diff >= DROPDOWN_HEIGHT) {
+          this.scrollDropdown.scrollTo(0, offsetTop - down_height);
+        }
+      }
+      // 向上滚动
+      if(up) {
+        // this.scrollDropdown.scrollTo(0, offsetTop);
+        // 处于全部数据的顶部时
+        if(diff > DROPDOWN_HEIGHT) {
+          this.scrollDropdown.scrollTo(0, this.getAllHeight() - DROPDOWN_HEIGHT);
+          return;
+        }
+        // 处于可视下拉菜单区域的顶部时
+        if(diff < 0) {
+          this.scrollDropdown.scrollTo(0, offsetTop);
         }
       }
     }, 0)
