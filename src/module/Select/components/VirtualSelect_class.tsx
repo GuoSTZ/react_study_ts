@@ -1,10 +1,12 @@
-import React, { ReactNode } from 'react';
-import { Select } from 'antd';
-import { SelectProps, OptionProps } from 'antd/lib/select';
+import React, { ReactElement, ReactNode } from 'react';
+import { Select, Checkbox } from 'antd';
+import { SelectProps } from 'antd/lib/select';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox/Checkbox';
 import DropdownRender_class from './DropdownRender_class';
+import './index.less';
 
 export interface VirtualSelectProps extends SelectProps {
-  children?: ReactNode[];
+  children?: any;
 }
 
 type FilterChildListType = undefined | any[];
@@ -13,6 +15,9 @@ interface VirtualSelectState {
   childList: any[];
   filterChildList: FilterChildListType;
   key?: string;
+  visible: boolean;
+  selectValue: any | any[];
+  checkAll: boolean;
 }
 
 const Option = Select.Option;
@@ -27,12 +32,19 @@ const ITEM_HEIGHT_CONFIG = {
   default: 32
 };
 
+// 可视区域展示的条数
+const PAGE_SIZE = 8;
+
 // 下拉框mode
 const MULTIPLEMODES: any = ["multiple", "tags"];
-// 下拉菜单高度
-const DROPDOWN_HEIGHT = 256;
+
+// 选中全部设定
+const checkAll_text = "全部";
+const checkAll_height = 40;
 
 export default class VirtualSelect_class extends React.Component<VirtualSelectProps, VirtualSelectState> {
+  // 下拉菜单高度
+  private DROPDOWN_HEIGHT: number = 0;
   // 子项高度
   private ITEM_HEIGHT: number;
   // 下拉菜单DOM节点
@@ -45,30 +57,51 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
   private prevScrollTop: number = 0;
   // 滚动后刷新所需要的滚动高度
   private height_to_refresh: number;
+  // 是否为多选
+  private isMultiple: boolean = false;
+
   private cref: any = null;
+  private selectRef: any = null;
   private timer: any = null;
+  private lock: any = null;
+  // 监听事件中使用了querySelector去获取元素，当存在多个下拉框组件时，会出现问题，需要对class类做区别
+  private randomNum: string = `${new Date().valueOf()}${Math.floor(Math.random() * 100)}`;
+  
+  static Option = Option;
+  static OptGroup = OptGroup
 
   constructor(props: VirtualSelectProps) {
     super(props);
     this.state = {
-      childList: props.children || [],
+      childList: this.handlePropsChildren(props.children),
       filterChildList: undefined,
-      key: undefined
+      key: undefined,
+      visible: false,
+      selectValue: undefined,
+      checkAll: false
     }
     this.ITEM_HEIGHT = ITEM_HEIGHT_CONFIG[props.size || "default"]
+    this.DROPDOWN_HEIGHT = PAGE_SIZE * this.ITEM_HEIGHT;
+    // 判断是否为多选模式
+    if (MULTIPLEMODES.includes(props.mode)) {
+      this.isMultiple = true;
+      this.DROPDOWN_HEIGHT = PAGE_SIZE * this.ITEM_HEIGHT + checkAll_height - this.ITEM_HEIGHT;
+    }
+
     this.height_to_refresh = this.ITEM_HEIGHT * ITEM_SIZE / 3;
     this.cref = React.createRef();
+    this.selectRef = React.createRef();
   }
 
   componentDidMount() {
-    
+
   }
 
   componentDidUpdate(prevProps: any, prevState: any) {
     const { children } = this.props;
     if (prevProps.children !== children) {
       this.setState({
-        childList: children || [],
+        childList: this.handlePropsChildren(children),
         filterChildList: undefined
       });
     }
@@ -76,6 +109,15 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
 
   componentWillUnmount() {
     this.removeEvent();
+  }
+
+  // 处理children
+  handlePropsChildren(children: React.ReactNode) {
+    if(children) {
+      return Array.isArray(children) ? children : [children];
+    } else {
+      return [];
+    }
   }
 
   // 区分是否存在搜索情况
@@ -87,6 +129,12 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
   // 获取总高度，数据为空时，设置为100
   getAllHeight() {
     return this.getChildList().length * this.ITEM_HEIGHT || 100;
+  }
+
+  // 获取children的value值，供【全部】使用
+  getAllValue() {
+    const list = this.getChildList();
+    return list.map((item: ReactElement) => item.props.value);
   }
 
   handleItemIndex(initialIndex?: number) {
@@ -128,46 +176,44 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     }
     keyTimer = setTimeout(() => {
       // 获取当前正处于高亮显示的子项
-      const currentItem: HTMLElement | null = document.querySelector(".ant-select-dropdown-menu-item-active");
+      const currentItem: HTMLElement | null = document.querySelector(`.VtSelect-dropdown${this.randomNum} .ant-select-dropdown-menu-item-active`);
 
       if (!currentItem) return;
       const offsetTop = currentItem.offsetTop;
-      // 每页展示的条数
-      const count = DROPDOWN_HEIGHT / this.ITEM_HEIGHT;
+      // 根据是否多选，调整高度
+      const dropdown_height = this.isMultiple ? this.DROPDOWN_HEIGHT - checkAll_height : this.DROPDOWN_HEIGHT;
       const diff = offsetTop - this.currScrollTop;
 
       /**要注意的是，处于最后一项向下移动时，并不是直接回到第一项，同理，第一项向上移动时，也不是直接到最后一项 */
-      console.log("up: ", up, "down: ", down, this.prevScrollTop, this.currScrollTop, offsetTop, this.getAllHeight(), '===')
 
       // 向下滚动
-      if(down) {
-        const down_height = (count - 1) * this.ITEM_HEIGHT;
-        // this.scrollDropdown.scrollTo(0, offsetTop - down_height);
+      if (down) {
+        const down_distance = dropdown_height - this.ITEM_HEIGHT;
         // 处于全部数据的底部时
-        if(diff < 0 && this.currScrollTop - this.prevScrollTop <= DROPDOWN_HEIGHT) {
+        if (diff < 0 && this.currScrollTop - this.prevScrollTop <= dropdown_height) {
           this.scrollDropdown.scrollTo(0, 0);
           return;
         }
         // 当下拉菜单中的最后一项显示不完整时，显示完全该项
-        if (DROPDOWN_HEIGHT - this.ITEM_HEIGHT < diff && diff < DROPDOWN_HEIGHT) {
-          const times = Math.ceil(Math.abs(offsetTop - DROPDOWN_HEIGHT) / this.ITEM_HEIGHT) + 1;
+        if (dropdown_height - this.ITEM_HEIGHT < diff && diff < dropdown_height) {
+          const times = Math.ceil(Math.abs(offsetTop - dropdown_height) / this.ITEM_HEIGHT) + 1;
           this.scrollDropdown.scrollTo(0, times * this.ITEM_HEIGHT);
         }
         // 处于可视下拉菜单区域的底部时
-        if(diff >= DROPDOWN_HEIGHT) {
-          this.scrollDropdown.scrollTo(0, offsetTop - down_height);
+        if (diff >= dropdown_height) {
+          this.scrollDropdown.scrollTo(0, offsetTop - down_distance);
         }
       }
       // 向上滚动
-      if(up) {
+      if (up) {
         // this.scrollDropdown.scrollTo(0, offsetTop);
         // 处于全部数据的顶部时
-        if(diff > DROPDOWN_HEIGHT) {
-          this.scrollDropdown.scrollTo(0, this.getAllHeight() - DROPDOWN_HEIGHT);
+        if (diff > dropdown_height) {
+          this.scrollDropdown.scrollTo(0, this.getAllHeight() - dropdown_height);
           return;
         }
         // 处于可视下拉菜单区域的顶部时
-        if(diff < 0) {
+        if (diff < 0) {
           this.scrollDropdown.scrollTo(0, offsetTop);
         }
       }
@@ -176,8 +222,8 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
 
   // 挂载监听事件
   addEvent() {
-    this.scrollDropdown = document.querySelector(`.VtSelect-dropdown`);
-    this.scrollKey = document.querySelector(`.VtSelect`);
+    this.scrollDropdown = document.querySelector(`.VtSelect-dropdown${this.randomNum}`);
+    this.scrollKey = document.querySelector(`.VtSelect${this.randomNum}`);
     // 下拉菜单未展开时元素不存在
     this.scrollDropdown && this.scrollDropdown.addEventListener("scroll", this.onScroll.bind(this), false);
     this.scrollKey && this.scrollKey.addEventListener("keydown", this.onKeyDown.bind(this), false);
@@ -195,10 +241,10 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     const itemTop = key * this.ITEM_HEIGHT;
     this.cref?.initialDropdown && this.cref?.initialDropdown(start, end, this.getAllHeight(), () => {
       // 当选中元素处于下拉菜单上方不可见区域或处于上方半遮挡
-      if(this.currScrollTop - itemTop >= 0) {  
+      if (this.currScrollTop - itemTop >= 0) {
         this.scrollDropdown.scrollTo(0, itemTop);
-      } else if(itemTop - this.currScrollTop >= DROPDOWN_HEIGHT - this.ITEM_HEIGHT) { // 当选中元素处于下拉菜单下方不可见区域或处于下方半遮挡时
-        this.scrollDropdown.scrollTo(0, itemTop - DROPDOWN_HEIGHT + this.ITEM_HEIGHT);
+      } else if (itemTop - this.currScrollTop >= this.DROPDOWN_HEIGHT - this.ITEM_HEIGHT) { // 当选中元素处于下拉菜单下方不可见区域或处于下方半遮挡时
+        this.scrollDropdown.scrollTo(0, itemTop - this.DROPDOWN_HEIGHT + this.ITEM_HEIGHT);
       }
     });
   }
@@ -213,26 +259,59 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
         this.timer = setTimeout(() => this.addEvent(), 0);
       } else {
         // 单选配置，且已经有选中值时
-        !MULTIPLEMODES.includes(mode) && key 
-          ? this.scrollWithValue(Number(key)) 
+        !this.isMultiple && key
+          ? this.scrollWithValue(Number(key))
           : this.refreshDropdown();
       }
     }
+    if (this.lock) {
+      this.selectRef.focus();
+      return;
+    }
+    this.setState({ visible });
     _onDropdownVisibleChange && _onDropdownVisibleChange(visible);
+  }
+
+  lockClose = (e: any) => {
+    clearTimeout(this.lock);
+    this.lock = setTimeout(() => {
+      this.lock = null;
+    }, 100);
+  };
+
+  checkOnChange = (e: CheckboxChangeEvent) => {
+    const { onChange: _onChange } = this.props;
+    this.setState({
+      checkAll: e.target.checked
+    });
+    const value = e.target.checked ? this.getAllValue() : this.state.selectValue;
+    _onChange && _onChange(value, []);
   }
 
   // 自定义下拉菜单
   renderDropdown(menuNode: ReactNode, props: any) {
     const { start, end } = this.handleItemIndex();
     return (
-      <DropdownRender_class
-        start={start}
-        end={end}
-        allHeight={this.getAllHeight()}
-        itemHeight={this.ITEM_HEIGHT}
-        menuNode={menuNode}
-        ref={ele => this.cref = ele}
-      />
+      <React.Fragment>
+        {
+          this.isMultiple && (
+            <div className='VtSelect-dropdown-checkAll' onMouseDown={this.lockClose} onMouseUp={this.lockClose}>
+              <Checkbox checked={this.state.checkAll} onChange={this.checkOnChange.bind(this)}>
+                {checkAll_text}
+              </Checkbox>
+            </div>
+          )
+        }
+        <DropdownRender_class
+          start={start}
+          end={end}
+          allHeight={this.getAllHeight()}
+          itemHeight={this.ITEM_HEIGHT}
+          menuNode={menuNode}
+          ref={ele => this.cref = ele}
+          isCheckAll={this.state.checkAll}
+        />
+      </React.Fragment>
     );
   }
 
@@ -240,7 +319,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
   onSearch(value: string) {
     const { onSearch: _onSearch, showSearch, filterOption, children } = this.props;
     let result: any = undefined;
-    if (showSearch) {
+    if (showSearch || this.isMultiple) {
       if (typeof filterOption === "function") {
         result = children?.filter((item: any) => filterOption(value, item));
       }
@@ -263,8 +342,8 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
 
   // 选中选项后，清除搜索条件，重新计算下拉框高度
   onChange(value: any, option: any) {
-    const { showSearch, onChange: _onChange, autoClearSearchValue, mode } = this.props;
-    if (showSearch || MULTIPLEMODES.includes(mode)) {
+    const { showSearch, onChange: _onChange, autoClearSearchValue } = this.props;
+    if (showSearch || this.isMultiple) {
       // 在选中选项后，清空输入框内容
       if (autoClearSearchValue !== false) {
         this.setState({
@@ -274,7 +353,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
         });
       }
     }
-    this.setState({key: option.key});
+    this.setState({ key: option.key, selectValue: value });
     _onChange && _onChange(value, option);
   };
 
@@ -293,20 +372,24 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
       dropdownStyle,
       ...restProps
     } = this.props;
+    const { visible, selectValue, checkAll } = this.state;
     const customDropdownStyle = Object.assign({}, dropdownStyle, {
-      maxHeight: DROPDOWN_HEIGHT,
+      maxHeight: this.DROPDOWN_HEIGHT,
       overflow: 'auto',
     })
     return (
       <Select
         {...restProps}
-        className={`VtSelect ${className}`}
-        dropdownClassName={`VtSelect-dropdown ${dropdownClassName}`}
+        className={`VtSelect VtSelect${this.randomNum} ${className}`}
+        dropdownClassName={`VtSelect-dropdown VtSelect-dropdown${this.randomNum} ${dropdownClassName}`}
         onSearch={this.onSearch.bind(this)}
         onChange={this.onChange.bind(this)}
         dropdownStyle={customDropdownStyle}
         dropdownRender={this.renderDropdown.bind(this)}
         onDropdownVisibleChange={this.onDropdownVisibleChange.bind(this)}
+        ref={ref => this.selectRef = ref}
+        open={visible}
+        value={checkAll ? checkAll_text : selectValue}
       >
         {this.getChildList()}
       </Select>

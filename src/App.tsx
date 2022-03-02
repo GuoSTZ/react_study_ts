@@ -72,13 +72,13 @@ class App extends Component {
           style={{width: 400}}
           showSearch
           optionFilterProp="children"
-          // mode="multiple"
+          mode="multiple"
         >
           {
             options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
           }
         </VirtualSelect_class>
-        {/* <FormView /> */}
+        <FormView />
         {/* <TableTransfer 
           dataSource={data}
           leftColumns={[{dataIndex: 'title'}]}

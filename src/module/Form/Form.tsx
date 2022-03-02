@@ -53,39 +53,12 @@ const FormWrap = (props: any) => {
     });
   };
 
-  const renderItem = (it: any, idx: number) => {
-    return (
-      <Select.Option key={idx} value={it.value}>
-        {it.label}
-      </Select.Option>
-    );
-  }
-
-  const renderChildNode = (childData: any[]) => {
-    return childData.map((it: any, idx: number) => {
-      return renderItem(it, idx);
-    });
-  }
-
-  const renderFields = (element: React.ReactElement) => {
-    const {defaultValue, children, ...otherProps} = element.props;
-    let containerToProps = {
-      getPopupContainer: (triggerNode: any) => triggerNode.parentNode
-    };
-    const elementProps = Object.assign(
-      {},
-      otherProps,
-      containerToProps,
-    );
-    console.log(
-      elementProps,
-      renderChildNode([{label: "aaa", value: 11}])
-    )
-    return React.createElement(
-      element.type,
-      elementProps,
-      renderChildNode([{label: "aaa", value: 11}])
-    );
+  const data = [];
+  for(let i=0;i< 1000; i++) {
+    data.push({
+      label: `content ${i}`,
+      value: i.toString(),
+    })
   }
 
   return (
@@ -97,14 +70,38 @@ const FormWrap = (props: any) => {
             //   { required: true, message: "请输入内容" }
             // ]
           })(
-            renderFields(<VirtualSelect_class placeholder="ceshi" />)
+            <VirtualSelect_class placeholder="ceshi" mode='multiple'>
+              {
+                data?.map((item: any) => (
+                  <VirtualSelect_class.Option value={item.value} key={item.value}>
+                    {item.label}
+                  </VirtualSelect_class.Option>
+                ))
+              }
+            </VirtualSelect_class>
+          )}
+        </Form.Item>
+        <Form.Item label="测试中" labelCol={{span: 4}} wrapperCol={{span: 20}}>
+          {getFieldDecorator('virtual_select2', {
+            // rules: [
+            //   { required: true, message: "请输入内容" }
+            // ]
+          })(
+            <VirtualSelect_class placeholder="ceshi" mode='multiple'>
+              {
+                data?.map((item: any) => (
+                  <VirtualSelect_class.Option value={item.value} key={item.value}>
+                    {item.label}
+                  </VirtualSelect_class.Option>
+                ))
+              }
+            </VirtualSelect_class>
           )}
         </Form.Item>
         <FormList
           name="ceshi"
           form={props.form}
           max={5}
-          initialValue={[{firstName: undefined, lastName: "aa"}, {firstName: "qq", lastName: "bb"}]}
         >
           {(field: any, operation: any) => {
             const { name, fieldName, key, index, values } = field;

@@ -1,8 +1,15 @@
 import React from "react";
 
-
-export default class DropdownRender_class extends React.Component<any, any> {
-  constructor(props: any) {
+export interface DropdownRenderProps {
+  start: number;
+  end: number;
+  allHeight: number;
+  itemHeight: number;
+  menuNode: any;
+  isCheckAll?: boolean;
+}
+export default class DropdownRender_class extends React.Component<DropdownRenderProps, any> {
+  constructor(props: DropdownRenderProps) {
     super(props);
     const { start, end, allHeight } = props;
     this.state = {
@@ -34,24 +41,34 @@ export default class DropdownRender_class extends React.Component<any, any> {
     });
   }
 
+  handleMenuItems(menuNode: any) {
+    const { start, end } = this.state;
+    const { isCheckAll } = this.props;
+    const new_menuItems: any = [];
+    menuNode?.props?.menuItems
+      .slice(start, end)
+      .map((item: any, idx: number) => {
+        const index = start + idx;
+        const style = this.handleItemStyle(index);
+        // 为空时
+        if (item.key === "NOT_FOUND") {
+          delete style.height;
+        }
+        new_menuItems.push(
+          React.cloneElement(item, {
+            style: { ...item.style, ...style },
+            disabled: isCheckAll,
+          })
+        )
+      });
+    return new_menuItems;
+  }
+
   render(): React.ReactNode {
     const { menuNode } = this.props;
-    const { start, end, allHeight } = this.state;
+    const { allHeight } = this.state;
     return React.cloneElement(menuNode, {
-      menuItems: menuNode?.props?.menuItems
-        .slice(start, end)
-        .map((item: any, idx: number) => {
-          const index = start + idx;
-          const style = this.handleItemStyle(index);
-          
-          // 为空时
-          if (item.key === "NOT_FOUND") {
-            delete style.height;
-          }
-          return React.cloneElement(item, {
-            style: { ...item.style, ...style }
-          });
-        }),
+      menuItems: this.handleMenuItems(menuNode),
       dropdownMenuStyle: {
         ...menuNode?.props?.dropdownMenuStyle,
         position: 'relative',
