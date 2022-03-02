@@ -272,6 +272,16 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     _onDropdownVisibleChange && _onDropdownVisibleChange(visible);
   }
 
+  checkAllDivOnClick() {
+    const { onChange: _onChange } = this.props;
+    const {checkAll} = this.state;
+    this.setState({
+      checkAll: !checkAll
+    });
+    const value = !checkAll ? this.getAllValue() : this.state.selectValue;
+    _onChange && _onChange(value, []);
+  }
+
   lockClose = (e: any) => {
     clearTimeout(this.lock);
     this.lock = setTimeout(() => {
@@ -295,7 +305,12 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
       <React.Fragment>
         {
           this.isMultiple && (
-            <div className='VtSelect-dropdown-checkAll' onMouseDown={this.lockClose} onMouseUp={this.lockClose}>
+            <div 
+              className='VtSelect-dropdown-checkAll VtSelect-dropdown-checkAll-fixed' 
+              onClick={this.checkAllDivOnClick.bind(this)} 
+              onMouseDown={this.lockClose} 
+              onMouseUp={this.lockClose}
+            >
               <Checkbox checked={this.state.checkAll} onChange={this.checkOnChange.bind(this)}>
                 {checkAll_text}
               </Checkbox>
