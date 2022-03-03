@@ -68,7 +68,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
   private lock: any = null;
   // 监听事件中使用了querySelector去获取元素，当存在多个下拉框组件时，会出现问题，需要对class类做区别
   private randomNum: string = `${new Date().valueOf()}${Math.floor(Math.random() * 100)}`;
-  
+
   static Option = Option;
   static OptGroup = OptGroup
 
@@ -115,7 +115,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
 
   // 处理children
   handlePropsChildren(children: React.ReactNode) {
-    if(children) {
+    if (children) {
       return Array.isArray(children) ? children : [children];
     } else {
       return [];
@@ -298,11 +298,11 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     // 默认滑动宽度为17，如果有自定义滑块样式，此处会出现偏差
     const scrollbaWidth = isScroll ? 17 : 0;
     // 如果组件传入自定义style，则优先设置该style
-    if(style?.width) {
+    if (style?.width) {
       return checkAll_fixed ? `calc( ${style.width}px - ${scrollbaWidth}px )` : "100%";
     }
     // 获取下拉组件输入控件的宽度
-    if(element) {
+    if (element) {
       const width = element?.clientWidth;
       return checkAll_fixed ? `calc( ${width}px - ${scrollbaWidth}px )` : "100%";
     }
@@ -311,26 +311,27 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
 
   // 自定义下拉菜单
   renderDropdown(menuNode: ReactNode, props: any) {
+    const { dropdownRender: _dropdownRender } = this.props;
     const { start, end } = this.handleItemIndex();
-    return (
+    const menu = (
       <React.Fragment>
         {
-          this.isMultiple && (
-            <div 
+          this.isMultiple && this.getChildList().length > 0 && (
+            <div
               className={`VtSelect-dropdown-checkAll ${checkAll_fixed ? 'VtSelect-dropdown-checkAll-fixed' : ''}`}
-              onMouseDown={this.lockClose} 
+              onMouseDown={this.lockClose}
               onMouseUp={this.lockClose}
               style={{
                 width: this.handleFixedWidth(),
                 height: this.ITEM_HEIGHT,
               }}
             >
-              <Checkbox 
+              <Checkbox
                 style={{
                   lineHeight: `${this.ITEM_HEIGHT}px`,
                   paddingLeft: 12
-                }} 
-                checked={this.state.checkAll} 
+                }}
+                checked={this.state.checkAll}
                 onChange={this.checkOnChange.bind(this)}
               >
                 {checkAll_text}
@@ -348,7 +349,8 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
           isCheckAll={this.state.checkAll}
         />
       </React.Fragment>
-    );
+    )
+    return _dropdownRender ? _dropdownRender(menu) : menu;
   }
 
   // 搜索回调

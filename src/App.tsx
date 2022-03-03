@@ -18,7 +18,7 @@ import CheckView from './module/EditTable/check';
 // import ProgressView from './module/ProgressView';
 // import CardView from './module/CardView';
 // import SelectView from './module/SelectView';
-// import TreeSelectView from './module/TreeSelectView';
+import TreeSelect from './module/TreeSelect/select';
 import TableTransfer from './module/TableTransfer';
 // import EchartsView from './module/EchartsView';
 // import LessView from './module/LessView';
@@ -39,6 +39,9 @@ import image1 from './images/1.png'
 import borderSvg from './border.svg';
 import ceshiSvg from './ceshi.svg';
 import customSvg from './custom.svg';
+
+
+import {treeData} from './utils/mockData';
 
 class App extends Component {
   render() {
@@ -78,7 +81,7 @@ class App extends Component {
             options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
           }
         </VirtualSelect_class> */}
-        <FormView />
+        {/* <FormView /> */}
         {/* <TableTransfer 
           dataSource={data}
           leftColumns={[{dataIndex: 'title'}]}
@@ -88,6 +91,12 @@ class App extends Component {
           maxTargetKeys={200}
           dropdownSelectCount={[100]}
         /> */}
+        <TreeSelect 
+          style={{width: 400}}
+          placeholder="请选择"
+          treeData={treeData}
+          treeCheckable
+        />
       </div>
     );
   }
