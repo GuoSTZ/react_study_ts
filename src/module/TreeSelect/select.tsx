@@ -56,7 +56,8 @@ const TreeSelect = (props: any) => {
   const checkOnChange = (e: CheckboxChangeEvent) => {
     const { onChange: _onChange, treeData } = props;
     setCheckAll(e.target.checked);
-    _onChange && _onChange(getAllKey(treeData));
+    const value = e.target.checked ? getAllKey(treeData) : selectValue;
+    _onChange && _onChange(value);
   }
 
   const renderDropdown = (originNode: any) => {
@@ -85,7 +86,7 @@ const TreeSelect = (props: any) => {
     const { onChange: _onChange } = props;
     // tag清空【全部】时触发
     if (checkAll && value?.length === 0) {
-      checkOnChange({ target: { checked: false } } as any);
+      setCheckAll(false);
     }
     setSelectValue(value);
     _onChange && _onChange(value, label, extra);
@@ -94,7 +95,6 @@ const TreeSelect = (props: any) => {
   return (
     <RcTreeSelect
       {...props}
-      open={true}
       onChange={onChange}
       value={checkAll ? [checkAll_text] : selectValue}
       dropdownRender={renderDropdown}
