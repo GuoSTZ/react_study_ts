@@ -381,6 +381,10 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
   // 选中选项后，清除搜索条件，重新计算下拉框高度
   onChange(value: any, option: any) {
     const { showSearch, onChange: _onChange, autoClearSearchValue } = this.props;
+    // tag清空【全部】时触发
+    if(this.state.checkAll && value?.length === 0) {
+      this.checkOnChange({target: {checked: false}} as any);
+    }
     if (showSearch || this.isMultiple) {
       // 在选中选项后，清空输入框内容
       if (autoClearSearchValue !== false) {
