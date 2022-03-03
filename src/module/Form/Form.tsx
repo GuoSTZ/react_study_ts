@@ -54,7 +54,7 @@ const FormWrap = (props: any) => {
   };
 
   const data = [];
-  for(let i=0;i< 1000; i++) {
+  for(let i=0;i< 5; i++) {
     data.push({
       label: `content ${i}`,
       value: i.toString(),
@@ -66,23 +66,6 @@ const FormWrap = (props: any) => {
       <Form className='normal-form' onSubmit={onSubmit}>
         <Form.Item label="测试中" labelCol={{span: 4}} wrapperCol={{span: 20}}>
           {getFieldDecorator('virtual_select', {
-            // rules: [
-            //   { required: true, message: "请输入内容" }
-            // ]
-          })(
-            <VirtualSelect_class placeholder="ceshi" mode='multiple'>
-              {
-                data?.map((item: any) => (
-                  <VirtualSelect_class.Option value={item.value} key={item.value}>
-                    {item.label}
-                  </VirtualSelect_class.Option>
-                ))
-              }
-            </VirtualSelect_class>
-          )}
-        </Form.Item>
-        <Form.Item label="测试中" labelCol={{span: 4}} wrapperCol={{span: 20}}>
-          {getFieldDecorator('virtual_select2', {
             // rules: [
             //   { required: true, message: "请输入内容" }
             // ]

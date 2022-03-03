@@ -40,7 +40,9 @@ const MULTIPLEMODES: any = ["multiple", "tags"];
 
 // 选中全部设定
 const checkAll_text = "全部";
-const checkAll_height = 40;
+
+// 是否固定【全部】选项
+const checkAll_fixed = false;
 
 export default class VirtualSelect_class extends React.Component<VirtualSelectProps, VirtualSelectState> {
   // 下拉菜单高度
@@ -85,7 +87,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     // 判断是否为多选模式
     if (MULTIPLEMODES.includes(props.mode)) {
       this.isMultiple = true;
-      this.DROPDOWN_HEIGHT = PAGE_SIZE * this.ITEM_HEIGHT + checkAll_height - this.ITEM_HEIGHT;
+      this.DROPDOWN_HEIGHT = PAGE_SIZE * this.ITEM_HEIGHT;
     }
 
     this.height_to_refresh = this.ITEM_HEIGHT * ITEM_SIZE / 3;
@@ -181,7 +183,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
       if (!currentItem) return;
       const offsetTop = currentItem.offsetTop;
       // 根据是否多选，调整高度
-      const dropdown_height = this.isMultiple ? this.DROPDOWN_HEIGHT - checkAll_height : this.DROPDOWN_HEIGHT;
+      const dropdown_height = this.isMultiple ? this.DROPDOWN_HEIGHT - this.ITEM_HEIGHT : this.DROPDOWN_HEIGHT;
       const diff = offsetTop - this.currScrollTop;
 
       /**要注意的是，处于最后一项向下移动时，并不是直接回到第一项，同理，第一项向上移动时，也不是直接到最后一项 */
@@ -272,16 +274,6 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     _onDropdownVisibleChange && _onDropdownVisibleChange(visible);
   }
 
-  checkAllDivOnClick() {
-    const { onChange: _onChange } = this.props;
-    const {checkAll} = this.state;
-    this.setState({
-      checkAll: !checkAll
-    });
-    const value = !checkAll ? this.getAllValue() : this.state.selectValue;
-    _onChange && _onChange(value, []);
-  }
-
   lockClose = (e: any) => {
     clearTimeout(this.lock);
     this.lock = setTimeout(() => {
@@ -298,6 +290,25 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     _onChange && _onChange(value, []);
   }
 
+  // 处理【全部】选项固定与非固定时的宽度
+  handleFixedWidth() {
+    const { style } = this.props;
+    const element: any = document.querySelector(`.VtSelect${this.randomNum}`);
+    const isScroll = this.getChildList().length > PAGE_SIZE - 1;
+    // 默认滑动宽度为17，如果有自定义滑块样式，此处会出现偏差
+    const scrollbaWidth = isScroll ? 17 : 0;
+    // 如果组件传入自定义style，则优先设置该style
+    if(style?.width) {
+      return checkAll_fixed ? `calc( ${style.width}px - ${scrollbaWidth}px )` : "100%";
+    }
+    // 获取下拉组件输入控件的宽度
+    if(element) {
+      const width = element?.clientWidth;
+      return checkAll_fixed ? `calc( ${width}px - ${scrollbaWidth}px )` : "100%";
+    }
+    return "100%";
+  }
+
   // 自定义下拉菜单
   renderDropdown(menuNode: ReactNode, props: any) {
     const { start, end } = this.handleItemIndex();
@@ -306,12 +317,22 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
         {
           this.isMultiple && (
             <div 
-              className='VtSelect-dropdown-checkAll VtSelect-dropdown-checkAll-fixed' 
-              onClick={this.checkAllDivOnClick.bind(this)} 
+              className={`VtSelect-dropdown-checkAll ${checkAll_fixed ? 'VtSelect-dropdown-checkAll-fixed' : ''}`}
               onMouseDown={this.lockClose} 
               onMouseUp={this.lockClose}
+              style={{
+                width: this.handleFixedWidth(),
+                height: this.ITEM_HEIGHT,
+              }}
             >
-              <Checkbox checked={this.state.checkAll} onChange={this.checkOnChange.bind(this)}>
+              <Checkbox 
+                style={{
+                  lineHeight: `${this.ITEM_HEIGHT}px`,
+                  paddingLeft: 12
+                }} 
+                checked={this.state.checkAll} 
+                onChange={this.checkOnChange.bind(this)}
+              >
                 {checkAll_text}
               </Checkbox>
             </div>

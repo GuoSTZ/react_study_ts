@@ -67,7 +67,7 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <VirtualSelect_class 
+        {/* <VirtualSelect_class 
           placeholder="请选择内容" 
           style={{width: 400}}
           showSearch
@@ -77,7 +77,7 @@ class App extends Component {
           {
             options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
           }
-        </VirtualSelect_class>
+        </VirtualSelect_class> */}
         <FormView />
         {/* <TableTransfer 
           dataSource={data}
