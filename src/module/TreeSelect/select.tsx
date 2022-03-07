@@ -10,6 +10,7 @@ const TreeSelect = (props: any) => {
   const [disabledData, setDisabledData] = useState([]);
 
   const checkAll_text = "全部";
+  const isMultiple = !!(props?.treeCheckable || props?.multiple);
 
   useEffect(() => {
     setOriginData(flatten(props.treeData));
@@ -64,13 +65,17 @@ const TreeSelect = (props: any) => {
     const { dropdownRender: _dropdownRender } = props;
     const menu = (
       <React.Fragment>
-        <Checkbox
-          checked={checkAll}
-          onChange={checkOnChange}
-          style={{ padding: "3px 4px 4px 10px", width: '100%', marginBottom: 4 }}
-        >
-          {checkAll_text}
-        </Checkbox>
+        {
+          isMultiple && (
+            <Checkbox
+              checked={checkAll}
+              onChange={checkOnChange}
+              style={{ padding: "3px 4px 4px 10px", width: '100%', marginBottom: 4 }}
+            >
+              {checkAll_text}
+            </Checkbox>
+          )
+        }
         {
           React.cloneElement(originNode, {
             options: checkAll ? disabledData : originData
