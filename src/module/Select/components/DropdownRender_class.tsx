@@ -27,7 +27,8 @@ export default class DropdownRender_class extends React.Component<DropdownRender
       position: "absolute",
       top: itemHeight * idx,
       height: itemHeight,
-      width: "100%"
+      width: "100%",
+      lineHeight: `${itemHeight - 2 * 5}px`
     };
   }
 

@@ -29,7 +29,6 @@ import TableTransfer from './module/TableTransfer';
 // import Select from './module/Select';
 import VirtualSelect from './module/Select/components/VirtualSelect';
 import VirtualSelect_class from './module/Select/components/VirtualSelect_class';
-import SuperSelect from './module/Select/ceshi';
 import ScreenView from './module/Screen';
 import TransferView, { ListTransfer, Ceshi } from './module/Transfer';
 import { FormView, WrappedDynamicFieldSet } from './module/Form';
@@ -48,7 +47,7 @@ class App extends Component {
     const {Option, OptGroup} = Select;
     const options = [];
     const options2 = [];
-    for (let i = 1; i < 10001; i++) {
+    for (let i = 1; i < 70; i++) {
       const value = i;
       options.push({
         value,
@@ -70,17 +69,18 @@ class App extends Component {
     }
     return (
       <div className="App">
-        {/* <VirtualSelect_class 
+        <VirtualSelect_class 
           placeholder="请选择内容" 
           style={{width: 400}}
           showSearch
           optionFilterProp="children"
           mode="multiple"
+          open={true}
         >
           {
             options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
           }
-        </VirtualSelect_class> */}
+        </VirtualSelect_class>
         {/* <FormView /> */}
         {/* <TableTransfer 
           dataSource={data}
@@ -96,6 +96,7 @@ class App extends Component {
           placeholder="请选择"
           treeData={treeData}
           treeCheckable
+          open={true}
         />
       </div>
     );

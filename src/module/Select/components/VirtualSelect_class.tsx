@@ -42,7 +42,7 @@ const MULTIPLEMODES: any = ["multiple", "tags"];
 const checkAll_text = "全部";
 
 // 是否固定【全部】选项
-const checkAll_fixed = false;
+const checkAll_fixed = true;
 
 export default class VirtualSelect_class extends React.Component<VirtualSelectProps, VirtualSelectState> {
   // 下拉菜单高度
@@ -96,7 +96,10 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
   }
 
   componentDidMount() {
-
+    // 设置open为true时，需要直接绑定节点
+    if (!this.timer) {
+      this.timer = setTimeout(() => this.addEvent(), 0);
+    }
   }
 
   componentDidUpdate(prevProps: any, prevState: any) {
@@ -293,18 +296,25 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
   // 处理【全部】选项固定与非固定时的宽度
   handleFixedWidth() {
     const { style } = this.props;
-    const element: any = document.querySelector(`.VtSelect${this.randomNum}`);
+    const element: HTMLElement|null = document.querySelector(`.VtSelect${this.randomNum}`);
+    // 当【全部】选择固定时，根据不同的size，设置不同的marginTop值
+    const scroll_element_div: HTMLElement|null = 
+      document.querySelector(`.VtSelect-dropdown${this.randomNum} > div:nth-of-type(2)`);
+    if(scroll_element_div && checkAll_fixed) {
+      scroll_element_div.style.marginTop = `${this.ITEM_HEIGHT}px`;
+    }
+    // 是否存在滚动条
     const isScroll = this.getChildList().length > PAGE_SIZE - 1;
-    // 默认滑动宽度为17，如果有自定义滑块样式，此处会出现偏差
-    const scrollbaWidth = isScroll ? 17 : 0;
+    // 默认滑块宽度为17，如果有自定义滑块样式，此处会出现偏差
+    const scrollbarWidth = isScroll ? 17 : 0;
     // 如果组件传入自定义style，则优先设置该style
     if (style?.width) {
-      return checkAll_fixed ? `calc( ${style.width}px - ${scrollbaWidth}px )` : "100%";
+      return checkAll_fixed ? `calc( ${style.width}px - ${scrollbarWidth}px )` : "100%";
     }
     // 获取下拉组件输入控件的宽度
     if (element) {
       const width = element?.clientWidth;
-      return checkAll_fixed ? `calc( ${width}px - ${scrollbaWidth}px )` : "100%";
+      return checkAll_fixed ? `calc( ${width}px - ${scrollbarWidth}px )` : "100%";
     }
     return "100%";
   }
@@ -414,6 +424,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
       className = "",
       dropdownClassName = "",
       dropdownStyle,
+      open,
       ...restProps
     } = this.props;
     const { visible, selectValue, checkAll } = this.state;
@@ -432,7 +443,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
         dropdownRender={this.renderDropdown.bind(this)}
         onDropdownVisibleChange={this.onDropdownVisibleChange.bind(this)}
         ref={ref => this.selectRef = ref}
-        open={visible}
+        open={ open || visible}
         value={checkAll ? checkAll_text : selectValue}
       >
         {this.getChildList()}
