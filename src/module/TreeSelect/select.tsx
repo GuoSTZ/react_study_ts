@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Checkbox } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { default as RcTreeSelect } from "./index";
+import { DefaultValueType } from 'rc-tree-select/lib/interface';
+import { default as RcTreeSelect, TreeSelectProps } from "./index";
 
-const TreeSelect = (props: any) => {
+const TreeSelect = (props: TreeSelectProps<DefaultValueType>) => {
   const [checkAll, setCheckAll] = useState(false);
-  const [selectValue, setSelectValue] = useState(undefined as undefined | any[]);
+  const [selectValue, setSelectValue] = useState(undefined as any);
   const [originData, setOriginData] = useState([]);
   const [disabledData, setDisabledData] = useState([]);
 
@@ -15,7 +16,7 @@ const TreeSelect = (props: any) => {
   useEffect(() => {
     setOriginData(flatten(props.treeData));
     setDisabledData(setItemDisabled(props.treeData))
-  }, []);
+  }, [props.treeData]);
 
   // 将原始数据处理为树节点中的options数组，用以取消选中全部时的数据重渲染
   const flatten = (data: any) => {
@@ -58,7 +59,7 @@ const TreeSelect = (props: any) => {
     const { onChange: _onChange, treeData } = props;
     setCheckAll(e.target.checked);
     const value = e.target.checked ? getAllKey(treeData) : selectValue;
-    _onChange && _onChange(value);
+    _onChange && _onChange(value, [], {} as any);
   }
 
   const renderDropdown = (originNode: any) => {

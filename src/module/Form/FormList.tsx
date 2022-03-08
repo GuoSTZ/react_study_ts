@@ -56,7 +56,7 @@ export interface FormListOperationProps {
   RemoveNode: () => ReactNode;
 }
 
-const DynamicFieldSet = (props: FormListProps, _ref: any) => {
+export const FormList = forwardRef((props: FormListProps, ref: any) => {
   const {
     name,
     form,
@@ -112,16 +112,18 @@ const DynamicFieldSet = (props: FormListProps, _ref: any) => {
   const removeItem = (key: number) => {
     // 删除节点时，被删除行的数据会出现遗留现象，因为下一行控件的id变成了被删除行控件的id
     // 故需要将下一个节点的值填入到当前删除的节点位置
-    // 替代解决方案，不使用索引值作为控件id，使用key值作为控件id，这样就不需要手动设置值
-    const fields = getFileds(key);
-    const index = keys.indexOf(key);
-    fields?.map((item: string) => {
-      let array: any = item?.split(".");
-      // 获取fieldName中索引index所在的位置
-      const idx = array.indexOf(index.toString());
-      array?.splice(idx, 1, index + 1);
-      form?.setFieldsValue({ [item]: form.getFieldValue(array.join(".")) });
-    })
+    const index: number = keys.indexOf(key);
+    for(let i=index; i< keys.length-1; i++) {
+      const fields: string[] = getFileds(keys[i]);
+      fields?.map((item: string) => {
+        let array: any = item?.split(".");
+        // 获取field中索引index所在的位置
+        const idx = array.indexOf(i.toString());
+        array?.splice(idx, 1, i + 1);
+        form?.setFieldsValue({ [item]: form.getFieldValue(array.join(".")) });
+      })
+    }
+
     const new_keys = keys?.filter((item: number) => item !== key);
     setKeys(new_keys);
     if(max && new_keys.length <= max) {
@@ -196,15 +198,11 @@ const DynamicFieldSet = (props: FormListProps, _ref: any) => {
     })
   }
   return (
-    <div className="FormList" ref={_ref}>
+    <div className="FormList" ref={ref}>
       {getItem()}
       <Form.Item>
         <ErrorList errors={errors}/>
       </Form.Item>
     </div>
   )
-}
-
-const FormList = forwardRef<FormListProps, FormListProps>(DynamicFieldSet);
-
-export default FormList;
+});
