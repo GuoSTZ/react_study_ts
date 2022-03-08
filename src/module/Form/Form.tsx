@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Input, Icon, Button, List, Checkbox, Select, Row, Col } from 'antd';
-import FormList, { FormListFieldProps } from './FormList';
+import { FormListFieldProps, FormList } from './FormList';
 import VirtualSelect_class from '../Select/components/VirtualSelect_class';
 import './style/Form.less';
 
