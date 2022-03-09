@@ -97,7 +97,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
 
   componentDidMount() {
     // 设置open为true时，需要直接绑定节点
-    if (!this.timer) {
+    if (!this.timer && this.props.open) {
       this.timer = setTimeout(() => this.addEvent(), 0);
     }
   }

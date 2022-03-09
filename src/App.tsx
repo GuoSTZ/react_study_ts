@@ -47,7 +47,7 @@ class App extends Component {
     const {Option, OptGroup} = Select;
     const options = [];
     const options2 = [];
-    for (let i = 1; i < 70; i++) {
+    for (let i = 1; i < 701; i++) {
       const value = i;
       options.push({
         value,
@@ -72,10 +72,13 @@ class App extends Component {
         <VirtualSelect_class 
           placeholder="请选择内容" 
           style={{width: 400}}
+          // dropdownStyle={{height: 400}}
+          // dropdownClassName={'aaaaaa'}
           showSearch
           optionFilterProp="children"
           mode="multiple"
-          open={true}
+          // open={true}  
+          // getPopupContainer={(triggerNode: any) => triggerNode.parentElement}
         >
           {
             options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
@@ -91,13 +94,13 @@ class App extends Component {
           maxTargetKeys={200}
           dropdownSelectCount={[100]}
         /> */}
-        <TreeSelect 
+        {/* <TreeSelect 
           style={{width: 400}}
           placeholder="请选择"
           treeData={treeData}
           treeCheckable
           open={true}
-        />
+        /> */}
       </div>
     );
   }
