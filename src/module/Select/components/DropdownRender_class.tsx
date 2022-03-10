@@ -49,18 +49,16 @@ export default class DropdownRender_class extends React.Component<DropdownRender
     menuNode?.props?.menuItems
       .slice(start, end)
       .map((item: any, idx: number) => {
-        let isDisabledItem = false;
         const index = start + idx;
         const style = this.handleItemStyle(index);
         // 为空时
         if (item.key === "NOT_FOUND") {
-          isDisabledItem = true;
           delete style.height;
         }
         new_menuItems.push(
           React.cloneElement(item, {
             style: { ...item.style, ...style },
-            disabled: isCheckAll || isDisabledItem,
+            disabled: isCheckAll || item.key === "NOT_FOUND",
           })
         )
       });
