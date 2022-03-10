@@ -14,9 +14,11 @@ type FilterChildListType = undefined | any[];
 interface VirtualSelectState {
   childList: any[];
   filterChildList: FilterChildListType;
+  valueList: string[];
   key?: string;
   visible: boolean;
   selectValue: any | any[];
+  searchValue?: string;
   checkAll: boolean;
 }
 
@@ -77,9 +79,11 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     this.state = {
       childList: this.handlePropsChildren(props.children),
       filterChildList: undefined,
+      valueList: this.handlePropsChildren(props.children).map((item: any) => item.props.value),
       key: undefined,
       visible: false,
       selectValue: undefined,
+      searchValue: undefined,
       checkAll: false
     }
     this.ITEM_HEIGHT = ITEM_HEIGHT_CONFIG[props.size || "default"]
@@ -104,12 +108,19 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
 
   componentDidUpdate(prevProps: any, prevState: any) {
     const { children } = this.props;
+    const { searchValue } = this.state;
     if (prevProps.children !== children) {
       this.setState({
         childList: this.handlePropsChildren(children),
         filterChildList: undefined
       });
     }
+    // if(!!searchValue && this.cref?.selectRef?.inputRef) {
+    //   this.setState({
+    //     filterChildList: undefined,
+    //     searchValue: undefined
+    //   })
+    // }
   }
 
   componentWillUnmount() {
@@ -133,6 +144,10 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
 
   // 获取总高度，数据为空时，设置为100
   getAllHeight() {
+    // 当模式为tags，且输入的内容为自定义数据无匹配的情况时
+    if(this.props.mode === "tags" && this.getChildList().length === 0) {
+      return this.ITEM_HEIGHT;
+    }
     return this.getChildList().length * this.ITEM_HEIGHT || 100;
   }
 
@@ -225,7 +240,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     }, 0)
   }
 
-  // 挂载监听事件
+  // 挂载事件
   addEvent() {
     this.scrollDropdown = document.querySelector(`.VtSelect-dropdown${this.randomNum}`);
     this.scrollKey = document.querySelector(`.VtSelect${this.randomNum}`);
@@ -268,6 +283,11 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
           ? this.scrollWithValue(Number(key))
           : this.refreshDropdown();
       }
+    } else {
+      // 收起时，清除过滤，该方案目前有缺陷，仅限失焦时，输入框内的值被清空，且下拉菜单被收起时才能使用
+      this.setState({
+        filterChildList: undefined
+      })
     }
     if (this.lock) {
       this.selectRef.focus();
@@ -296,13 +316,8 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
   // 处理【全部】选项固定与非固定时的宽度
   handleFixedWidth() {
     const { style } = this.props;
-    const element: HTMLElement|null = document.querySelector(`.VtSelect${this.randomNum}`);
-    // 当【全部】选择固定时，根据不同的size，设置不同的marginTop值
-    const scroll_element_div: HTMLElement|null = 
-      document.querySelector(`.VtSelect-dropdown${this.randomNum} > div:nth-of-type(2)`);
-    if(scroll_element_div && checkAll_fixed) {
-      scroll_element_div.style.marginTop = `${this.ITEM_HEIGHT}px`;
-    }
+    const element: HTMLElement | null = document.querySelector(`.VtSelect${this.randomNum}`);
+
     // 是否存在滚动条
     const isScroll = this.getChildList().length > PAGE_SIZE - 1;
     // 默认滑块宽度为17，如果有自定义滑块样式，此处会出现偏差
@@ -321,12 +336,12 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
 
   // 自定义下拉菜单
   renderDropdown(menuNode: ReactNode, props: any) {
-    const { dropdownRender: _dropdownRender } = this.props;
+    const { dropdownRender: _dropdownRender, mode } = this.props;
     const { start, end } = this.handleItemIndex();
     const menu = (
       <React.Fragment>
         {
-          this.isMultiple && this.getChildList().length > 0 && (
+          this.isMultiple && (this.getChildList().length > 0 || mode === 'tags') && (
             <div
               className={`VtSelect-dropdown-checkAll ${checkAll_fixed ? 'VtSelect-dropdown-checkAll-fixed' : ''}`}
               onMouseDown={this.lockClose}
@@ -357,6 +372,8 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
           menuNode={menuNode}
           ref={ele => this.cref = ele}
           isCheckAll={this.state.checkAll}
+          isMultiple={this.isMultiple}
+          isCheckAllFixed={checkAll_fixed}
         />
       </React.Fragment>
     )
@@ -366,6 +383,15 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
   // 搜索回调
   onSearch(value: string) {
     const { onSearch: _onSearch, showSearch, filterOption, children } = this.props;
+    // 做搜索时，如果向下滚动一定高度，此时scrollTop一直在变大
+    // 到一定程度后，会导致计算出来的start和end的值都大于过滤后的数据的总高度
+    // 这样会演变成过滤数组存在，但是在模板组件内切割出来的数据为空，最终无法显示下拉菜单
+    // 目前处理为，每一次搜索，都滑动回顶部
+    this.scrollDropdown.scrollTo(0, 0);
+    this.setState({
+      searchValue: value
+    })
+
     let result: any = undefined;
     if (showSearch || this.isMultiple) {
       if (typeof filterOption === "function") {
@@ -374,11 +400,6 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
       if (!filterOption) {
         result = children?.filter((item: any) => this.customFilterOption(value, item));
       }
-      // 做搜索时，如果向下滚动一定高度，此时scrollTop一直在变大
-      // 到一定程度后，会导致计算出来的start和end的值都大于过滤后的数据的总高度
-      // 这样会演变成过滤数组存在，但是在模板组件内切割出来的数据为空，最终无法显示下拉菜单
-      // 目前处理为，每一次搜索，都滑动回顶部
-      this.scrollDropdown.scrollTo(0, 0);
       this.setState({
         filterChildList: !value ? undefined : result
       }, () => {
@@ -390,7 +411,8 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
 
   // 选中选项后，清除搜索条件，重新计算下拉框高度
   onChange(value: any, option: any) {
-    const { showSearch, onChange: _onChange, autoClearSearchValue } = this.props;
+    const { showSearch, onChange: _onChange, autoClearSearchValue, children, mode } = this.props;
+    const { childList, valueList } = this.state;
     // tag清空【全部】时触发
     if(this.state.checkAll && value?.length === 0) {
       this.setState({
@@ -407,15 +429,33 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
         });
       }
     }
+    // 对于tags模式下，当选中自定义值时，需要将其添加到列表底部
+    if(mode === 'tags') {
+      let arr: any[] = [];
+      value?.map((item: string) => {
+        if(valueList.indexOf(item) === -1) {
+          const new_item = React.cloneElement(childList[0], {
+            value: item,
+            children: item,
+            key: childList.length
+          });
+          arr.push(new_item);
+        }
+      });
+      this.setState({
+        childList: this.handlePropsChildren(children).concat(arr)
+      });
+    }
+
     this.setState({ key: option.key, selectValue: value });
     _onChange && _onChange(value, option);
   };
 
-  // 自定义过滤方法，默认大小写不匹配
+  // 自定义过滤方法，默认大小写匹配
   customFilterOption(value: string, option: any) {
     const { optionFilterProp } = this.props;
     const customOptionFilterProp = optionFilterProp || "children";
-    return `${option.props[customOptionFilterProp]}`?.indexOf(value) !== -1;
+    return `${option.props[customOptionFilterProp]}`?.toUpperCase()?.indexOf(value?.toUpperCase()) !== -1;
   }
 
   render(): React.ReactNode {

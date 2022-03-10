@@ -47,18 +47,18 @@ class App extends Component {
     const {Option, OptGroup} = Select;
     const options = [];
     const options2 = [];
-    for (let i = 1; i < 701; i++) {
-      const value = i;
+    for (let i = 1; i < 20001; i++) {
+      const value = `content${i}`;
       options.push({
         value,
         label: `content${i}`,
         disabled: i === 10,
       });
-      i< 500 && options2.push({
-        value,
-        label: `content${i}`,
-        disabled: i === 10,
-      });
+      // i< 500 && options2.push({
+      //   value,
+      //   label: `content${i}`,
+      //   disabled: i === 10,
+      // });
     }
     let data = [];
     for(let i=0;i< 1000; i++) {
@@ -76,14 +76,27 @@ class App extends Component {
           // dropdownClassName={'aaaaaa'}
           showSearch
           optionFilterProp="children"
+          // mode="tags"
           mode="multiple"
-          // open={true}  
+          open={true}  
           // getPopupContainer={(triggerNode: any) => triggerNode.parentElement}
         >
           {
             options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
           }
         </VirtualSelect_class>
+        {/* <Select
+          optionFilterProp="children"
+          // mode="tags"
+          showSearch
+          placeholder="普通Select" 
+          style={{width: 400}}
+          open={true}
+        >
+          {
+            options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
+          }
+        </Select> */}
         {/* <FormView /> */}
         {/* <TableTransfer 
           dataSource={data}

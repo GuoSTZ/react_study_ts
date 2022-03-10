@@ -1,12 +1,22 @@
 import React from "react";
 
 export interface DropdownRenderProps {
+  /** 数据截取起始位置 */
   start: number;
+  /** 数据截取结束位置 */
   end: number;
+  /** 总高度 */
   allHeight: number;
+  /** 子项高度 */
   itemHeight: number;
+  /** 原始下拉菜单节点 */
   menuNode: any;
+  /** 是否选中【全部】 */
   isCheckAll?: boolean;
+  /** 是否为多选模式 */
+  isMultiple?: boolean;
+  /** 是否固定【全部】 */
+  isCheckAllFixed?: boolean;
 }
 export default class DropdownRender_class extends React.Component<DropdownRenderProps, any> {
   constructor(props: DropdownRenderProps) {
@@ -66,14 +76,16 @@ export default class DropdownRender_class extends React.Component<DropdownRender
   }
 
   render(): React.ReactNode {
-    const { menuNode } = this.props;
+    const { menuNode, isMultiple, isCheckAllFixed } = this.props;
     const { allHeight } = this.state;
+    const menuItems = this.handleMenuItems(menuNode);
     return React.cloneElement(menuNode, {
-      menuItems: this.handleMenuItems(menuNode),
+      menuItems: menuItems,
       dropdownMenuStyle: {
         ...menuNode?.props?.dropdownMenuStyle,
         position: 'relative',
         height: allHeight,
+        marginTop: (isMultiple && isCheckAllFixed && menuItems[0]?.key !== "NOT_FOUND") ? 32 : 0,
         maxHeight: allHeight,
         overflow: "hidden"
       }
