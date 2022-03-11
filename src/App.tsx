@@ -76,9 +76,9 @@ class App extends Component {
           // dropdownClassName={'aaaaaa'}
           showSearch
           optionFilterProp="children"
-          // mode="tags"
-          mode="multiple"
-          open={true}  
+          mode="tags"
+          // mode="multiple"
+          // open={true}  
           // getPopupContainer={(triggerNode: any) => triggerNode.parentElement}
         >
           {

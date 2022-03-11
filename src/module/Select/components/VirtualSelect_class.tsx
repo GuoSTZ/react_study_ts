@@ -115,12 +115,14 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
         filterChildList: undefined
       });
     }
-    // if(!!searchValue && this.cref?.selectRef?.inputRef) {
-    //   this.setState({
-    //     filterChildList: undefined,
-    //     searchValue: undefined
-    //   })
-    // }
+    // 输入框失焦后，重置searchValue值，并重绘下拉菜单
+    if(!!searchValue && !this.selectRef?.rcSelect?.inputRef?.value) {
+      this.setState({
+        searchValue: undefined
+      }, () =>{
+        this.refreshDropdown();
+      })
+    }
   }
 
   componentWillUnmount() {
