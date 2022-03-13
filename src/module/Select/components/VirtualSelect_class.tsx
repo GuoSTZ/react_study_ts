@@ -38,13 +38,13 @@ const ITEM_HEIGHT_CONFIG = {
 const PAGE_SIZE = 8;
 
 // 下拉框mode
-const MULTIPLEMODES: any = ["multiple", "tags"];
+export const MULTIPLEMODES: any = ["multiple", "tags"];
 
 // 选中全部设定
 const checkAll_text = "全部";
 
 // 是否固定【全部】选项
-const checkAll_fixed = true;
+export const checkAll_fixed = true;
 
 export default class VirtualSelect_class extends React.Component<VirtualSelectProps, VirtualSelectState> {
   // 下拉菜单高度
@@ -146,8 +146,9 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
 
   // 获取总高度，数据为空时，设置为100
   getAllHeight() {
+    const { searchValue } = this.state;
     // 当模式为tags，且输入的内容为自定义数据无匹配的情况时
-    if(this.props.mode === "tags" && this.getChildList().length === 0) {
+    if(this.props.mode === "tags" && this.getChildList().length === 0 && !!searchValue) {
       return this.ITEM_HEIGHT;
     }
     return this.getChildList().length * this.ITEM_HEIGHT || 100;
@@ -336,6 +337,18 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     return "100%";
   }
 
+  isShowCheckAll() {
+    const { mode } = this.props;
+    const { searchValue } = this.state;
+    const base = this.isMultiple && this.getChildList().length > 0;
+    const base_tags = mode === "tags" && !!searchValue;
+    if(base || base_tags) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   // 自定义下拉菜单
   renderDropdown(menuNode: ReactNode, props: any) {
     const { dropdownRender: _dropdownRender, mode } = this.props;
@@ -343,7 +356,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     const menu = (
       <React.Fragment>
         {
-          this.isMultiple && (this.getChildList().length > 0 || mode === 'tags') && (
+          this.isShowCheckAll() && (
             <div
               className={`VtSelect-dropdown-checkAll ${checkAll_fixed ? 'VtSelect-dropdown-checkAll-fixed' : ''}`}
               onMouseDown={this.lockClose}
@@ -374,8 +387,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
           menuNode={menuNode}
           ref={ele => this.cref = ele}
           isCheckAll={this.state.checkAll}
-          isMultiple={this.isMultiple}
-          isCheckAllFixed={checkAll_fixed}
+          mode={mode}
         />
       </React.Fragment>
     )
@@ -436,12 +448,10 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
       let arr: any[] = [];
       value?.map((item: string) => {
         if(valueList.indexOf(item) === -1) {
-          const new_item = React.cloneElement(childList[0], {
-            value: item,
-            children: item,
-            key: childList.length
-          });
-          arr.push(new_item);
+          const option = (
+            <Select.Option key={childList.length} value={item}>{item}</Select.Option>
+          )
+          arr.push(option);
         }
       });
       this.setState({

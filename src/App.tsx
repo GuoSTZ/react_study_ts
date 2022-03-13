@@ -47,7 +47,7 @@ class App extends Component {
     const {Option, OptGroup} = Select;
     const options = [];
     const options2 = [];
-    for (let i = 1; i < 20001; i++) {
+    for (let i = 1; i < 1; i++) {
       const value = `content${i}`;
       options.push({
         value,

@@ -1,4 +1,5 @@
 import React from "react";
+import { MULTIPLEMODES, checkAll_fixed } from "./VirtualSelect_class";
 
 export interface DropdownRenderProps {
   /** 数据截取起始位置 */
@@ -13,10 +14,8 @@ export interface DropdownRenderProps {
   menuNode: any;
   /** 是否选中【全部】 */
   isCheckAll?: boolean;
-  /** 是否为多选模式 */
-  isMultiple?: boolean;
-  /** 是否固定【全部】 */
-  isCheckAllFixed?: boolean;
+  /** 下拉框模式 */
+  mode?: string;
 }
 export default class DropdownRender_class extends React.Component<DropdownRenderProps, any> {
   constructor(props: DropdownRenderProps) {
@@ -75,8 +74,25 @@ export default class DropdownRender_class extends React.Component<DropdownRender
     return new_menuItems;
   }
 
+  calcMarginTop(menuItems: any) {
+    const { mode } = this.props;
+    const isMultiple = MULTIPLEMODES.includes(mode);
+    // 多选
+    if(isMultiple) {
+      // 【全部】选项固定
+      if(checkAll_fixed) {
+        // 下拉菜单有数据
+        if(menuItems[0]?.key !== "NOT_FOUND") {
+          return 32;
+        }
+      }
+    }
+    // (isMultiple && isCheckAllFixed && menuItems[0]?.key !== "NOT_FOUND") ? 32 : 0
+    return 0;
+  }
+
   render(): React.ReactNode {
-    const { menuNode, isMultiple, isCheckAllFixed } = this.props;
+    const { menuNode } = this.props;
     const { allHeight } = this.state;
     const menuItems = this.handleMenuItems(menuNode);
     return React.cloneElement(menuNode, {
@@ -85,7 +101,7 @@ export default class DropdownRender_class extends React.Component<DropdownRender
         ...menuNode?.props?.dropdownMenuStyle,
         position: 'relative',
         height: allHeight,
-        marginTop: (isMultiple && isCheckAllFixed && menuItems[0]?.key !== "NOT_FOUND") ? 32 : 0,
+        marginTop: this.calcMarginTop(menuItems),
         maxHeight: allHeight,
         overflow: "hidden"
       }
