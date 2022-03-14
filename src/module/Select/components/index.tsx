@@ -2,7 +2,7 @@ import React, { ReactElement, ReactNode } from 'react';
 import { Select, Checkbox } from 'antd';
 import { SelectProps } from 'antd/lib/select';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox/Checkbox';
-import DropdownRender_class from './DropdownRender_class';
+import DropdownRender from './DropdownRender';
 import './index.less';
 
 export interface VirtualSelectProps extends SelectProps {
@@ -47,7 +47,7 @@ const checkAll_text = "全部";
 // 是否固定【全部】选项
 export const checkAll_fixed = false;
 
-export default class VirtualSelect_class extends React.Component<VirtualSelectProps, VirtualSelectState> {
+export default class VirtualSelect extends React.Component<VirtualSelectProps, VirtualSelectState> {
   // 下拉菜单高度
   private DROPDOWN_HEIGHT: number = 0;
   // 子项高度
@@ -109,19 +109,27 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
   }
 
   componentDidUpdate(prevProps: any, prevState: any) {
-    const { children } = this.props;
+    const { children, value } = this.props;
     const { searchValue } = this.state;
-    if (prevProps.children !== children) {
+    // 默认值回填
+    if(prevProps.value !== value) {
+      this.setState({
+        selectValue: value
+      })
+    }
+    // 由于组件使用外部传入的onChange向外抛出数据，导致两个props的children引用不同，通过length来进一步管控
+    if (prevProps.children !== children && prevProps.children?.length !== children?.length) {
       this.setState({
         childList: this.handlePropsChildren(children),
-        filterChildList: undefined
+        filterChildList: undefined,
+        valueList: this.handlePropsChildren(children).map((item: any) => item.props.value)
       });
     }
     // 输入框失焦后，重置searchValue值，并重绘下拉菜单
-    if(!!searchValue && !this.selectRef?.rcSelect?.inputRef?.value) {
+    if (!!searchValue && !this.selectRef?.rcSelect?.inputRef?.value) {
       this.setState({
         searchValue: undefined
-      }, () =>{
+      }, () => {
         this.refreshDropdown();
       })
     }
@@ -148,12 +156,12 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
 
   // 获取总高度，数据为空时，设置为100
   getAllHeight() {
-    const { searchValue } = this.state;
-    // 当模式为tags，且输入的内容为自定义数据无匹配的情况时
-    if(this.props.mode === "tags" && this.getChildList().length === 0 && !!searchValue) {
-      return this.ITEM_HEIGHT;
+    const len = this.cref?.getMenuItemsLength && this.cref?.getMenuItemsLength() || 0;
+    if(len === 0) {
+      return 100;
+    } else {
+      return len * this.ITEM_HEIGHT
     }
-    return this.getChildList().length * this.ITEM_HEIGHT || 100;
   }
 
   // 获取children的value值，供【全部】使用
@@ -205,8 +213,8 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
 
       if (!currentItem) return;
       const offsetTop = currentItem.offsetTop;
-      // 根据是否多选，调整高度
-      const dropdown_height = this.isMultiple ? this.DROPDOWN_HEIGHT - this.ITEM_HEIGHT : this.DROPDOWN_HEIGHT;
+      // 根据是否多选以及是否固定【全部】，调整高度
+      const dropdown_height = (this.isMultiple && checkAll_fixed) ? this.DROPDOWN_HEIGHT - this.ITEM_HEIGHT : this.DROPDOWN_HEIGHT;
       const diff = offsetTop - this.currScrollTop;
 
       /**要注意的是，处于最后一项向下移动时，并不是直接回到第一项，同理，第一项向上移动时，也不是直接到最后一项 */
@@ -231,7 +239,6 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
       }
       // 向上滚动
       if (up) {
-        // this.scrollDropdown.scrollTo(0, offsetTop);
         // 处于全部数据的顶部时
         if (diff > dropdown_height) {
           this.scrollDropdown.scrollTo(0, this.getAllHeight() - dropdown_height);
@@ -339,6 +346,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     return "100%";
   }
 
+  // 是否展示【全部】
   isShowCheckAll() {
     const { mode } = this.props;
     const { searchValue } = this.state;
@@ -346,7 +354,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     const base_tags = mode === "tags" && !!searchValue;
     // 临时隐藏【全部】功能
     return false;
-    if(base || base_tags) {
+    if (base || base_tags) {
       return true;
     } else {
       return false;
@@ -383,7 +391,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
             </div>
           )
         }
-        <DropdownRender_class
+        <DropdownRender
           start={start}
           end={end}
           allHeight={this.getAllHeight()}
@@ -422,8 +430,8 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
       }
 
       let arr: any[] = [];
-      if(mode === 'tags') {
-        if(tagsValueList.indexOf(value) === -1) {
+      if (mode === 'tags') {
+        if (tagsValueList.indexOf(value) === -1) {
           const option = (
             <Select.Option key={childList.length} value={value}>{value}</Select.Option>
           )
@@ -444,9 +452,9 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
   // 选中选项后，清除搜索条件，重新计算下拉框高度
   onChange(value: any, option: any) {
     const { showSearch, onChange: _onChange, autoClearSearchValue, children, mode } = this.props;
-    const { childList, valueList, filterChildList } = this.state;
+    const { childList, valueList } = this.state;
     // tag清空【全部】时触发
-    if(this.state.checkAll && value?.length === 0) {
+    if (this.state.checkAll && value?.length === 0) {
       this.setState({
         checkAll: false
       });
@@ -455,18 +463,18 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
       // 在选中选项后，清空输入框内容（清空搜索状态）
       if (autoClearSearchValue !== false) {
         this.setState({
-          filterChildList: undefined
+          filterChildList: undefined,
         }, () => {
           this.refreshDropdown();
         });
       }
     }
     // 对于tags模式下，当选中自定义值时，需要将其添加到列表底部
-    if(mode === 'tags') {
+    if (mode === 'tags') {
       let arr: any[] = [];
       let tagsValueArr: string[] = [];
       value?.map((item: string) => {
-        if(valueList.indexOf(item) === -1) {
+        if (valueList.indexOf(item) === -1) {
           const option = (
             <Select.Option key={childList.length} value={item}>{item}</Select.Option>
           )
@@ -516,7 +524,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
         dropdownRender={this.renderDropdown.bind(this)}
         onDropdownVisibleChange={this.onDropdownVisibleChange.bind(this)}
         ref={ref => this.selectRef = ref}
-        open={ open || visible}
+        open={open || visible}
         value={checkAll ? checkAll_text : selectValue}
       >
         {this.getChildList()}

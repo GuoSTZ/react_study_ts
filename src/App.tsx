@@ -27,8 +27,7 @@ import TableTransfer from './module/TableTransfer';
 // import AnimateCssView from './module/AnimateCss';
 // import AnimationView from './module/Animation';
 // import Select from './module/Select';
-import VirtualSelect from './module/Select/components/VirtualSelect';
-import VirtualSelect_class from './module/Select/components/VirtualSelect_class';
+import VirtualSelect_class from './module/Select/components';
 import ScreenView from './module/Screen';
 import TransferView, { ListTransfer, Ceshi } from './module/Transfer';
 import { FormView, WrappedDynamicFieldSet } from './module/Form';
@@ -47,7 +46,7 @@ class App extends Component {
     const {Option, OptGroup} = Select;
     const options = [];
     const options2 = [];
-    for (let i = 1; i < 11; i++) {
+    for (let i = 1; i < 1004; i++) {
       const value = `content${i}`;
       options.push({
         value,

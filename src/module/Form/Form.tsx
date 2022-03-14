@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Icon, Button, List, Checkbox, Select, Row, Col } from 'antd';
 import { FormListFieldProps, FormList } from './FormList';
-import VirtualSelect_class from '../Select/components/VirtualSelect_class';
+import VirtualSelect_class from '../Select/components';
 import './style/Form.less';
 
 const FormWrap = (props: any) => {

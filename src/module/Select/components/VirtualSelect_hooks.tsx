@@ -1,8 +1,8 @@
 import React, { useState, useEffect, ReactNode, useRef } from 'react';
 import { Select } from 'antd';
 import { SelectProps, OptionProps } from 'antd/lib/select';
-import DropdownRender from './DropdownRender';
-import DropdownRender2 from './DropdownRender_class';
+import DropdownRender from './DropdownRender_hooks';
+import DropdownRender2 from './DropdownRender';
 import './index.less';
 
 export interface VirtualSelectProps extends SelectProps {
