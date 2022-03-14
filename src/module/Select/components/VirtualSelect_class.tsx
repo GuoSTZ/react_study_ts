@@ -15,6 +15,7 @@ interface VirtualSelectState {
   childList: any[];
   filterChildList: FilterChildListType;
   valueList: string[];
+  tagsValueList: string[];
   key?: string;
   visible: boolean;
   selectValue: any | any[];
@@ -44,7 +45,7 @@ export const MULTIPLEMODES: any = ["multiple", "tags"];
 const checkAll_text = "全部";
 
 // 是否固定【全部】选项
-export const checkAll_fixed = true;
+export const checkAll_fixed = false;
 
 export default class VirtualSelect_class extends React.Component<VirtualSelectProps, VirtualSelectState> {
   // 下拉菜单高度
@@ -80,6 +81,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
       childList: this.handlePropsChildren(props.children),
       filterChildList: undefined,
       valueList: this.handlePropsChildren(props.children).map((item: any) => item.props.value),
+      tagsValueList: [],
       key: undefined,
       visible: false,
       selectValue: undefined,
@@ -342,6 +344,8 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     const { searchValue } = this.state;
     const base = this.isMultiple && this.getChildList().length > 0;
     const base_tags = mode === "tags" && !!searchValue;
+    // 临时隐藏【全部】功能
+    return false;
     if(base || base_tags) {
       return true;
     } else {
@@ -396,7 +400,8 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
 
   // 搜索回调
   onSearch(value: string) {
-    const { onSearch: _onSearch, showSearch, filterOption, children } = this.props;
+    const { onSearch: _onSearch, showSearch, filterOption, mode } = this.props;
+    const { tagsValueList, childList } = this.state;
     // 做搜索时，如果向下滚动一定高度，此时scrollTop一直在变大
     // 到一定程度后，会导致计算出来的start和end的值都大于过滤后的数据的总高度
     // 这样会演变成过滤数组存在，但是在模板组件内切割出来的数据为空，最终无法显示下拉菜单
@@ -407,13 +412,26 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     })
 
     let result: any = undefined;
+    // 可进行模糊搜索或者为多选模式下
     if (showSearch || this.isMultiple) {
       if (typeof filterOption === "function") {
-        result = children?.filter((item: any) => filterOption(value, item));
+        result = childList?.filter((item: any) => filterOption(value, item));
       }
       if (!filterOption) {
-        result = children?.filter((item: any) => this.customFilterOption(value, item));
+        result = childList?.filter((item: any) => this.customFilterOption(value, item));
       }
+
+      let arr: any[] = [];
+      if(mode === 'tags') {
+        if(tagsValueList.indexOf(value) === -1) {
+          const option = (
+            <Select.Option key={childList.length} value={value}>{value}</Select.Option>
+          )
+          arr = [option];
+        }
+      }
+      result.push(...arr);
+
       this.setState({
         filterChildList: !value ? undefined : result
       }, () => {
@@ -426,7 +444,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
   // 选中选项后，清除搜索条件，重新计算下拉框高度
   onChange(value: any, option: any) {
     const { showSearch, onChange: _onChange, autoClearSearchValue, children, mode } = this.props;
-    const { childList, valueList } = this.state;
+    const { childList, valueList, filterChildList } = this.state;
     // tag清空【全部】时触发
     if(this.state.checkAll && value?.length === 0) {
       this.setState({
@@ -434,7 +452,7 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
       });
     }
     if (showSearch || this.isMultiple) {
-      // 在选中选项后，清空输入框内容
+      // 在选中选项后，清空输入框内容（清空搜索状态）
       if (autoClearSearchValue !== false) {
         this.setState({
           filterChildList: undefined
@@ -446,16 +464,19 @@ export default class VirtualSelect_class extends React.Component<VirtualSelectPr
     // 对于tags模式下，当选中自定义值时，需要将其添加到列表底部
     if(mode === 'tags') {
       let arr: any[] = [];
+      let tagsValueArr: string[] = [];
       value?.map((item: string) => {
         if(valueList.indexOf(item) === -1) {
           const option = (
             <Select.Option key={childList.length} value={item}>{item}</Select.Option>
           )
           arr.push(option);
+          tagsValueArr.push(item);
         }
       });
       this.setState({
-        childList: this.handlePropsChildren(children).concat(arr)
+        childList: this.handlePropsChildren(children).concat(arr),
+        tagsValueList: tagsValueArr
       });
     }
 
