@@ -87,7 +87,6 @@ export default class DropdownRender_class extends React.Component<DropdownRender
         }
       }
     }
-    // (isMultiple && isCheckAllFixed && menuItems[0]?.key !== "NOT_FOUND") ? 32 : 0
     return 0;
   }
 
