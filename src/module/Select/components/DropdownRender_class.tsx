@@ -77,14 +77,11 @@ export default class DropdownRender_class extends React.Component<DropdownRender
   calcMarginTop(menuItems: any) {
     const { mode } = this.props;
     const isMultiple = MULTIPLEMODES.includes(mode);
-    // 多选
-    if(isMultiple) {
-      // 【全部】选项固定
-      if(checkAll_fixed) {
-        // 下拉菜单有数据
-        if(menuItems[0]?.key !== "NOT_FOUND") {
-          return 32;
-        }
+    // 多选且【全部】选项固定
+    if(isMultiple && checkAll_fixed) {
+      // 下拉菜单有数据
+      if(menuItems[0]?.key !== "NOT_FOUND") {
+        return 32;
       }
     }
     return 0;
