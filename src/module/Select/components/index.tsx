@@ -156,7 +156,10 @@ export default class VirtualSelect extends React.Component<VirtualSelectProps, V
 
   // 获取总高度，数据为空时，设置为100
   getAllHeight() {
-    const len = this.cref?.getMenuItemsLength && this.cref?.getMenuItemsLength() || 0;
+    const len = 
+      this.cref?.getMenuItemsLength && this.cref?.getMenuItemsLength() || 
+      this.getChildList().length * this.ITEM_HEIGHT || 
+      0;
     if(len === 0) {
       return 100;
     } else {
