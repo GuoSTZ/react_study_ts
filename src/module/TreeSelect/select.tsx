@@ -16,6 +16,10 @@ const TreeSelect = (props: TreeSelectProps<DefaultValueType>) => {
     setDisabledData(setItemDisabled(props.treeData))
   }, [props.treeData]);
 
+  useEffect(() => {
+    setSelectValue(props.value)
+  }, [props.value])
+
   // 获取全部数据的key值数组
   const getAllKey = (data: any): string[] => {
     const keys: string[] = [];
