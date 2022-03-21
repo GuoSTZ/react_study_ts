@@ -7,29 +7,14 @@ import { default as RcTreeSelect, TreeSelectProps } from "./index";
 const TreeSelect = (props: TreeSelectProps<DefaultValueType>) => {
   const [checkAll, setCheckAll] = useState(false);
   const [selectValue, setSelectValue] = useState(undefined as any);
-  const [originData, setOriginData] = useState([]);
   const [disabledData, setDisabledData] = useState([]);
 
   const checkAll_text = "全部";
   const isMultiple = !!(props?.treeCheckable || props?.multiple);
 
   useEffect(() => {
-    setOriginData(flatten(props.treeData));
     setDisabledData(setItemDisabled(props.treeData))
   }, [props.treeData]);
-
-  // 将原始数据处理为树节点中的options数组，用以取消选中全部时的数据重渲染
-  const flatten = (data: any) => {
-    return data?.map((item: any) => {
-      const new_item = Object.assign({}, item);
-      new_item.node = item;
-      new_item.value = item.key;
-      if (new_item.children) {
-        new_item.children = flatten(new_item.children);
-      }
-      return new_item;
-    });
-  }
 
   // 获取全部数据的key值数组
   const getAllKey = (data: any): string[] => {
@@ -67,7 +52,7 @@ const TreeSelect = (props: TreeSelectProps<DefaultValueType>) => {
     const menu = (
       <React.Fragment>
         {
-          isMultiple && (
+          isMultiple && props?.treeData && props?.treeData?.length > 0 && (
             <Checkbox
               checked={checkAll}
               onChange={checkOnChange}
@@ -79,7 +64,7 @@ const TreeSelect = (props: TreeSelectProps<DefaultValueType>) => {
         }
         {
           React.cloneElement(originNode, {
-            options: checkAll ? disabledData : originData
+            options: checkAll ? disabledData : originNode.props.options
           })
         }
       </React.Fragment>
