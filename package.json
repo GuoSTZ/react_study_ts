@@ -25,6 +25,7 @@
     "customize-cra": "1.0.0",
     "echarts": "^5.2.2",
     "highcharts": "^9.3.2",
+    "jsoneditor": "^9.7.4",
     "less": "3.9.0",
     "less-loader": "4.1.0",
     "lodash": "4.17.21",

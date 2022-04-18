@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   Redirect
 } from 'react-router-dom';
-import { Select } from 'antd';
+import { Select, Button } from 'antd';
 // import EditTableView from './module/EditTable';
 import CheckView from './module/EditTable/check';
 // import DisabledButton from './module/Button/DisabledButton';
@@ -19,6 +19,7 @@ import CheckView from './module/EditTable/check';
 // import CardView from './module/CardView';
 // import SelectView from './module/SelectView';
 import TreeSelect from './module/TreeSelect/select';
+import AntdTreeSelect from './module/TreeSelect';
 import TableTransfer from './module/TableTransfer';
 // import EchartsView from './module/EchartsView';
 // import LessView from './module/LessView';
@@ -42,11 +43,15 @@ import customSvg from './custom.svg';
 import {treeData} from './utils/mockData';
 
 class App extends Component {
+  state = {
+    status: false,
+    visible: false
+  }
   render() {
     const {Option, OptGroup} = Select;
     const options = [];
     const options2 = [];
-    for (let i = 1; i < 1004; i++) {
+    for (let i = 1; i < 1; i++) {
       const value = `content${i}`;
       options.push({
         value,
@@ -68,7 +73,7 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <VirtualSelect_class 
+        {/* <VirtualSelect_class 
           placeholder="请选择内容" 
           style={{width: 400}}
           // dropdownStyle={{height: 400}}
@@ -83,7 +88,7 @@ class App extends Component {
           {
             options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
           }
-        </VirtualSelect_class>
+        </VirtualSelect_class> */}
         {/* <Select
           optionFilterProp="children"
           // mode="tags"
@@ -96,7 +101,7 @@ class App extends Component {
             options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
           }
         </Select> */}
-        {/* <FormView /> */}
+        <FormView />
         {/* <TableTransfer 
           dataSource={data}
           leftColumns={[{dataIndex: 'title'}]}
@@ -107,11 +112,13 @@ class App extends Component {
           dropdownSelectCount={[100]}
         /> */}
         {/* <TreeSelect 
-          style={{width: 400}}
-          placeholder="请选择"
+          style={{ width: '100%' }}
+          dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
           treeData={treeData}
+          placeholder="Please select"
+          treeDefaultExpandAll
+          showSearch
           treeCheckable
-          open={true}
         /> */}
       </div>
     );
