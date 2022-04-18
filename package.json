@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@mcfed/components": "0.7.16",
+    "@mcfed/components": "0.7.31",
     "@mcfed/core": "0.6.2",
     "@mcfed/crud": "0.5.0-beta2",
     "@mcfed/utils": "0.4.4",

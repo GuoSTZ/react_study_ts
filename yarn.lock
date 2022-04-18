@@ -1531,10 +1531,10 @@
     "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
-"@mcfed/components@0.7.16":
-  version "0.7.16"
-  resolved "http://nexus.mchz.com.cn:4873/@mcfed%2fcomponents/-/components-0.7.16.tgz#a77387bb0a97b33169c272a47c72bd5d346fe050"
-  integrity sha512-oSO7tTQxavhq3TanNjptkLnL0STNld7HBxid4P9310b1pnXjFd0iic0414nLvj5YHPMwtfYXLwThv9fO7DXpwQ==
+"@mcfed/components@0.7.31":
+  version "0.7.31"
+  resolved "http://nexus.mchz.com.cn:4873/@mcfed%2fcomponents/-/components-0.7.31.tgz#1f8041d5ddbee6f17c9937c9703316227913eed6"
+  integrity sha512-k9CmCKCJORE8oYqSJY5BbH/rS544MVoS/N7v1qwS42l2r98yqOSr367zehEXYVhuXxOaOaeBW9GGyBbNKs6spQ==
   dependencies:
     "@ant-design/css-animation" "^1.7.2"
     "@mcfed/utils" "^0.2.0-rc8"
