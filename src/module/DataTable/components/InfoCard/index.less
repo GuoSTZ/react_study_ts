@@ -1,0 +1,36 @@
+.info-card {
+  display: flex;
+  align-items: center;
+  .ant-avatar {
+    display: block;
+    margin-right: 12px;
+    color: #3385FF;
+    background-color: #E6F0FF;
+    > .ant-avatar-string {
+      font-size: 18px;
+      font-weight: 400;
+    }
+  }
+  > .info-card-content {
+    width: calc( 100% - 56px );
+    display: inline-block;;
+    > .info-card-title {
+      margin-bottom: 16px;
+      > div:nth-child(1) {
+        height: 24px;
+        margin-bottom: 4px;
+        line-height: 24px;
+        color: #38415c;
+        font-size: 16px;
+        font-weight: 500;
+      }
+      > div:nth-child(2) {
+        height: 22px;
+        line-height: 22px;
+        color: #82899e;
+        font-size: 14px;
+        font-weight: 400;
+      }
+    }
+  }
+}

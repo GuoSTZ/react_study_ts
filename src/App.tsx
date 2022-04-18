@@ -38,6 +38,7 @@ import image1 from './images/1.png'
 import borderSvg from './border.svg';
 import ceshiSvg from './ceshi.svg';
 import customSvg from './custom.svg';
+import DataTable from './module/DataTable';
 
 
 import {treeData} from './utils/mockData';
@@ -101,7 +102,7 @@ class App extends Component {
             options.map((item: any, index: number) => <Option value={item.value} key={index}>{item.label}</Option>)
           }
         </Select> */}
-        <FormView />
+        {/* <FormView /> */}
         {/* <TableTransfer 
           dataSource={data}
           leftColumns={[{dataIndex: 'title'}]}
@@ -120,6 +121,7 @@ class App extends Component {
           showSearch
           treeCheckable
         /> */}
+        <DataTable />
       </div>
     );
   }
