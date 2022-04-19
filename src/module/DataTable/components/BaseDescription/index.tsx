@@ -21,7 +21,10 @@ const BaseDescription: React.FC<BaseDescriptionProps> = props => {
     return (
       <Descriptions.Item span={span} label={label}>
         { 
-          typeof value === 'string' ?  <span title={value}>{value}</span> : value
+          (typeof value === 'string' || typeof value === 'number') 
+            // @ts-ignore
+            ? <span title={value}>{value}</span> 
+            : value
         }
       </Descriptions.Item>
     )

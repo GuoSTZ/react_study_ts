@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
-import { Badge } from 'antd';
-import { DataTable as McDataTable } from '@mcfed/components';
+import { Badge, Switch } from 'antd';
+import { DataTable as McDataTable, ButtonGroups } from '@mcfed/components';
 import { InfoCard, DataCard } from './components';
 import './index.less';
 
@@ -61,6 +61,34 @@ const DataTable: React.FC<any> = () => {
     }
   }
 
+  const renderValueWithUnit = (value: number) => {
+    return (
+      <div className='value-with-unit'>
+        <span>
+          {formatNumber(value)}
+        </span>
+        <span className='unit'>
+          GB
+        </span>
+      </div>
+    )
+  }
+
+  const renderOperation = () => {
+    const Button = ButtonGroups.CustomButton;
+    return (
+      <div className='operation-group'>
+        <Switch className='operation-group-switch'/>
+        <ButtonGroups
+          handleClick={(actionType: string) => console.log(actionType)}>
+          <Button type='link' actionkey='edit'>编辑</Button>
+          <Button type='link' actionkey='detail'>查看</Button>
+          <Button type='link' actionkey='delete'>删除</Button>
+        </ButtonGroups>
+      </div>
+    )
+  }
+
   let tableConf: any = {
     rowKey: "id",
     dataSource: [
@@ -75,10 +103,11 @@ const DataTable: React.FC<any> = () => {
         title: '测试1',
         dataIndex: 'ceshi1',
         key: 'ceshi1',
-        // width: 400,
+        className: "cardStyle",
+        width: "30%",
         render: (text: any, row: any) =>
           <InfoCard
-            title="杭州美创防水坝防水坝防水坝"
+            title="杭州美创防水坝"
             desc="www.hzmc.com"
             info={{
               column: 2,
@@ -94,6 +123,8 @@ const DataTable: React.FC<any> = () => {
         title: '测试2',
         dataIndex: 'ceshi2',
         key: 'ceshi2',
+        width: "65%",
+        className: "cardStyle",
         render: (text: any, row: any) =>
           <DataCard
             monitorData={{
@@ -101,7 +132,7 @@ const DataTable: React.FC<any> = () => {
               column: 3,
               dataSource: [
                 { label: renderLabel(<img src={access} />, "当日访问量"), value: formatNumber(10199) },
-                { label: renderLabel(<img src={flow} />, "当日监控流量"), value: formatNumber("62111") + " GB" },
+                { label: renderLabel(<img src={flow} />, "当日监控流量"), value: renderValueWithUnit(62115) },
                 { label: renderLabel(<img src={ip} />, "当日访问IP数量"), value: formatNumber(62111) },
                 { label: renderLabel(<img src={interface_sum} />, "接口数量"), value: <a href='#'>{formatNumber(62111)}</a> },
                 { label: renderLabel(<img src={sensitive_interface} />, "敏感接口数"), value: <a href='#'>{formatNumber(62111)}</a> },
@@ -116,6 +147,13 @@ const DataTable: React.FC<any> = () => {
               ]
             }}
           />
+      },
+      {
+        title: '操作',
+        dataIndex: 'operation',
+        key: 'operation',
+        // width: 50,
+        render: renderOperation
       }
     ],
     rowSelection,

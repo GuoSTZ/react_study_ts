@@ -21,8 +21,8 @@ const InfoCard: React.FC<InfoCardProps> = props => {
       <Avatar size={56}>{cutTitle(title)}</Avatar>
       <div className='info-card-content'>
         <div className='info-card-title'>
-          <div>{title}</div>
-          <div>{desc}</div>
+          <div title={title}>{title}</div>
+          <div title={desc}>{desc}</div>
         </div>
         <BaseDescription {...otherProps} dataSource={dataSource} />
       </div>

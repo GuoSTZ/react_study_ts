@@ -15,7 +15,7 @@ export interface DataCardProps {
 const DataCard: React.FC<DataCardProps> = props => {
   const { monitorData, dataLabel } = props;
   return (
-    <div>
+    <div className="data-card">
       <BaseDescription {...monitorData} />
       <BaseDescription {...dataLabel} />
     </div>

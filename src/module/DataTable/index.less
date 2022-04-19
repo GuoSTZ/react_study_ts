@@ -17,7 +17,49 @@
           font-size: 16px;
           font-weight: 500;
         }
+        .value-with-unit {
+          > .unit {
+            margin-left: 4px;
+            font-size: 12px;
+          }
+        }
       }
     } 
+  }
+  .ant-table {
+    border-top: 1px solid #E6E9F0;
+    .ant-table-body {
+      .ant-table-tbody {
+        .ant-table-row {
+          td.ant-table-selection-column {
+            padding-right: 0;
+          }
+          td.cardStyle {
+            padding-right: 0;
+            > .info-card {
+              padding-right: 16px;
+              border-right: 1px solid #E9E9E9;
+            }
+            > .data-card {
+              padding-right: 16px;
+              border-right: 1px solid #E9E9E9;
+            }
+          }
+          .operation-group {
+            text-align: center;
+            > .operation-group-switch {
+              margin-bottom: 11px;
+            }
+            .button-groups {
+              > .ant-btn-group {
+                button {
+                  padding: 0 7px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
