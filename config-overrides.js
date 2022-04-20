@@ -9,6 +9,7 @@ module.exports = override(
   }),
   addLessLoader({
     javascriptEnabled: true,
+    modules: true,
     modifyVars: {
       '@red-6': '#FF3D55', //红色系基础色
       '@volcano-6': '#FF6537', //橙色系基础色

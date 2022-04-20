@@ -39,6 +39,7 @@ import borderSvg from './border.svg';
 import ceshiSvg from './ceshi.svg';
 import customSvg from './custom.svg';
 import DataTable from './module/DataTable';
+import JsonEditorView from './module/JsonEditorView';
 
 
 import {treeData} from './utils/mockData';
@@ -121,7 +122,7 @@ class App extends Component {
           showSearch
           treeCheckable
         /> */}
-        <DataTable />
+        <JsonEditorView />
       </div>
     );
   }
