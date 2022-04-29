@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@mc/table-render-3": "^1.0.1",
     "@mcfed/components": "0.7.31",
     "@mcfed/core": "0.6.2",
     "@mcfed/crud": "0.5.0-beta2",

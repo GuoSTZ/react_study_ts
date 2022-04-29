@@ -1531,6 +1531,14 @@
     "@types/yargs" "^16.0.0"
     chalk "^4.0.0"
 
+"@mc/table-render-3@^1.0.1":
+  version "1.0.1"
+  resolved "http://nexus.mchz.com.cn:4873/@mc%2ftable-render-3/-/table-render-3-1.0.1.tgz#cf8f2f07cfbbabfc82871918e2c60cceb013e99a"
+  integrity sha512-f2eDOqEQRrVFcWWL/iwSJSOIocTCoGSmc727b12aL3KbEcd6+m9PDCMq0Se/rN46ZUL6aaPWZ3G5UDilaMVKDw==
+  dependencies:
+    "@babel/runtime" "^7.11.2"
+    dayjs "^1.10.7"
+
 "@mcfed/components@0.7.31":
   version "0.7.31"
   resolved "http://nexus.mchz.com.cn:4873/@mcfed%2fcomponents/-/components-0.7.31.tgz#1f8041d5ddbee6f17c9937c9703316227913eed6"
@@ -4666,6 +4674,11 @@ data-urls@^2.0.0:
     abab "^2.0.3"
     whatwg-mimetype "^2.3.0"
     whatwg-url "^8.0.0"
+
+dayjs@^1.10.7:
+  version "1.11.1"
+  resolved "http://nexus.mchz.com.cn:4873/dayjs/-/dayjs-1.11.1.tgz#90b33a3dda3417258d48ad2771b415def6545eb0"
+  integrity sha512-ER7EjqVAMkRRsxNCC5YqJ9d9VQYuWdGt7aiH2qA5R5wt8ZmWaP2dLUSIK6y/kVzLMlmh1Tvu5xUf4M/wdGJ5KA==
 
 debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.0, debug@^2.6.9:
   version "2.6.9"
