@@ -40,6 +40,7 @@ import ceshiSvg from './ceshi.svg';
 import customSvg from './custom.svg';
 import DataTable from './module/DataTable';
 import JsonEditorView from './module/JsonEditorView';
+import RcSelectView from './module/RcSelect';
 
 
 import {treeData} from './utils/mockData';
@@ -122,7 +123,8 @@ class App extends Component {
           showSearch
           treeCheckable
         /> */}
-        <JsonEditorView />
+        {/* <JsonEditorView /> */}
+        <RcSelectView />
       </div>
     );
   }
