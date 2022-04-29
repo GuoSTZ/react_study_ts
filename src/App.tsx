@@ -41,6 +41,7 @@ import customSvg from './custom.svg';
 import DataTable from './module/DataTable';
 import JsonEditorView from './module/JsonEditorView';
 import RcSelectView from './module/RcSelect';
+import VirtualTableView from './module/VirtualTable';
 
 
 import {treeData} from './utils/mockData';
@@ -124,7 +125,8 @@ class App extends Component {
           treeCheckable
         /> */}
         {/* <JsonEditorView /> */}
-        <RcSelectView />
+        {/* <RcSelectView /> */}
+        <VirtualTableView />
       </div>
     );
   }
