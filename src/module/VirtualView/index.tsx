@@ -3,9 +3,10 @@ import VirtualTable from './component/VirtualTable/index';
 import ListExample from './component/VirtualList/index.class';
 import VirtualList from './component/VirtualList';
 import VirtualTable1 from './component/VirtualTable/table';
+import VirtualTable2 from './component/VirtualTable/index.data';
 
 const VirtualTableView: React.FC<any> = props => {
-  const arr = Array.from(Array(1000), (v,k) =>k);
+  const arr = Array.from(Array(5), (v,k) =>k);
   const list = arr.map((item: number) => ({
     name: `content${item}`,
     description: `地址${item}`,
@@ -43,7 +44,8 @@ const VirtualTableView: React.FC<any> = props => {
     // <VirtualTable {...tableConf}/>
     // <ListExample list={list}/>
     // <VirtualList list={list}/>
-    <VirtualTable1 />
+    // <VirtualTable1 />
+    <VirtualTable2 {...tableConf} />
   )
 }
 
