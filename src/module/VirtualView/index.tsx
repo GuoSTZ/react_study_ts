@@ -1,5 +1,8 @@
 import React from 'react';
 import VirtualTable from './component/VirtualTable/index';
+import ListExample from './component/VirtualList/index.class';
+import VirtualList from './component/VirtualList';
+import VirtualTable1 from './component/VirtualTable/table';
 
 const VirtualTableView: React.FC<any> = props => {
   const arr = Array.from(Array(1000), (v,k) =>k);
@@ -35,9 +38,12 @@ const VirtualTableView: React.FC<any> = props => {
     // rowGetter: ({index}: any) => ({key: index, name: "a", description: "fff"}),
     columns
   }
-
+  
   return (
-    <VirtualTable {...tableConf}/>
+    // <VirtualTable {...tableConf}/>
+    // <ListExample list={list}/>
+    // <VirtualList list={list}/>
+    <VirtualTable1 />
   )
 }
 
