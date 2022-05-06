@@ -1,5 +1,5 @@
 import React from 'react';
-import VirtualTable from './component/index';
+import VirtualTable from './component/VirtualTable/index';
 
 const VirtualTableView: React.FC<any> = props => {
   const arr = Array.from(Array(1000), (v,k) =>k);

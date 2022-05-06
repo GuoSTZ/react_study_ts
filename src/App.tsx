@@ -41,7 +41,7 @@ import customSvg from './custom.svg';
 import DataTable from './module/DataTable';
 import JsonEditorView from './module/JsonEditorView';
 import RcSelectView from './module/RcSelect';
-import VirtualTableView from './module/VirtualTable';
+import VirtualTableView from './module/VirtualView';
 
 
 import {treeData} from './utils/mockData';
