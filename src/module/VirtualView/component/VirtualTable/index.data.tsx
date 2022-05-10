@@ -20,7 +20,7 @@ export interface VirtualTableProps extends TableProps {
 const VirtualTable: React.FC<VirtualTableProps> = props => {
 
   const [expandedIndex, setExpandedIndex] = useState(-1);
-  const [expandedData, setExpandedData] = useState({} as any);
+  const [expandedData, setExpandedData] = useState([] as any);
   const tableRef: any = useRef();
   const { columns, dataSource, ...otherProps } = props;
   const keys = dataSource?.map((item: any) => item.key);
@@ -43,17 +43,17 @@ const VirtualTable: React.FC<VirtualTableProps> = props => {
     setExpandedIndex(index);
 
     let idx = keys.indexOf(index);
-    console.log(idx, keys, '===')
     if(idx === -1) {
       setExpandedData(dataSource)
     } else {
       const data: any = [].concat(dataSource as any);
+      // const data: any = JSON.parse(JSON.stringify(dataSource));
       const list = [
-        {name: "aa", description: "eee", key: "100"},
-        {name: "bb", description: "eee", key: "101"},
+        {name: "aa", description: "eee", key: "1-1"},
+        {name: "bb", description: "eee", key: "1-2"},
       ]
-      console.log(data?.splice(index, 0, ...list), '===')
-      // setExpandedData(data?.splice(index, 0, ...list))
+      data?.splice(index + 1, 0, ...list)
+      setExpandedData(data)
     }
   }
 
@@ -66,9 +66,9 @@ const VirtualTable: React.FC<VirtualTableProps> = props => {
       <div className={classnames(baseName, status)} onClick={() => onExpandCell(index)} />
     )
   };
-
+  
   return (
-    <AutoSizer className='VirtualTable-AutoSizer'>
+    <AutoSizer className='VirtualTable-AutoSizer' onResize={(props: any) => console.log(props, '===')}>
       {
         ({ width, height }) => (
           <Table

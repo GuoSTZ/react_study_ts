@@ -4,6 +4,7 @@ import ListExample from './component/VirtualList/index.class';
 import VirtualList from './component/VirtualList';
 import VirtualTable1 from './component/VirtualTable/table';
 import VirtualTable2 from './component/VirtualTable/index.data';
+import TreeToTable from './component/VirtualTree/TreeToTable';
 
 const VirtualTableView: React.FC<any> = props => {
   const arr = Array.from(Array(5), (v,k) =>k);
@@ -39,13 +40,14 @@ const VirtualTableView: React.FC<any> = props => {
     // rowGetter: ({index}: any) => ({key: index, name: "a", description: "fff"}),
     columns
   }
-  
+
   return (
     // <VirtualTable {...tableConf}/>
     // <ListExample list={list}/>
     // <VirtualList list={list}/>
     // <VirtualTable1 />
-    <VirtualTable2 {...tableConf} />
+    // <VirtualTable2 {...tableConf} />
+    <TreeToTable />
   )
 }
 

@@ -1,0 +1,121 @@
+.virtual-tree {
+
+  .browser-user-select(@value) {
+    -webkit-user-select: @value;
+    -moz-user-select: @value;
+    -ms-user-select: @value;
+    user-select: @value;
+  }
+
+  @keyframes antMoveDownIn {
+    0% {
+      transform: translateY(100%);
+      transform-origin: 0 0;
+      opacity: 0;
+    }
+
+    100% {
+      transform: translateY(0%);
+      transform-origin: 0 0;
+      opacity: 1;
+    }
+  }
+
+  @keyframes antMoveDownOut {
+    0% {
+      transform: translateY(0%);
+      transform-origin: 0 0;
+      opacity: 1;
+    }
+
+    100% {
+      transform: translateY(100%);
+      transform-origin: 0 0;
+      opacity: 0;
+    }
+  }
+
+  @animation-duration-base: 0.2s;
+  @ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
+
+  >.ant-tree-list {
+    >.ant-tree-list-holder {
+      >div {
+        >.ant-tree-list-holder-inner {
+          >.ant-tree-treenode {
+            display: flex;
+            align-items: flex-start;
+            padding: 0 0 4px;
+            outline: none;
+
+            >.ant-tree-indent {
+              align-self: stretch;
+              white-space: nowrap;
+              .browser-user-select(none);
+
+              >.ant-tree-indent-unit {
+                display: inline-block;
+                width: 24px;
+              }
+            }
+
+            >span.ant-tree-switcher {
+              position: relative;
+              flex: none;
+              align-self: stretch;
+              width: 24px;
+              margin: 0;
+              line-height: 24px;
+              text-align: center;
+              cursor: pointer;
+              .browser-user-select(none);
+
+              >.ant-tree-switcher-icon {
+                display: inline-block;
+                font-size: 10px;
+                vertical-align: baseline;
+              }
+
+              &.ant-tree-switcher_close {
+                .ant-tree-switcher-icon svg {
+                  transform: rotate(-90deg);
+                }
+              }
+
+              .ant-tree-switcher-icon svg,
+              .mc-virtual-select-tree-switcher-icon svg {
+                transition: transform .3s;
+              }
+            }
+
+            >span.ant-tree-checkbox {
+              top: initial;
+              margin: 4px 8px 0 0;
+            }
+
+            .ant-tree-node-content-wrapper {
+              position: relative;
+              z-index: auto;
+              min-height: 24px;
+              margin: 0;
+              padding: 0 4px;
+              color: inherit;
+              line-height: 24px;
+              background: 0 0;
+              border-radius: 2px;
+              cursor: pointer;
+              transition: all .3s, border 0s, line-height 0s, box-shadow 0s;
+              .browser-user-select(none);
+            }
+          }
+
+          .ant-motion-collapse {
+            overflow: hidden;
+            transition: height @animation-duration-base @ease-in-out,
+              opacity @animation-duration-base @ease-in-out  !important;
+          }
+        }
+      }
+    }
+  }
+}
