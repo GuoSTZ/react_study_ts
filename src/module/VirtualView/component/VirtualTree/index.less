@@ -1,3 +1,5 @@
+@import './motion.less';
+
 .virtual-tree {
 
   .browser-user-select(@value) {
@@ -7,36 +9,45 @@
     user-select: @value;
   }
 
-  @keyframes antMoveDownIn {
-    0% {
-      transform: translateY(100%);
-      transform-origin: 0 0;
-      opacity: 0;
-    }
-
-    100% {
-      transform: translateY(0%);
-      transform-origin: 0 0;
-      opacity: 1;
-    }
-  }
-
-  @keyframes antMoveDownOut {
-    0% {
-      transform: translateY(0%);
-      transform-origin: 0 0;
-      opacity: 1;
-    }
-
-    100% {
-      transform: translateY(100%);
-      transform-origin: 0 0;
-      opacity: 0;
-    }
-  }
-
   @animation-duration-base: 0.2s;
   @ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
+  
+  @keyframes antFadeIn {
+    0% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes antFadeOut {
+    0% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .fade-motion(@className, @keyframeName) {
+    @name: "ant-tree";
+    .make-motion(@name, @keyframeName);
+
+    .@{name}-enter,
+    .@{name}-appear {
+      opacity: 0;
+      animation-timing-function: linear;
+    }
+
+    .@{name}-leave {
+      animation-timing-function: linear;
+    }
+  }
+
+  // .fade-motion(fade, antFade);
 
   >.ant-tree-list {
     >.ant-tree-list-holder {
@@ -114,6 +125,13 @@
             transition: height @animation-duration-base @ease-in-out,
               opacity @animation-duration-base @ease-in-out  !important;
           }
+
+          // .fade-motion(fade, antFade);
+
+          // .ant-motion-collapse-appear {}
+
+          // .ant-motion-collapse-appear-active {}
+
         }
       }
     }

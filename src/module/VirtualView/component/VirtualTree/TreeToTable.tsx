@@ -11,8 +11,8 @@ interface DataNode {
 
 const initTreeData: DataNode[] = [
   { title: 'Expand to load', key: '0' },
-  { title: 'Expand to load', key: '1' },
-  { title: 'Tree Node', key: '2', isLeaf: true },
+  // { title: 'Expand to load', key: '1' },
+  // { title: 'Tree Node', key: '2', isLeaf: true },
 ];
 
 const getChildNodes = (key: number, count: number) => {
@@ -74,7 +74,7 @@ const TreeToTable: React.FC<any> = props => {
       }
       setTimeout(() => {
         setTreeData(origin =>
-          updateTreeData(origin, key, getChildNodes(key, 100)),
+          updateTreeData(origin, key, getChildNodes(key, 5)),
         );
         resolve();
       }, 1000);
