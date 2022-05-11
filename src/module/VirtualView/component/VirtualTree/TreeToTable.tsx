@@ -13,6 +13,9 @@ const initTreeData: DataNode[] = [
   { title: 'Expand to load', key: '0' },
   // { title: 'Expand to load', key: '1' },
   // { title: 'Tree Node', key: '2', isLeaf: true },
+  // { title: 'Expand to load', key: '0', children: [
+  //   { title: 'childNode', key: '0-1' },
+  // ]},
 ];
 
 const getChildNodes = (key: number, count: number) => {
