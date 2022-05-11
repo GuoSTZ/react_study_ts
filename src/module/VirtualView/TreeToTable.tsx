@@ -89,7 +89,7 @@ const TreeToTable: React.FC<any> = props => {
       treeData={dig()}
       height={233}
       checkable
-      showLine
+      // showLine
       switcherIcon={ <span className={"row-expand-icon"} /> }
       // loadData={onLoadData}
     />
