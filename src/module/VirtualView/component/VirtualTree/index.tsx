@@ -1,13 +1,13 @@
 import React, { forwardRef } from 'react';
 import RcTree, { TreeNode, TreeProps as RcTreeProps, BasicDataNode } from 'rc-tree';
-import { DataNode, Key } from 'rc-tree/lib/interface';
+import { DataNode, Direction, Key } from 'rc-tree/lib/interface';
 // import DirectoryTree from './DirectoryTree';
 import classNames from 'classnames';
-import { renderSwitcherIcon, dropIndicatorRender, collapseMotion } from './utils';
+import { renderSwitcherIcon, dropIndicatorRender, collapseMotion, getPrefixCls } from './utils';
 import "rc-tree/assets/index.css"
 import './index.less';
 
-export interface AntdTreeNodeAttribute {
+export interface VirtualTreeNodeAttribute {
   eventKey: string;
   prefixCls: string;
   className: string;
@@ -27,7 +27,7 @@ export interface AntdTreeNodeAttribute {
   disableCheckbox: boolean;
 }
 
-export interface AntTreeNodeProps {
+export interface VirtualTreeNodeProps {
   className?: string;
   checkable?: boolean;
   disabled?: boolean;
@@ -41,14 +41,14 @@ export interface AntTreeNodeProps {
   loading?: boolean;
   selected?: boolean;
   selectable?: boolean;
-  icon?: ((treeNode: AntdTreeNodeAttribute) => React.ReactNode) | React.ReactNode;
+  icon?: ((treeNode: VirtualTreeNodeAttribute) => React.ReactNode) | React.ReactNode;
   children?: React.ReactNode;
   [customProp: string]: any;
 }
 
-export interface AntTreeNode extends React.Component<AntTreeNodeProps, {}> { }
+export interface VirtualTreeNode extends React.Component<VirtualTreeNodeProps, {}> { }
 
-type DraggableFn = (node: AntTreeNode) => boolean;
+type DraggableFn = (node: VirtualTreeNode) => boolean;
 
 interface DraggableConfig {
   icon?: React.ReactNode | false;
@@ -87,13 +87,13 @@ export interface VirtualTreeProps<T extends BasicDataNode = DataNode>
   defaultSelectedKeys?: Key[];
   selectable?: boolean;
   /** 点击树节点触发 */
-  filterAntTreeNode?: (node: AntTreeNode) => boolean;
+  filterAntTreeNode?: (node: VirtualTreeNode) => boolean;
   loadedKeys?: Key[];
   /** 设置节点可拖拽（IE>8） */
   draggable?: DraggableFn | boolean | DraggableConfig;
   style?: React.CSSProperties;
   showIcon?: boolean;
-  icon?: ((nodeProps: AntdTreeNodeAttribute) => React.ReactNode) | React.ReactNode;
+  icon?: ((nodeProps: VirtualTreeNodeAttribute) => React.ReactNode) | React.ReactNode;
   switcherIcon?: React.ReactElement<any>;
   prefixCls?: string;
   children?: React.ReactNode;
@@ -120,9 +120,9 @@ const VirtualTree = forwardRef<RcTree, VirtualTreeProps>((props, ref) => {
     checkable,
     selectable,
     draggable,
+    virtual
   } = props;
-  // const prefixCls = getPrefixCls('tree', customizePrefixCls);
-  const prefixCls = customizePrefixCls ? `${customizePrefixCls}-tree` : "ant-tree";
+  const prefixCls = getPrefixCls('tree', customizePrefixCls);
   let direction: any = "ltr";
   const newProps = {
     ...props,
@@ -160,7 +160,7 @@ const VirtualTree = forwardRef<RcTree, VirtualTreeProps>((props, ref) => {
     <RcTree
       itemHeight={20}
       ref={ref}
-      virtual={true}
+      virtual={virtual}
       {...newProps}
       prefixCls={prefixCls}
       className={classNames(
