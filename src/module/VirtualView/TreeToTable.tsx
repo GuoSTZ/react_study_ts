@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useLayoutEffect } from 'react';
-import VirtualTree from '.';
+import VirtualTree from './component/VirtualTree';
 import './TreeToTable.less'
 
 interface DataNode {
