@@ -33,7 +33,7 @@ const TreeToTable: React.FC<any> = props => {
     setTreeData(initTreeData);
   }, [initTreeData])
 
-  const dig = (path = '0', level = 3) => {
+  const dig = (path = '0', level = 2) => {
     const list = [];
     for (let i = 0; i < 10; i += 1) {
       const key = `${path}-${i}`;
@@ -86,11 +86,12 @@ const TreeToTable: React.FC<any> = props => {
   return (
     <VirtualTree
       className='McVirtual-Tree'
-      treeData={treeData}
+      treeData={dig()}
       height={233}
       checkable
+      showLine
       switcherIcon={ <span className={"row-expand-icon"} /> }
-      loadData={onLoadData}
+      // loadData={onLoadData}
     />
   )
 }

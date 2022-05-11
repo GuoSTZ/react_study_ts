@@ -1,3 +1,8 @@
+@virtual-tree-prefix-cls: ~'ant-tree';
+@animation-duration-base: 0.2s;
+@ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
+@component-background: #141414;
+
 .virtual-tree {
 
   .browser-user-select(@value) {
@@ -7,31 +12,30 @@
     user-select: @value;
   }
 
-  @animation-duration-base: 0.2s;
-  @ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
 
-  >.ant-tree-list {
-    >.ant-tree-list-holder {
+
+  >.@{virtual-tree-prefix-cls}-list {
+    >.@{virtual-tree-prefix-cls}-list-holder {
       >div {
-        >.ant-tree-list-holder-inner {
-          .ant-tree-treenode {
+        >.@{virtual-tree-prefix-cls}-list-holder-inner {
+          .@{virtual-tree-prefix-cls}-treenode {
             display: flex;
             align-items: flex-start;
             padding: 0 0 4px;
             outline: none;
 
-            >.ant-tree-indent {
+            >.@{virtual-tree-prefix-cls}-indent {
               align-self: stretch;
               white-space: nowrap;
               .browser-user-select(none);
 
-              >.ant-tree-indent-unit {
+              >.@{virtual-tree-prefix-cls}-indent-unit {
                 display: inline-block;
                 width: 24px;
               }
             }
 
-            >span.ant-tree-switcher {
+            >span.@{virtual-tree-prefix-cls}-switcher {
               position: relative;
               flex: none;
               align-self: stretch;
@@ -42,30 +46,30 @@
               cursor: pointer;
               .browser-user-select(none);
 
-              >.ant-tree-switcher-icon {
+              >.@{virtual-tree-prefix-cls}-switcher-icon {
                 display: inline-block;
                 font-size: 10px;
                 vertical-align: baseline;
               }
 
-              &.ant-tree-switcher_close {
-                .ant-tree-switcher-icon svg {
+              &.@{virtual-tree-prefix-cls}-switcher_close {
+                .@{virtual-tree-prefix-cls}-switcher-icon svg {
                   transform: rotate(-90deg);
                 }
               }
 
-              .ant-tree-switcher-icon svg,
+              .@{virtual-tree-prefix-cls}-switcher-icon svg,
               .mc-virtual-select-tree-switcher-icon svg {
                 transition: transform .3s;
               }
             }
 
-            >span.ant-tree-checkbox {
+            >span.@{virtual-tree-prefix-cls}-checkbox {
               top: initial;
               margin: 4px 8px 0 0;
             }
 
-            .ant-tree-node-content-wrapper {
+            .@{virtual-tree-prefix-cls}-node-content-wrapper {
               position: relative;
               z-index: auto;
               min-height: 24px;
@@ -88,6 +92,43 @@
           }
         }
       }
+    }
+  }
+}
+
+// ==================== Show Line =====================
+.virtual-tree.@{virtual-tree-prefix-cls}-show-line {
+
+  // ================ Indent lines ================
+  .@{virtual-tree-prefix-cls}-indent {
+    &-unit {
+      position: relative;
+      height: 100%;
+
+      &::before {
+        position: absolute;
+        top: 0;
+        right: 12px;
+        bottom: -4px;
+        border-right: 1px solid #d9d9d9;
+        content: "";
+      }
+
+      &-end {
+        &::before {
+          display: none;
+        }
+      }
+    }
+  }
+
+  // ============== Cover Background ==============
+  .@{virtual-tree-prefix-cls}-switcher {
+    // background: @component-background;
+
+    &-line-icon {
+      // https://github.com/ant-design/ant-design/issues/32813
+      vertical-align: -0.15em;
     }
   }
 }
