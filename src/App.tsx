@@ -69,7 +69,7 @@ class App extends Component {
       // });
     }
     let data = [];
-    for(let i=0;i< 100000; i++) {
+    for(let i=0;i< 100; i++) {
       data.push({
         title: `content ${i}`,
         key: i.toString(),
@@ -106,7 +106,7 @@ class App extends Component {
           }
         </Select> */}
         {/* <FormView /> */}
-        <TableTransfer 
+        {/* <TableTransfer 
           dataSource={data}
           leftColumns={[{dataIndex: 'title'}]}
           rightColumns={[{dataIndex: 'title'}]}
@@ -114,7 +114,7 @@ class App extends Component {
           showSelectAll={false}
           maxTargetKeys={200}
           dropdownSelectCount={[100]}
-        />
+        /> */}
         {/* <TreeSelect 
           style={{ width: '100%' }}
           dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
@@ -126,7 +126,10 @@ class App extends Component {
         /> */}
         {/* <JsonEditorView /> */}
         {/* <RcSelectView /> */}
-        {/* <VirtualView /> */}
+        <VirtualView />
+        <Select style={{display: 'block', width: 200}}>
+          <Select.Option value={1}>aaa</Select.Option>
+        </Select>
       </div>
     );
   }

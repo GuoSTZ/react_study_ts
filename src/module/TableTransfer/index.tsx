@@ -74,7 +74,7 @@ const TableTransfer = (props: TableTransferProps) => {
     const sourceEnableKeys: any = []; // 左侧穿梭框可选数据的key值数组
     const targetEnabledKeys: any = []; // 右侧穿梭框可选数据的key值数组
 
-    _targetKeys?.map((key: any) => {
+    targetKeys?.map((key: any) => {
       targetSet.add(key);
     });
 
@@ -93,7 +93,7 @@ const TableTransfer = (props: TableTransferProps) => {
       }
     })
     return [targetSet, sourceKeys, sourceEnableKeys, targetEnabledKeys]
-  }, [_targetKeys, filterValue])
+  }, [targetKeys, filterValue])
 
   useEffect(() => {
     setTargetKeys(_targetKeys || []);
@@ -129,8 +129,6 @@ const TableTransfer = (props: TableTransferProps) => {
     setTargetSelectedKeys(targetKeys);
   }, [_selectedKeys])
 
-  const getKeys = (data: any) => data?.map((item: any) => item.key);
-
   // 筛选非禁用的数据key
   const getEnabledItemKeys = (data: any) => {
     const keys: any = [];
@@ -145,26 +143,6 @@ const TableTransfer = (props: TableTransferProps) => {
   // 获取当页穿梭框显示的数据数组
   const getCurrentPageData = (data: any, page: number) => {
     return data?.slice((page - 1) * itemSize, page * itemSize);
-  }
-
-  // 获取筛选后穿梭框内显示的数据数组
-  const getFilterData = (direction: string) => {
-    const data: any = {
-      'left': [],
-      'right': new Array(targetKeys.length)
-    };
-    dataSource?.forEach((record: any) => {
-      const indexOfKey = targetKeys.indexOf(record.key);
-      const isFiltered = record?.title?.toUpperCase()?.includes(filterValue[direction]?.toUpperCase());
-      if (isFiltered) {
-        if (indexOfKey !== -1) {
-          data['right'][indexOfKey] = record;
-        } else {
-          data['left'].push(record);
-        }
-      }
-    });
-    return data;
   }
 
   // 获取筛选后穿梭框内显示的数据key值数组
@@ -208,17 +186,25 @@ const TableTransfer = (props: TableTransferProps) => {
         "left": sourceEnableKeys,
         "right": targetEnabledKeys
       }
-      setSelectedKeys(data[direction]);
+      // 如果已经勾选了全部数据，那么取消全部选中
+      if (data[direction]?.length === selectedKeys.length) {
+        setSelectedKeys([]);
+      } else {
+        setSelectedKeys(data[direction]);
+      }
     }
   }
 
   // 全选当页
   const getSelectCurrent = (direction: string, page: number, selectedKeys: any, setSelectedKeys: any) => {
     return () => {
-      const data = getFilterData(direction);
-      const currentPageData = getCurrentPageData(data[direction], page);
-      const currentPageKeys: any = getEnabledItemKeys(currentPageData);
-
+      const data: any = {
+        "left": sourceEnableKeys,
+        "right": targetEnabledKeys
+      }
+      console.log(data, '======')
+      const currentPageKeys = getCurrentPageData(data[direction], page);
+      // 获取其他页的被选中的数据
       const otherPageKeys = selectedKeys?.filter((item: any) => !currentPageKeys?.includes(item));
       setSelectedKeys([...otherPageKeys, ...currentPageKeys]);
     }
@@ -227,9 +213,11 @@ const TableTransfer = (props: TableTransferProps) => {
   // 反选当页
   const getInvertCurrent = (direction: string, page: number, selectedKeys: any, setSelectedKeys: any) => {
     return () => {
-      const data = getFilterData(direction);
-      const currentPageData = getCurrentPageData(data[direction], page);
-      const currentPageKeys: any = getEnabledItemKeys(currentPageData);
+      const data: any = {
+        "left": sourceEnableKeys,
+        "right": targetEnabledKeys
+      }
+      const currentPageKeys = getCurrentPageData(data[direction], page);
 
       const invertKeys = currentPageKeys?.filter((item: any) => !selectedKeys?.includes(item));
       const otherPageKeys = selectedKeys?.filter((item: any) => !currentPageKeys?.includes(item));
@@ -282,8 +270,12 @@ const TableTransfer = (props: TableTransferProps) => {
     }
   }
 
-  const { DropdownView: LeftDropdown } = useDropdownView(handleDropdownConfig('left', `leftDropdown  ${showSelectAll ? 'TableTransfer-selectAll' : ''}`));
-  const { DropdownView: RightDropdown } = useDropdownView(handleDropdownConfig('right', `rightDropdown  ${showSelectAll ? 'TableTransfer-selectAll' : ''}`));
+  const { DropdownView: LeftDropdown } = useDropdownView(
+    handleDropdownConfig('left', `leftDropdown  ${showSelectAll ? 'TableTransfer-selectAll' : ''}`)
+  );
+  const { DropdownView: RightDropdown } = useDropdownView(
+    handleDropdownConfig('right', `rightDropdown  ${showSelectAll ? 'TableTransfer-selectAll' : ''}`)
+  );
 
   // 数据转移回调
   const onChange = (nextTargetKeys: any, direction: string, moveKeys: string[]) => {
@@ -334,9 +326,7 @@ const TableTransfer = (props: TableTransferProps) => {
   // 搜索回调
   const onSearch = (direction: 'left' | 'right', value: string) => {
     setFilterValue(Object.assign({}, filterValue, { [direction]: value }));
-    if (props.onSearch) {
-      props.onSearch(direction, value);
-    }
+    props.onSearch?.(direction, value);
   }
 
   /** 设置勾选项 */

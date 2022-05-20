@@ -10744,6 +10744,19 @@ rc-resize-observer@^1.1.0:
     rc-util "^5.15.0"
     resize-observer-polyfill "^1.5.1"
 
+rc-select@^14.1.4:
+  version "14.1.4"
+  resolved "http://192.168.238.91:4873/rc-select/-/rc-select-14.1.4.tgz#486b632dfcaee36a3f0ba6a214e2d546f9d3666b"
+  integrity sha512-vU2DlROjv33nbYxcPrT/3yk1m53qsxVXhLv1u9lD7H2G5XkUR1p75KMiHU/5l/1VSw9I2IfMsFJoHkpUGNAkdQ==
+  dependencies:
+    "@babel/runtime" "^7.10.1"
+    classnames "2.x"
+    rc-motion "^2.0.1"
+    rc-overflow "^1.0.0"
+    rc-trigger "^5.0.4"
+    rc-util "^5.16.1"
+    rc-virtual-list "^3.2.0"
+
 rc-select@~13.1.0-alpha.0:
   version "13.1.1"
   resolved "https://registry.npmmirror.com/rc-select/download/rc-select-13.1.1.tgz#851315d08a743504db57c7a5358cc907b69b45a5"
@@ -10755,19 +10768,6 @@ rc-select@~13.1.0-alpha.0:
     rc-overflow "^1.0.0"
     rc-trigger "^5.0.4"
     rc-util "^5.9.8"
-    rc-virtual-list "^3.2.0"
-
-rc-select@~14.1.1:
-  version "14.1.1"
-  resolved "https://registry.npmmirror.com/rc-select/-/rc-select-14.1.1.tgz#87a51ce515aba5cfa083ae0f5be15e7c550ad93f"
-  integrity sha512-l2TSSy/rwvfob0SmQ0sPQ1pUMUq65u6U4Y9lc9dvQOMSMzDSga4b3tEgIgzN1YKzakV65wGXMOBVecjixPEZ4Q==
-  dependencies:
-    "@babel/runtime" "^7.10.1"
-    classnames "2.x"
-    rc-motion "^2.0.1"
-    rc-overflow "^1.0.0"
-    rc-trigger "^5.0.4"
-    rc-util "^5.16.1"
     rc-virtual-list "^3.2.0"
 
 rc-select@~9.2.0:
