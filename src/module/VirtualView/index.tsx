@@ -5,10 +5,11 @@ import VirtualList from './component/VirtualList';
 import VirtualTable1 from './component/VirtualTable/table';
 import VirtualTable2 from './component/VirtualTable/index.data';
 import TreeToTable from './TreeToTable';
+import VirtualSelect from './component/VirtualSelect';
 import { Button } from 'antd';
 
-const VirtualTableView: React.FC<any> = props => {
-  const arr = Array.from(Array(50000), (v,k) =>k);
+const VirtualView: React.FC<any> = props => {
+  const arr = Array.from(Array(10000), (v,k) =>k);
   const list = arr.map((item: number) => ({
     name: `content${item}`,
     description: `地址${item}`,
@@ -77,15 +78,20 @@ const VirtualTableView: React.FC<any> = props => {
     // <VirtualTable {...tableConf}/>
     // <ListExample list={list}/>
     // <VirtualList list={list}/>
-    <VirtualTable1 
-      dataSource={list} 
-      columns={antdColumns} 
-      pagination={false} 
-      rowSelection={rowSelection}
-    />
+    // <VirtualTable1 
+    //   dataSource={list} 
+    //   columns={antdColumns} 
+    //   pagination={false} 
+    //   rowSelection={rowSelection}
+    // />
     // <VirtualTable2 {...tableConf} />
     // <TreeToTable />
+    <VirtualSelect style={{width: 200}} placeholder="请选择">
+      {
+        list.map((item: any) => <VirtualSelect.Option value={item.key} key={item.key}>{item.name}</VirtualSelect.Option>)
+      }
+    </VirtualSelect>
   )
 }
 
-export default VirtualTableView;
+export default VirtualView;

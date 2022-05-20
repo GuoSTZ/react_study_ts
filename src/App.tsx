@@ -41,7 +41,7 @@ import customSvg from './custom.svg';
 import DataTable from './module/DataTable';
 import JsonEditorView from './module/JsonEditorView';
 import RcSelectView from './module/RcSelect';
-import VirtualTableView from './module/VirtualView';
+import VirtualView from './module/VirtualView';
 
 
 import {treeData} from './utils/mockData';
@@ -69,7 +69,7 @@ class App extends Component {
       // });
     }
     let data = [];
-    for(let i=0;i< 1000; i++) {
+    for(let i=0;i< 100000; i++) {
       data.push({
         title: `content ${i}`,
         key: i.toString(),
@@ -106,7 +106,7 @@ class App extends Component {
           }
         </Select> */}
         {/* <FormView /> */}
-        {/* <TableTransfer 
+        <TableTransfer 
           dataSource={data}
           leftColumns={[{dataIndex: 'title'}]}
           rightColumns={[{dataIndex: 'title'}]}
@@ -114,7 +114,7 @@ class App extends Component {
           showSelectAll={false}
           maxTargetKeys={200}
           dropdownSelectCount={[100]}
-        /> */}
+        />
         {/* <TreeSelect 
           style={{ width: '100%' }}
           dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
@@ -126,7 +126,7 @@ class App extends Component {
         /> */}
         {/* <JsonEditorView /> */}
         {/* <RcSelectView /> */}
-        <VirtualTableView />
+        {/* <VirtualView /> */}
       </div>
     );
   }
