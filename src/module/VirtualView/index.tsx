@@ -5,9 +5,10 @@ import VirtualList from './component/VirtualList';
 import VirtualTable1 from './component/VirtualTable/table';
 import VirtualTable2 from './component/VirtualTable/index.data';
 import TreeToTable from './TreeToTable';
+import { Button } from 'antd';
 
 const VirtualTableView: React.FC<any> = props => {
-  const arr = Array.from(Array(5), (v,k) =>k);
+  const arr = Array.from(Array(50000), (v,k) =>k);
   const list = arr.map((item: number) => ({
     name: `content${item}`,
     description: `地址${item}`,
@@ -41,13 +42,49 @@ const VirtualTableView: React.FC<any> = props => {
     columns
   }
 
+  const antdColumns = [
+    {
+      title: '姓名',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: '描述',
+      dataIndex: 'description',
+      key: 'description',
+      width: 250,
+    },
+    {
+      title: '操作',
+      dataIndex: 'operation',
+      key: 'operation',
+      width: 350,
+      render: () => <Button>测试</Button>
+    },
+  ];
+
+  const rowSelection = {
+    onChange: (selectedRowKeys: any, selectedRows: any) => {
+      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    },
+    getCheckboxProps: (record: any) => ({
+      disabled: record.name === 'Disabled User', // Column configuration not to be checked
+      name: record.name,
+    }),
+  };
+
   return (
     // <VirtualTable {...tableConf}/>
     // <ListExample list={list}/>
     // <VirtualList list={list}/>
-    // <VirtualTable1 />
+    <VirtualTable1 
+      dataSource={list} 
+      columns={antdColumns} 
+      pagination={false} 
+      rowSelection={rowSelection}
+    />
     // <VirtualTable2 {...tableConf} />
-    <TreeToTable />
+    // <TreeToTable />
   )
 }
 
