@@ -20,7 +20,7 @@ import CheckView from './module/EditTable/check';
 // import SelectView from './module/SelectView';
 import TreeSelect from './module/TreeSelect/select';
 import AntdTreeSelect from './module/TreeSelect';
-import TableTransfer from './module/TableTransfer';
+import TableTransfer from './module/TableTransfer/new';
 // import EchartsView from './module/EchartsView';
 // import LessView from './module/LessView';
 // import { ModalMethodView } from './module/Modal';
@@ -69,10 +69,11 @@ class App extends Component {
       // });
     }
     let data = [];
-    for(let i=0;i< 100; i++) {
+    for(let i=0;i< 10; i++) {
       data.push({
         title: `content ${i}`,
         key: i.toString(),
+        disabled: i === 4,
       })
     }
     return (
@@ -106,15 +107,16 @@ class App extends Component {
           }
         </Select> */}
         {/* <FormView /> */}
-        {/* <TableTransfer 
+        <TableTransfer 
           dataSource={data}
+          targetKeys={['1', '2']}
           leftColumns={[{dataIndex: 'title'}]}
           rightColumns={[{dataIndex: 'title'}]}
           showSearch
           showSelectAll={false}
           maxTargetKeys={200}
           dropdownSelectCount={[100]}
-        /> */}
+        />
         {/* <TreeSelect 
           style={{ width: '100%' }}
           dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
@@ -126,10 +128,10 @@ class App extends Component {
         /> */}
         {/* <JsonEditorView /> */}
         {/* <RcSelectView /> */}
-        <VirtualView />
+        {/* <VirtualView />
         <Select style={{display: 'block', width: 200}}>
           <Select.Option value={1}>aaa</Select.Option>
-        </Select>
+        </Select> */}
       </div>
     );
   }
