@@ -5,7 +5,7 @@ import { ColumnProps } from 'antd/lib/table';
 import useDropdownView from './useDropdownVIew';
 import './index.less';
 
-export interface TableTransferProps extends Omit<TransferProps, "listStyle"|'titles'> {
+export interface TableTransferProps extends Omit<TransferProps, "listStyle"> {
   /**
    * 左侧表格列配置
    */
@@ -34,15 +34,10 @@ export interface TableTransferProps extends Omit<TransferProps, "listStyle"|'tit
    * 自定义报错信息
    */
   maxErrorMsg?: string;
-  /**
-   * 穿梭框头部
-   */
-  titles?: React.ReactNode[];
 }
 
 const TableTransfer = (props: TableTransferProps) => {
   const [dataSource, setDataSource] = useState([] as any);                             // 全部数据 - dataSource
-  const [dataSourceKeys, setDataSourceKeys] = useState([] as any);                     // 全部数据的key值
   const [targetKeys, setTargetKeys] = useState([] as any);                             // 右侧穿梭框内的数据
   const [sourceSelectedKeys, setSourceSelectedKeys] = useState([] as any);             // 左侧穿梭框被勾选的数据
   const [targetSelectedKeys, setTargetSelectedKeys] = useState([] as any);             // 右侧穿梭框被勾选的数据
@@ -54,81 +49,44 @@ const TableTransfer = (props: TableTransferProps) => {
   const {
     leftColumns,
     rightColumns,
-    dataSource: _dataSource,
-    targetKeys: _targetKeys,
+    dataSource: _dataSource = [],
+    targetKeys: _targetKeys = [],
     itemSize = 10,
-    selectedKeys: _selectedKeys,
+    selectedKeys: _selectedKeys = [],
     showSelectAll = true,
     dropdownSelectCount = [],
     maxTargetKeys,
     className,
     maxErrorMsg,
-    titles,
+    filterOption,
     ...restProps
   } = props;
 
-  /** 当发生数据穿梭或者数据筛选时，进行数据处理 */
-  const [targetKeySet, sourceKeys, sourceEnableKeys, targetEnabledKeys] = React.useMemo(() => {
-    const targetSet = new Set(); // 转化为Set集合，便于后面的数据判断
-    const sourceKeys: any = []; // 左侧穿梭框数据的key值数组
-    const sourceEnableKeys: any = []; // 左侧穿梭框可选数据的key值数组
-    const targetEnabledKeys: any = []; // 右侧穿梭框可选数据的key值数组
-
-    targetKeys?.map((key: any) => {
-      targetSet.add(key);
-    });
-
-    // 判断是否符合过滤条件
-    const isFiltered = (title: string, direction: string) => 
-      title?.toUpperCase()?.includes(filterValue[direction]?.toUpperCase());
-
-    _dataSource?.map((record: any) => {
-      const {key, disabled, title} = record;
-      // 左侧数据处理
-      if(!targetSet.has(key)) {
-        sourceKeys.push(key);
-        !disabled && isFiltered(title, 'left') && sourceEnableKeys.push(key);
-      } else {
-        !disabled && isFiltered(title, 'right') && targetEnabledKeys.push(key);
-      }
-    })
-    return [targetSet, sourceKeys, sourceEnableKeys, targetEnabledKeys]
-  }, [targetKeys, filterValue])
-
   useEffect(() => {
-    setTargetKeys(_targetKeys || []);
-  }, [_targetKeys]);
-
-  useEffect(() => {
-    const data: any = []; // 存储处理后的源数据
-    const dataKeys: any = []; // 存储全部数据的key值
-    _dataSource?.map((record: any) => {
-      if(props.render) {
-        data.push(Object.assign({}, record, {title: props.render?.(record)}))
-      } else {
-        data.push(Object.assign({}, record));
-      }
-      dataKeys.push(record.key);
-    });
-    setDataSource(data);
-    setDataSourceKeys(dataKeys);
+    let _data: any = _dataSource.slice(0, _dataSource.length);
+    // 默认为title字段处理，传入自定义render时，转化为title属性
+    if (props.render) {
+      _data = _data?.map((record: any) => {
+        return Object.assign({}, {
+          ...record,
+          title: props.render && props.render(record),
+        });
+      })
+    }
+    setDataSource(_data);
+    setTargetKeys(_targetKeys);
+    setSourceSelectedKeys(_selectedKeys?.filter((item: any) => !targetKeys.includes(item)));
+    setTargetSelectedKeys(_selectedKeys?.filter((item: any) => targetKeys.includes(item)));
   }, [_dataSource]);
 
-  useEffect(() => {
-    const sourceKeys: any = [];
-    const targetKeys: any = [];
+  const getKeys = (data: any) => data?.map((item: any) => item.key);
 
-    _selectedKeys?.forEach((key: any) => {
-      if(targetKeySet?.has(key)) {
-        targetKeys.push(key);
-      } else {
-        sourceKeys.push(key);
-      }
-    });
-    setSourceSelectedKeys(sourceKeys);
-    setTargetSelectedKeys(targetKeys);
-  }, [_selectedKeys])
-
+  /** 筛选方法 */
+  const mergedFilterOption = (inputValue: string, item: any) =>
+    typeof filterOption === 'function' 
+      ? filterOption(inputValue, item)
+      : item?.title?.toUpperCase()?.indexOf(inputValue?.toUpperCase()) !== -1
+  
   // 筛选非禁用的数据key
   const getEnabledItemKeys = (data: any) => {
     const keys: any = [];
@@ -140,9 +98,33 @@ const TableTransfer = (props: TableTransferProps) => {
     return keys;
   }
 
+  const getContraryKeys = (data: any, keys: any) => {
+    return data.filter((item: any) => keys?.indexOf(item) === -1);
+  }
+
   // 获取当页穿梭框显示的数据数组
   const getCurrentPageData = (data: any, page: number) => {
     return data?.slice((page - 1) * itemSize, page * itemSize);
+  }
+
+  // 获取筛选后穿梭框内显示的数据数组
+  const getFilterData = (direction: string) => {
+    const data: any = {
+      'left': [],
+      'right': new Array(targetKeys.length)
+    };
+    dataSource?.forEach((record: any) => {
+      const indexOfKey = targetKeys.indexOf(record.key);
+      const isFiltered = mergedFilterOption(filterValue[direction], record);
+      if (isFiltered) {
+        if (indexOfKey !== -1) {
+          data['right'][indexOfKey] = record;
+        } else {
+          data['left'].push(record);
+        }
+      }
+    });
+    return data;
   }
 
   // 获取筛选后穿梭框内显示的数据key值数组
@@ -154,7 +136,7 @@ const TableTransfer = (props: TableTransferProps) => {
     let sum = 0;
     dataSource?.every((record: any) => {
       const indexOfKey = targetKeys.indexOf(record.key);
-      const isFiltered = record?.title?.toUpperCase()?.includes(filterValue[direction]?.toUpperCase());
+      const isFiltered = mergedFilterOption(filterValue[direction], record);
       const isEnabled = !record?.disabled;
       if(direction === 'left' && typeof count === 'number' && data[direction].length >= count) {
         return false;
@@ -182,11 +164,7 @@ const TableTransfer = (props: TableTransferProps) => {
   // 全选所有
   const getSelectAll = (direction: string, selectedKeys: any, setSelectedKeys: any) => {
     return () => {
-      const data: any = {
-        "left": sourceEnableKeys,
-        "right": targetEnabledKeys
-      }
-      // 如果已经勾选了全部数据，那么取消全部选中
+      const data: any = getFilterDataKeys(direction);
       if (data[direction]?.length === selectedKeys.length) {
         setSelectedKeys([]);
       } else {
@@ -198,13 +176,10 @@ const TableTransfer = (props: TableTransferProps) => {
   // 全选当页
   const getSelectCurrent = (direction: string, page: number, selectedKeys: any, setSelectedKeys: any) => {
     return () => {
-      const data: any = {
-        "left": sourceEnableKeys,
-        "right": targetEnabledKeys
-      }
-      console.log(data, '======')
-      const currentPageKeys = getCurrentPageData(data[direction], page);
-      // 获取其他页的被选中的数据
+      const data = getFilterData(direction);
+      const currentPageData = getCurrentPageData(data[direction], page);
+      const currentPageKeys: any = getEnabledItemKeys(currentPageData);
+
       const otherPageKeys = selectedKeys?.filter((item: any) => !currentPageKeys?.includes(item));
       setSelectedKeys([...otherPageKeys, ...currentPageKeys]);
     }
@@ -213,11 +188,9 @@ const TableTransfer = (props: TableTransferProps) => {
   // 反选当页
   const getInvertCurrent = (direction: string, page: number, selectedKeys: any, setSelectedKeys: any) => {
     return () => {
-      const data: any = {
-        "left": sourceEnableKeys,
-        "right": targetEnabledKeys
-      }
-      const currentPageKeys = getCurrentPageData(data[direction], page);
+      const data = getFilterData(direction);
+      const currentPageData = getCurrentPageData(data[direction], page);
+      const currentPageKeys: any = getEnabledItemKeys(currentPageData);
 
       const invertKeys = currentPageKeys?.filter((item: any) => !selectedKeys?.includes(item));
       const otherPageKeys = selectedKeys?.filter((item: any) => !currentPageKeys?.includes(item));
@@ -270,12 +243,8 @@ const TableTransfer = (props: TableTransferProps) => {
     }
   }
 
-  const { DropdownView: LeftDropdown } = useDropdownView(
-    handleDropdownConfig('left', `leftDropdown  ${showSelectAll ? 'TableTransfer-selectAll' : ''}`)
-  );
-  const { DropdownView: RightDropdown } = useDropdownView(
-    handleDropdownConfig('right', `rightDropdown  ${showSelectAll ? 'TableTransfer-selectAll' : ''}`)
-  );
+  const { DropdownView: LeftDropdown } = useDropdownView(handleDropdownConfig('left', `leftDropdown  ${showSelectAll ? 'TableTransfer-selectAll' : ''}`));
+  const { DropdownView: RightDropdown } = useDropdownView(handleDropdownConfig('right', `rightDropdown  ${showSelectAll ? 'TableTransfer-selectAll' : ''}`));
 
   // 数据转移回调
   const onChange = (nextTargetKeys: any, direction: string, moveKeys: string[]) => {
@@ -295,8 +264,9 @@ const TableTransfer = (props: TableTransferProps) => {
         const newTargetKeys = [...targetKeys, ...moveKeys.slice(0, len)];
         setTargetKeys(newTargetKeys);
         setShowMaxError(true);
-        
-        props.onChange?.(newTargetKeys, direction, moveKeys);
+        if (props.onChange) {
+          props.onChange(newTargetKeys, direction, moveKeys);
+        }
         return;
       }
     }
@@ -304,6 +274,7 @@ const TableTransfer = (props: TableTransferProps) => {
     setShowMaxError(false);
 
     // 移动数据时产生的分页变化，需要做额外处理
+    const sourceKeys = getContraryKeys(getKeys(dataSource), nextTargetKeys)
     if (nextTargetKeys.length > 0 && Math.ceil(nextTargetKeys.length / itemSize) < targetPage) {
       setTargetPage(targetPage - 1);
     }
@@ -320,24 +291,19 @@ const TableTransfer = (props: TableTransferProps) => {
     setSourceSelectedKeys(sourceSelectedKeys);
     setTargetSelectedKeys(targetSelectedKeys);
 
-    props.onSelectChange?.(sourceSelectedKeys, targetSelectedKeys);
+    if (props.onSelectChange) {
+      props.onSelectChange(sourceSelectedKeys, targetSelectedKeys);
+    }
   }
 
   // 搜索回调
   const onSearch = (direction: 'left' | 'right', value: string) => {
     setFilterValue(Object.assign({}, filterValue, { [direction]: value }));
-    props.onSearch?.(direction, value);
+    if (props.onSearch) {
+      props.onSearch(direction, value);
+    }
   }
 
-  /** 设置勾选项 */
-  // const handleSelectedKeys = () => {
-  //   const sourceKeys = sourceEnableKeys.slice((sourcePage - 1) * itemSize, sourcePage * itemSize);
-  //   const targetKeys = targetEnabledKeys.slice((targetPage - 1) * itemSize, targetPage * itemSize);
-  //   const _sourceSelectedKeys = sourceKeys.filter((key: any) => sourceSelectedKeys.includes(key));
-  //   const _targetSelectedKeys = targetKeys.filter((key: any) => targetSelectedKeys.includes(key));
-
-  //   return [..._sourceSelectedKeys, ..._targetSelectedKeys];
-  // }
   return (
     <div className={`TableTransfer ${className}`}>
       {<LeftDropdown />}
@@ -346,13 +312,9 @@ const TableTransfer = (props: TableTransferProps) => {
         dataSource={dataSource}
         targetKeys={targetKeys}
         // 默认用title处理，可传入自定义方法做覆盖
-        filterOption={(inputValue: string, item: any) =>
-          item?.title?.toUpperCase()?.indexOf(inputValue?.toUpperCase()) !== -1
-        }
+        filterOption={mergedFilterOption}
         {...restProps}
-        titles={titles as any}
         selectedKeys={[...sourceSelectedKeys, ...targetSelectedKeys]}
-        // selectedKeys={handleSelectedKeys()}
         onChange={onChange}
         onSelectChange={onSelectChange}
         onSearch={onSearch}

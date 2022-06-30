@@ -9,7 +9,7 @@ import VirtualSelect from './component/VirtualSelect';
 import { Button } from 'antd';
 
 const VirtualView: React.FC<any> = props => {
-  const arr = Array.from(Array(10000), (v,k) =>k);
+  const arr = Array.from(Array(100000), (v,k) =>k);
   const list = arr.map((item: number) => ({
     name: `content${item}`,
     description: `地址${item}`,
@@ -86,7 +86,11 @@ const VirtualView: React.FC<any> = props => {
     // />
     // <VirtualTable2 {...tableConf} />
     // <TreeToTable />
-    <VirtualSelect style={{width: 200}} placeholder="请选择">
+    <VirtualSelect
+      style={{width: 300}} 
+      placeholder="请选择"
+      showSearch
+    >
       {
         list.map((item: any) => <VirtualSelect.Option value={item.key} key={item.key}>{item.name}</VirtualSelect.Option>)
       }

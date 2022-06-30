@@ -18,6 +18,7 @@ import {
   getTransitionDirection
 } from './utils';
 import 'rc-select/assets/index.less';
+import './index.less';
 
 // export { OptionProps, BaseSelectRef as RefSelectProps, BaseOptionType, DefaultOptionType };
 
@@ -175,8 +176,14 @@ const InternalSelect = <OptionType extends BaseOptionType | DefaultOptionType = 
       : ('bottomLeft' as SelectCommonPlacement);
   };
 
+  console.log(getTransitionName(
+    rootPrefixCls,
+    getTransitionDirection(placement),
+    props.transitionName,
+  ), '=====')
+
   return (
-    <RcSelect<any, any>
+    <RcSelect
       ref={ref as any}
       virtual={virtual}
       dropdownMatchSelectWidth={dropdownMatchSelectWidth}
