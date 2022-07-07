@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Transfer, Table, Pagination } from 'antd';
+import { Transfer, Table } from 'antd';
 import { TransferProps } from 'antd/lib/transfer';
 import { ColumnProps } from 'antd/lib/table';
 import useDropdownView from './useDropdownVIew';
@@ -314,19 +314,14 @@ const TableTransfer = React.forwardRef<any, TableTransferProps>((props, ref) => 
 
   // const { DropdownView: LeftDropdown } = useDropdownView(handleDropdownConfig('left', `leftDropdown  ${showSelectAll ? 'TableTransfer-selectAll' : ''}`));
   // const { DropdownView: RightDropdown } = useDropdownView(handleDropdownConfig('right', `rightDropdown  ${showSelectAll ? 'TableTransfer-selectAll' : ''}`));
-  const getLeftNum = (page: number) => (page - 1) * itemSize!;
-  const getRightNum = (page: number) => page * itemSize!;
-  
-  const currentSourceData = sourceData.slice(getLeftNum(sourcePage), getRightNum(sourcePage))
-  const currentTargetData = targetData.slice(getLeftNum(targetPage), getRightNum(targetPage))
-  console.log([...currentSourceData, ...currentTargetData], '*/*****')
+  console.log("========")
   return (
     <div className={`TableTransfer ${className}`}>
       {/* {<LeftDropdown />}
       {<RightDropdown />} */}
       <button onClick={() => getSelectAll('left')}>全选</button>
       <Transfer
-        dataSource={[...currentSourceData, ...currentTargetData]}
+        dataSource={dataSource}
         targetKeys={rightKeys}
         filterOption={mergedFilterOption}
         {...restProps}
@@ -358,52 +353,27 @@ const TableTransfer = React.forwardRef<any, TableTransferProps>((props, ref) => 
           };
 
           return (
-            <div>
-              <Table
-                rowSelection={rowSelection}
-                columns={columns}
-                dataSource={filteredItems}
-                size="small"
-                style={{ pointerEvents: listDisabled ? 'none' : undefined }}
-                onRow={({ key, disabled: itemDisabled }) => ({
-                  onClick: () => {
-                    if (itemDisabled || listDisabled) return;
-                    onItemSelect(key, !listSelectedKeys.includes(key));
-                  },
-                })}
-                showHeader={false}
-                pagination={false}
-              />
-              {
-                direction === 'left' ? (
-                  <Pagination 
-                    simple 
-                    current={sourcePage}
-                    total={sourceData.length}
-                    onChange={(page: number) => {
-                      setSourcePage(page)
-                    }}
-                  />
-                ) : (
-                  <Pagination 
-                    simple 
-                    current={targetPage}
-                    total={targetData.length}
-                    onChange={(page: number) => {
-                      setTargetPage(page)
-                    }}
-                  />
-                )
-              }
-              {/* <Pagination 
-                simple 
-                current={direction === 'left' ? sourcePage : targetPage}
-                total={direction === 'left' ? sourceData.length : targetData.length}
-                onChange={(page: number) => {
+            <Table
+              rowSelection={rowSelection}
+              columns={columns}
+              dataSource={filteredItems}
+              size="small"
+              style={{ pointerEvents: listDisabled ? 'none' : undefined }}
+              onRow={({ key, disabled: itemDisabled }) => ({
+                onClick: () => {
+                  if (itemDisabled || listDisabled) return;
+                  onItemSelect(key, !listSelectedKeys.includes(key));
+                },
+              })}
+              showHeader={false}
+              pagination={{
+                pageSize: itemSize,
+                simple: true,
+                onChange(page, pageSize) {
                   direction === 'left' ? setSourcePage(page) : setTargetPage(page)
-                }}
-              /> */}
-            </div>
+                }
+              }}
+            />
           );
         }}
       </Transfer>

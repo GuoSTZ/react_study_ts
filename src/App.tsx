@@ -20,7 +20,7 @@ import CheckView from './module/EditTable/check';
 // import SelectView from './module/SelectView';
 import TreeSelect from './module/TreeSelect/select';
 import AntdTreeSelect from './module/TreeSelect';
-import TableTransfer from './module/TableTransfer/new';
+import TableTransfer from './module/TableTransfer/virtualTransfer';
 // import EchartsView from './module/EchartsView';
 // import LessView from './module/LessView';
 // import { ModalMethodView } from './module/Modal';
@@ -69,7 +69,7 @@ class App extends Component {
       // });
     }
     let data = [];
-    for(let i=0;i< 10; i++) {
+    for(let i=0;i< 50; i++) {
       data.push({
         title: `content ${i}`,
         key: i.toString(),
@@ -112,10 +112,11 @@ class App extends Component {
           targetKeys={['1', '2']}
           leftColumns={[{dataIndex: 'title'}]}
           rightColumns={[{dataIndex: 'title'}]}
-          showSearch
-          showSelectAll={false}
-          maxTargetKeys={200}
-          dropdownSelectCount={[100]}
+          // showSearch
+          // showSelectAll={false}
+          // maxTargetKeys={200}
+          // dropdownSelectCount={[100]}
+          // itemSize={10}
         />
         {/* <TreeSelect 
           style={{ width: '100%' }}
