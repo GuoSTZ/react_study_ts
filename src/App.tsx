@@ -42,6 +42,7 @@ import DataTable from './module/DataTable';
 import JsonEditorView from './module/JsonEditorView';
 import RcSelectView from './module/RcSelect';
 import VirtualView from './module/VirtualView';
+import InfiniteLoaderList from './module/InfiniteLoaderList';
 
 
 import {treeData} from './utils/mockData';
@@ -107,7 +108,7 @@ class App extends Component {
           }
         </Select> */}
         {/* <FormView /> */}
-        <TableTransfer 
+        {/* <TableTransfer 
           dataSource={data}
           targetKeys={['1', '2']}
           leftColumns={[{dataIndex: 'title'}]}
@@ -117,7 +118,7 @@ class App extends Component {
           // maxTargetKeys={200}
           // dropdownSelectCount={[100]}
           // itemSize={10}
-        />
+        /> */}
         {/* <TreeSelect 
           style={{ width: '100%' }}
           dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
@@ -133,6 +134,9 @@ class App extends Component {
         <Select style={{display: 'block', width: 200}}>
           <Select.Option value={1}>aaa</Select.Option>
         </Select> */}
+        <div style={{width: 800, height: 500}}>
+          <InfiniteLoaderList />
+        </div>
       </div>
     );
   }
