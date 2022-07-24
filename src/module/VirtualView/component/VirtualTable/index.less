@@ -1,0 +1,68 @@
+.VirtualTable-AutoSizer {
+  .VirtualTable {
+    .row-expanded-table {
+      .ReactVirtualized__Grid.ReactVirtualized__Table__Grid {
+        .ReactVirtualized__Grid__innerScrollContainer {
+
+        }
+      }
+    }
+
+    .row-expand-icon {
+      position: relative;
+      display: inline-flex;
+      float: left;
+      height: 17px;
+      width: 17px;
+      border: 1px solid rgba(0, 0, 0, .06);
+      border-radius: 2px;
+      box-sizing: border-box;
+      cursor: pointer;
+      transform: scale(.94117647);
+      transition: all .3s;
+
+
+      &::before,
+      &::after {
+        position: absolute;
+        background: rgba(0, 0, 0, 0.85);
+        transition: transform .3s ease-out;
+        content: "";
+      }
+
+      &::before {
+        top: 7px;
+        right: 3px;
+        left: 3px;
+        height: 1px;
+      }
+
+      &::after {
+        top: 3px;
+        bottom: 3px;
+        left: 7px;
+        width: 1px;
+        transform: rotate(90deg);
+      }
+
+      &:hover {
+        border-color: rgb(64, 169, 255);
+
+        &::before,
+        &::after {
+          background: rgb(64, 169, 255);
+        }
+      }
+    }
+
+    .row-expand-icon-collapsed {
+      &::before {
+        transform: rotate(-180deg);
+      }
+
+      &::after {
+        transform: rotate(0);
+      }
+    }
+  }
+}

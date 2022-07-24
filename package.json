@@ -21,6 +21,7 @@
     "@types/react": "17.0.0",
     "@types/react-dom": "17.0.0",
     "@types/react-virtualized": "^9.21.21",
+    "@types/react-window": "^1.8.5",
     "@types/three": "^0.136.1",
     "antd": "3.26",
     "babel-plugin-import": "1.13.3",
@@ -35,7 +36,10 @@
     "mammoth": "1.4.18",
     "postcss-loader": "3.0.0",
     "postcss-pxtorem": "5.1.1",
-    "rc-select": "~14.1.1",
+    "rc-motion": "^2.6.0",
+    "rc-select": "^14.1.4",
+    "rc-table": "^7.24.2",
+    "rc-tree": "5.6.1",
     "rc-tree-select": "4.7.0",
     "rc-util": "^5.14.0",
     "react": "16.13.1",
@@ -49,6 +53,7 @@
     "react-router-dom": "5.2.0",
     "react-scripts": "4.0.3",
     "react-virtualized": "^9.22.3",
+    "react-window": "^1.8.7",
     "three": "^0.136.0",
     "typescript": "4.1.2",
     "web-vitals": "1.0.1"
@@ -62,7 +67,8 @@
   "devDependencies": {
     "@types/react-router": "5.1.7",
     "@types/react-router-config": "5.0.1",
-    "@types/react-router-dom": "5.1.5"
+    "@types/react-router-dom": "5.1.5",
+    "reqwest": "^2.0.5"
   },
   "eslintConfig": {
     "extends": [

@@ -58,6 +58,7 @@ const TableTransfer = (props: TableTransferProps) => {
     maxTargetKeys,
     className,
     maxErrorMsg,
+    filterOption,
     ...restProps
   } = props;
 
@@ -80,6 +81,12 @@ const TableTransfer = (props: TableTransferProps) => {
 
   const getKeys = (data: any) => data?.map((item: any) => item.key);
 
+  /** 筛选方法 */
+  const mergedFilterOption = (inputValue: string, item: any) =>
+    typeof filterOption === 'function' 
+      ? filterOption(inputValue, item)
+      : item?.title?.toUpperCase()?.indexOf(inputValue?.toUpperCase()) !== -1
+  
   // 筛选非禁用的数据key
   const getEnabledItemKeys = (data: any) => {
     const keys: any = [];
@@ -108,7 +115,7 @@ const TableTransfer = (props: TableTransferProps) => {
     };
     dataSource?.forEach((record: any) => {
       const indexOfKey = targetKeys.indexOf(record.key);
-      const isFiltered = record?.title?.toUpperCase()?.includes(filterValue[direction]?.toUpperCase());
+      const isFiltered = mergedFilterOption(filterValue[direction], record);
       if (isFiltered) {
         if (indexOfKey !== -1) {
           data['right'][indexOfKey] = record;
@@ -129,7 +136,7 @@ const TableTransfer = (props: TableTransferProps) => {
     let sum = 0;
     dataSource?.every((record: any) => {
       const indexOfKey = targetKeys.indexOf(record.key);
-      const isFiltered = record?.title?.toUpperCase()?.includes(filterValue[direction]?.toUpperCase());
+      const isFiltered = mergedFilterOption(filterValue[direction], record);
       const isEnabled = !record?.disabled;
       if(direction === 'left' && typeof count === 'number' && data[direction].length >= count) {
         return false;
@@ -305,9 +312,7 @@ const TableTransfer = (props: TableTransferProps) => {
         dataSource={dataSource}
         targetKeys={targetKeys}
         // 默认用title处理，可传入自定义方法做覆盖
-        filterOption={(inputValue: string, item: any) =>
-          item?.title?.toUpperCase()?.indexOf(inputValue?.toUpperCase()) !== -1
-        }
+        filterOption={mergedFilterOption}
         {...restProps}
         selectedKeys={[...sourceSelectedKeys, ...targetSelectedKeys]}
         onChange={onChange}

@@ -20,7 +20,7 @@ import CheckView from './module/EditTable/check';
 // import SelectView from './module/SelectView';
 import TreeSelect from './module/TreeSelect/select';
 import AntdTreeSelect from './module/TreeSelect';
-import TableTransfer from './module/TableTransfer';
+import TableTransfer from './module/TableTransfer/virtualTransfer';
 // import EchartsView from './module/EchartsView';
 // import LessView from './module/LessView';
 // import { ModalMethodView } from './module/Modal';
@@ -41,7 +41,8 @@ import customSvg from './custom.svg';
 import DataTable from './module/DataTable';
 import JsonEditorView from './module/JsonEditorView';
 import RcSelectView from './module/RcSelect';
-import VirtualTableView from './module/VirtualTable';
+import VirtualView from './module/VirtualView';
+import InfiniteLoaderList from './module/InfiniteLoaderList';
 
 
 import {treeData} from './utils/mockData';
@@ -69,10 +70,11 @@ class App extends Component {
       // });
     }
     let data = [];
-    for(let i=0;i< 1000; i++) {
+    for(let i=0;i< 50; i++) {
       data.push({
         title: `content ${i}`,
         key: i.toString(),
+        disabled: i === 4,
       })
     }
     return (
@@ -108,12 +110,14 @@ class App extends Component {
         {/* <FormView /> */}
         {/* <TableTransfer 
           dataSource={data}
+          targetKeys={['1', '2']}
           leftColumns={[{dataIndex: 'title'}]}
           rightColumns={[{dataIndex: 'title'}]}
-          showSearch
-          showSelectAll={false}
-          maxTargetKeys={200}
-          dropdownSelectCount={[100]}
+          // showSearch
+          // showSelectAll={false}
+          // maxTargetKeys={200}
+          // dropdownSelectCount={[100]}
+          // itemSize={10}
         /> */}
         {/* <TreeSelect 
           style={{ width: '100%' }}
@@ -126,7 +130,13 @@ class App extends Component {
         /> */}
         {/* <JsonEditorView /> */}
         {/* <RcSelectView /> */}
-        <VirtualTableView />
+        {/* <VirtualView />
+        <Select style={{display: 'block', width: 200}}>
+          <Select.Option value={1}>aaa</Select.Option>
+        </Select> */}
+        <div style={{width: 800, height: 500}}>
+          <InfiniteLoaderList />
+        </div>
       </div>
     );
   }
