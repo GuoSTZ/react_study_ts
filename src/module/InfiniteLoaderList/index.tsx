@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, message, Avatar, Spin } from 'antd';
+import { List, Icon, Avatar, Spin } from 'antd';
 import WindowScroller from 'react-virtualized/dist/commonjs/WindowScroller';
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
 import VList from 'react-virtualized/dist/commonjs/List';
@@ -7,7 +7,8 @@ import InfiniteLoader from 'react-virtualized/dist/commonjs/InfiniteLoader';
 import './index.less';
 
 export default class InfiniteLoaderList extends React.Component {
-  index: number = 0;
+  index: number = 1;
+  itemHeight: number = 50;
   state = {
     data: [],
     loading: false,
@@ -25,7 +26,7 @@ export default class InfiniteLoaderList extends React.Component {
 
   fetchData = (callback: any) => {
     const data: any = [];
-    for(let i=this.index; i<this.index+50; i++ ) {
+    for(let i=this.index; i<this.index+100; i++ ) {
       data.push({
         id: i,
         name: {
@@ -34,24 +35,34 @@ export default class InfiniteLoaderList extends React.Component {
         email: "5400xxxxxx.com"
       })
     }
-    this.index = this.index + 50;
+    this.index = this.index + 100;
     callback(data)
   };
 
-  handleInfiniteOnLoad = ({ startIndex, stopIndex }: any): any => {
+  handleInfiniteOnLoad = (scrollTop: number, height: number, { startIndex, stopIndex }: any): any => {
     let { data } = this.state;
-
-    if(stopIndex === data.length - 1) {
-      console.log(startIndex, stopIndex, '=====')
-      this.fetchData((res: any) => {
-        data = data.concat(res);
-        setTimeout(() => {
+    this.setState({
+      loading: true,
+    });
+    console.log(startIndex, stopIndex, scrollTop, height, '=====')
+    // 舍弃小数点位
+    const int_scrollTop = Math.round(scrollTop);
+    // 当前显示的节点数量，包含显示部分的节点
+    const visibleNode = height / this.itemHeight;
+    const unvisibleNode = data.length - visibleNode;
+    if(
+      int_scrollTop - 40 <= this.itemHeight * unvisibleNode && 
+      int_scrollTop - 40 >= this.itemHeight * Math.trunc(unvisibleNode)
+    ) {
+      setTimeout(() => {
+        this.fetchData((res: any) => {
+          data = data.concat(res);
           this.setState({
+            data,
             loading: false,
-            data
           })
-        }, 2000)
-      });
+        })
+      }, 2000)
     }
   };
 
@@ -82,9 +93,9 @@ export default class InfiniteLoaderList extends React.Component {
           height={height}
           isScrolling={isScrolling}
           onScroll={onChildScroll}
-          overscanRowCount={100}
+          overscanRowCount={20}
           rowCount={data.length}
-          rowHeight={73}
+          rowHeight={this.itemHeight}
           rowRenderer={this.renderItem}
           onRowsRendered={onRowsRendered}
           scrollTop={scrollTop}
@@ -109,9 +120,9 @@ export default class InfiniteLoaderList extends React.Component {
     const infiniteLoader = ({ height, isScrolling, onChildScroll, scrollTop }: any) => (
       <InfiniteLoader
         isRowLoaded={this.isRowLoaded}
-        loadMoreRows={this.handleInfiniteOnLoad}
+        loadMoreRows={this.handleInfiniteOnLoad.bind(this, scrollTop, height)}
         rowCount={data.length}
-        minimumBatchSize={5}
+        minimumBatchSize={10}
       >
         {({ onRowsRendered }) =>
           autoSize({
@@ -128,7 +139,14 @@ export default class InfiniteLoaderList extends React.Component {
       <List>
         {data.length > 0 && <WindowScroller>{infiniteLoader}</WindowScroller>}
         {/* {this.state.loading && <Spin className="demo-loading" />} */}
-        <Spin className="demo-loading" />
+        {/* <Spin className="demo-loading" tip="加载中"/> */}
+        {
+          this.state.loading && (
+            <div className="demo-loading">
+              <Icon type="loading" style={{color: 'rgb(24, 144, 255)'}}/> 加载中
+            </div>
+          )
+        }
       </List>
     );
   }
