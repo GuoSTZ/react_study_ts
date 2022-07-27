@@ -12,6 +12,7 @@ export default class InfiniteLoaderList extends React.Component {
   state = {
     data: [],
     loading: false,
+    showTotal: false
   };
 
   loadedRowsMap: any = {};
@@ -25,8 +26,12 @@ export default class InfiniteLoaderList extends React.Component {
   }
 
   fetchData = (callback: any) => {
+    if(this.index === 151) {
+      callback([])
+      return;
+    }
     const data: any = [];
-    for(let i=this.index; i<this.index+100; i++ ) {
+    for(let i=this.index; i<this.index + 50; i++ ) {
       data.push({
         id: i,
         name: {
@@ -35,7 +40,7 @@ export default class InfiniteLoaderList extends React.Component {
         email: "5400xxxxxx.com"
       })
     }
-    this.index = this.index + 100;
+    this.index = this.index + 50;
     callback(data)
   };
 
@@ -43,8 +48,8 @@ export default class InfiniteLoaderList extends React.Component {
     let { data } = this.state;
     this.setState({
       loading: true,
+      showTotal: false
     });
-    console.log(startIndex, stopIndex, scrollTop, height, '=====')
     // 舍弃小数点位
     const int_scrollTop = Math.round(scrollTop);
     // 当前显示的节点数量，包含显示部分的节点
@@ -56,11 +61,18 @@ export default class InfiniteLoaderList extends React.Component {
     ) {
       setTimeout(() => {
         this.fetchData((res: any) => {
-          data = data.concat(res);
-          this.setState({
-            data,
-            loading: false,
-          })
+          if(res.length === 0) {
+            this.setState({
+              showTotal: true,
+              loading: false
+            })
+          } else {
+            data = data.concat(res);
+            this.setState({
+              data,
+              loading: false,
+            })
+          }
         })
       }, 2000)
     }
@@ -144,6 +156,13 @@ export default class InfiniteLoaderList extends React.Component {
           this.state.loading && (
             <div className="demo-loading">
               <Icon type="loading" style={{color: 'rgb(24, 144, 255)'}}/> 加载中
+            </div>
+          )
+        }
+        {
+          this.state.showTotal && (
+            <div className="demo-loading">
+              已展示全部
             </div>
           )
         }
