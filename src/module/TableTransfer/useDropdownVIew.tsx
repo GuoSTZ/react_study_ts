@@ -3,7 +3,7 @@ import { Menu, Dropdown, Icon } from 'antd';
 
 export interface DropdownViewProps {
   menuItems: MenuItemsProps[];
-  className: string;
+  className?: string;
 }
 
 interface MenuItemsProps {
