@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Transfer, Table, Button } from 'antd';
-import { TransferProps, ListStyle } from 'antd/lib/transfer';
+import { TransferProps, ListStyle, TransferDirection } from 'antd/lib/transfer';
 import { ColumnProps } from 'antd/lib/table';
 import useDropdownView from './useDropdownVIew';
 import './index.less';
@@ -31,7 +31,6 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
   } = props;
 
   const ref: any = React.useRef();
-  const tableRef: any = React.useRef();
 
   const PAGE_SIZE = 10;
 
@@ -108,6 +107,43 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
     setTableKeys(origin => Object.assign({}, origin, {'left': lDataKey}))
   }, [tableKeys['right']])
 
+  useEffect(() => {
+    //重写穿梭框的 moveTo 方法
+    const $ = ref.current;
+    $.moveTo = (direction: TransferDirection) => {
+      const { targetKeys = [], dataSource = [], onChange } = $.props;
+      const { sourceSelectedKeys, targetSelectedKeys } = $.state;
+      const newMoveKeysMap = new Map(); // 用 map 记录将被移动的数据的key值，替代下述的 indexOf 查询
+      const moveKeys = direction === 'right' ? sourceSelectedKeys : targetSelectedKeys;
+      // filter the disabled options
+      const newMoveKeys = moveKeys.filter(
+        (key: string) => {
+          const status = dataSourceMap.get(key).disabled;
+          if(!status) {
+            newMoveKeysMap.set(key, true);
+          }
+          return !status;
+        }
+      );
+      // move items to target box
+      const newTargetKeys =
+        direction === 'right'
+          ? newMoveKeys.concat(targetKeys)
+          : targetKeys.filter((targetKey: any[]) => !newMoveKeysMap.has(targetKey));
+  
+      // empty checked keys
+      const oppositeDirection = direction === 'right' ? 'left' : 'right';
+      $.setState({
+        [$.getSelectedKeysName(oppositeDirection)]: [],
+      });
+      $.handleSelectChange(oppositeDirection, []);
+  
+      if (onChange) {
+        onChange(newTargetKeys, direction, newMoveKeys);
+      }
+    };
+  }, [])
+
   /** 默认筛选函数 */
   const defaultFilterOption = (inputValue: string, record: any) => {
     const title = getTitle(record);
@@ -124,6 +160,14 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
       'right': targetKeys
     }))
     moveKeys.forEach((item: any) => dataSourceSelectedMap.set(item, false));
+  }
+
+  const onSearch = (direction: 'left'|'right', value: string) => {
+    if(direction === 'left') {
+      
+    } else {
+
+    }
   }
 
   const currentData = (direction: 'left'|'right') => 
@@ -160,15 +204,14 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
     }},
     {title: '反选当页', onClick: async () => {
       const keys: any[] = [];
-      const _keys: any[] = [];
       currentData('left')?.forEach((item: any) => {
         const status = dataSourceSelectedMap.get(item.key);
         !item.disabled && dataSourceSelectedMap.set(item.key, !status);
         !item.disabled && !status && keys.push(item.key);
-        !item.disabled && status && _keys.push(item.key);
       })
-      await ref?.current?.onItemSelectAll('left', _keys, false)
-      ref?.current?.onItemSelectAll('left', keys, true)
+      ref?.current?.setState?.({
+        sourceSelectedKeys: keys
+      })
     }}
   ], className: `leftDropdown`});
 
@@ -194,15 +237,14 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
     }},
     {title: '反选当页', onClick: async () => {
       const keys: any[] = [];
-      const _keys: any[] = [];
       currentData('right')?.forEach((item: any) => {
         const status = dataSourceSelectedMap.get(item.key);
         !item.disabled && dataSourceSelectedMap.set(item.key, !status);
         !item.disabled && !status && keys.push(item.key);
-        !item.disabled && status && _keys.push(item.key);
       })
-      await ref?.current?.onItemSelectAll('right', _keys, false)
-      ref?.current?.onItemSelectAll('right', keys, true)
+      ref?.current?.setState?.({
+        targetSelectedKeys: keys
+      })
     }}
   ], className: `rightDropdown`});
 
@@ -217,6 +259,7 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
         filterOption={mergedFilterOption}
         {...restProps}
         onChange={onChange}
+        onSearch={onSearch}
         showSelectAll={false}
       >
         {({
@@ -233,12 +276,8 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
             getCheckboxProps: (item: any) => ({ disabled: item.disabled }),
             onSelect(record: any, selected: boolean, selectedRows: any[], nativeEvent: any) {
               if(selected) {
-                // const keys = tableSelectedKeys[direction].concat(record.key);
-                // setTableSelectedKeys(origin => Object.assign({}, origin, {[direction]: keys}))
                 dataSourceSelectedMap.set(record.key, true)
               } else {
-                // const keys = tableSelectedKeys[direction].filter((item: any) => item !== record.key);
-                // setTableSelectedKeys(origin => Object.assign({}, origin, {[direction]: keys}))
                 dataSourceSelectedMap.set(record.key, false)
               }
               onItemSelect(record.key, selected);
