@@ -70,7 +70,7 @@ class App extends Component {
       // });
     }
     let data = [];
-    for(let i=0;i< 30000; i++) {
+    for(let i=0;i< 50000; i++) {
       data.push({
         title: `content ${i}`,
         key: i.toString(),

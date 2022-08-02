@@ -5,6 +5,8 @@ import { ColumnProps } from 'antd/lib/table';
 import useDropdownView from './useDropdownVIew';
 import './index.less';
 
+type DirectionType = 'left' | 'right'
+
 export interface VirtualTransferProps extends Omit<TransferProps, 'listStyle'> {
   /**
    * 左侧表格列配置
@@ -42,26 +44,50 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
     'left': [],
     'right': []
   })
-  const [selectedData, setSelectedData] = useState({
-    'left': [],
-    'right': []
-  }) 
   const [tableKeys, setTableKeys] = useState({
     'left': [],
     'right': [] as any[]
   })
-  const [tableSelectedKeys, setTableSelectedKeys] = useState({
-    'left': [] as any[],
-    'right': [] as any[]
+  const [filterValue, setFilterValue] = useState({
+    'left': '' as any,
+    'right': '' as any,
+  })
+  const [selectedKeysLen, setSelectedKeysLen] = useState({
+    'left': 0,
+    'right': 0,
   })
 
-  const getRowKey = (record: any) => typeof rowKey === 'function' ? rowKey(record) : record.key;
+  const nodes = document.querySelectorAll(
+    '.TableTransfer .ant-transfer-list-header-selected > span:first-child'
+  );
+  const leftNode = nodes[0];
+  const rightNode = nodes[1];
+
   const getTitle = (record: any) => typeof render === 'function' ? render(record) : record.title;
   const getRecordKey = (record: any, index: number) => {
     const { rowKey } = props;
     const recordKey =
       typeof rowKey === 'function' ? rowKey(record) : record.key;
     return recordKey === undefined ? index : recordKey;
+  }
+
+  /** 默认筛选函数 */
+  const defaultFilterOption = (inputValue: string, record: any) => {
+    const title = getTitle(record);
+    return title?.toUpperCase()?.indexOf(inputValue?.toUpperCase()) !== -1
+  }
+
+  /** 筛选函数合并 */
+  const mergedFilterOption = typeof filterOption === 'function'
+    ? filterOption
+    : defaultFilterOption
+
+  const filterData = (direction: DirectionType) => {
+    const inputValue = filterValue[direction];
+    if (inputValue === '' && inputValue.trim() === '') {
+      return tableData[direction];
+    }
+    return tableData[direction].filter((record: any) => mergedFilterOption(inputValue, record));
   }
 
   /** 获取全部数据的key和map */
@@ -79,7 +105,7 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
   }, [dataSource])
 
   useEffect(() => {
-    setTableKeys(origin => Object.assign({}, origin, {'right': targetKeys}))
+    setTableKeys(origin => Object.assign({}, origin, { 'right': targetKeys }))
   }, [targetKeys])
 
   useEffect(() => {
@@ -93,7 +119,7 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
     dataSource?.forEach((record: any, index: number) => {
       const key = getRecordKey(record, index);
       const idx = targetMap.get(key) ?? -1;
-      if(idx > -1) {
+      if (idx > -1) {
         rData[idx] = record;
       } else {
         lDataKey.push(key);
@@ -104,8 +130,42 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
       'left': lData,
       'right': rData
     }));
-    setTableKeys(origin => Object.assign({}, origin, {'left': lDataKey}))
+    setTableKeys(origin => Object.assign({}, origin, { 'left': lDataKey }))
   }, [tableKeys['right']])
+
+  useEffect(() => {
+    if(leftNode) {
+      const leftLen = filterData('left').length.toString();
+      leftNode.childNodes[0].nodeValue = leftLen
+    }
+  }, [filterData('left').length])
+
+  useEffect(() => {
+    if(rightNode) {
+      const rightLen = filterData('right').length.toString();
+      rightNode!.childNodes[0].nodeValue = rightLen;
+    }
+  }, [filterData('right').length])
+
+  useEffect(() => {
+    if(leftNode) {
+      if(leftNode.childNodes[0].nodeValue?.includes("/")) {
+        const leftLen = filterData('left').length.toString();
+        const values = leftNode.childNodes[0].nodeValue.split("/");
+        leftNode.childNodes[0].nodeValue = `${values[0]}/${leftLen}`;
+      }
+    }
+  }, [selectedKeysLen['left']])
+
+  useEffect(() => {
+    if(rightNode) {
+      if(rightNode.childNodes[0].nodeValue?.includes("/")) {
+        const rightLen = filterData('right').length.toString();
+        const values = rightNode.childNodes[0].nodeValue.split("/");
+        rightNode.childNodes[0].nodeValue = `${values[0]}/${rightLen}`;
+      }
+    }
+  }, [selectedKeysLen['right']])
 
   useEffect(() => {
     //重写穿梭框的 moveTo 方法
@@ -119,7 +179,7 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
       const newMoveKeys = moveKeys.filter(
         (key: string) => {
           const status = dataSourceMap.get(key).disabled;
-          if(!status) {
+          if (!status) {
             newMoveKeysMap.set(key, true);
           }
           return !status;
@@ -130,31 +190,20 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
         direction === 'right'
           ? newMoveKeys.concat(targetKeys)
           : targetKeys.filter((targetKey: any[]) => !newMoveKeysMap.has(targetKey));
-  
+
       // empty checked keys
       const oppositeDirection = direction === 'right' ? 'left' : 'right';
       $.setState({
         [$.getSelectedKeysName(oppositeDirection)]: [],
       });
       $.handleSelectChange(oppositeDirection, []);
-  
+
       if (onChange) {
         onChange(newTargetKeys, direction, newMoveKeys);
       }
     };
   }, [])
 
-  /** 默认筛选函数 */
-  const defaultFilterOption = (inputValue: string, record: any) => {
-    const title = getTitle(record);
-    return title?.toUpperCase()?.indexOf(inputValue?.toUpperCase()) !== -1
-  }
-
-  /** 筛选函数合并 */
-  const mergedFilterOption = typeof filterOption === 'function'
-    ? filterOption
-    : defaultFilterOption
-  
   const onChange = (targetKeys: string[], direction: string, moveKeys: string[]) => {
     setTableKeys(origin => Object.assign({}, origin, {
       'right': targetKeys
@@ -162,105 +211,99 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
     moveKeys.forEach((item: any) => dataSourceSelectedMap.set(item, false));
   }
 
-  const onSearch = (direction: 'left'|'right', value: string) => {
-    if(direction === 'left') {
-      
-    } else {
-
-    }
+  const onSearch = (direction: DirectionType, value: string) => {
+    setFilterValue(origin => Object.assign({}, origin, {
+      [direction]: value
+    }));
   }
 
-  const currentData = (direction: 'left'|'right') => 
-    tableData[direction].slice((page[direction] - 1) * PAGE_SIZE, page[direction] * PAGE_SIZE)
-  const currentSelectedKeys = (direction: 'left'|'right') => {
+  const currentData = (direction: DirectionType) =>
+    filterData(direction).slice((page[direction] - 1) * PAGE_SIZE, page[direction] * PAGE_SIZE)
+  const currentSelectedKeys = (direction: DirectionType) => {
     const keys: any[] = [];
     currentData(direction).map((item: any) => {
-      if(dataSourceSelectedMap.get(item.key)) {
+      if (dataSourceSelectedMap.get(item.key)) {
         keys.push(item.key);
       }
     })
     return keys;
   }
 
-  const { DropdownView: LeftDropdown } = useDropdownView({menuItems: [
-    {title: '全选所有', onClick: () => {
-      const keys: any[] = [];
-      const len = tableKeys['left'].length;
-      for(let i=0; i< len; i++) {
-        const isDisabled = dataSourceMap.get(tableKeys['left'][i]).disabled;
-        !isDisabled && keys.push(tableKeys['left'][i]);
-        !isDisabled && dataSourceSelectedMap.set(tableKeys['left'][i], true);
-      }
-      ref?.current?.onItemSelectAll('left', keys, keys.length > 0)
-    }},
-    {title: '全选当页', onClick: () => {
-      const keys: any[] = [];
-      currentData('left')?.forEach((item: any) => {
-        const status = dataSourceSelectedMap.get(item.key);
-        !item.disabled && dataSourceSelectedMap.set(item.key, true);
-        !item.disabled && !status && keys.push(item.key);
-      })
-      ref?.current?.onItemSelectAll('left', keys, keys.length > 0)
-    }},
-    {title: '反选当页', onClick: async () => {
-      const keys: any[] = [];
-      currentData('left')?.forEach((item: any) => {
-        const status = dataSourceSelectedMap.get(item.key);
-        !item.disabled && dataSourceSelectedMap.set(item.key, !status);
-        !item.disabled && !status && keys.push(item.key);
-      })
-      ref?.current?.setState?.({
-        sourceSelectedKeys: keys
-      })
-    }}
-  ], className: `leftDropdown`});
+  const getMenuItems = (direction: DirectionType) => {
+    return [
+      {
+        title: '全选所有', onClick: () => {
+          const keys: any[] = [];
+          const data: any[] = filterData(direction);
+          const len = data.length;
+          for (let i = 0; i < len; i++) {
+            const isDisabled = dataSourceMap.get(data[i].key).disabled;
+            !isDisabled && keys.push(data[i].key);
+            !isDisabled && dataSourceSelectedMap.set(data[i].key, true);
+          }
+          ref?.current?.onItemSelectAll(direction, keys, keys.length > 0)
+        }
+      },
+      {
+        title: '全选当页', onClick: () => {
+          const keys: any[] = [];
+          currentData(direction)?.forEach((item: any) => {
+            const status = dataSourceSelectedMap.get(item.key);
+            !item.disabled && dataSourceSelectedMap.set(item.key, true);
+            !item.disabled && !status && keys.push(item.key);
+          })
+          ref?.current?.onItemSelectAll(direction, keys, true)
+        }
+      },
+      {
+        title: '反选当页', onClick: async () => {
+          const keys: any[] = []; // 存储当前已经被勾选的数据
+          currentData(direction)?.forEach((item: any) => {
+            const status = dataSourceSelectedMap.get(item.key);
+            !item.disabled && dataSourceSelectedMap.set(item.key, !status);
+          })
+          tableKeys[direction]?.forEach((item: any) => {
+            if(dataSourceSelectedMap.get(item)) {
+              keys.push(item);
+            }
+          })
 
-  const { DropdownView: RightDropdown } = useDropdownView({menuItems: [
-    {title: '全选所有', onClick: () => {
-      const keys: any[] = [];
-      const len = tableKeys['right'].length;
-      for(let i=0; i< len; i++) {
-        const isDisabled = dataSourceMap.get(tableKeys['right'][i]).disabled;
-        !isDisabled && keys.push(tableKeys['right'][i]);
-        !isDisabled && dataSourceSelectedMap.set(tableKeys['right'][i], true);
+          let selectedKeys = direction === 'left' ? 'sourceSelectedKeys' : 'targetSelectedKeys'
+          ref?.current?.setState?.({
+            [selectedKeys]: keys
+          }, () => {
+            setSelectedKeysLen(origin => Object.assign({}, origin, {
+              [direction]: keys.length
+            }))
+          })
+        }
       }
-      ref?.current?.onItemSelectAll('right', keys, keys.length > 0)
-    }},
-    {title: '全选当页', onClick: () => {
-      const keys: any[] = [];
-      currentData('right')?.forEach((item: any) => {
-        const status = dataSourceSelectedMap.get(item.key);
-        !item.disabled && dataSourceSelectedMap.set(item.key, true);
-        !item.disabled && !status && keys.push(item.key);
-      })
-      ref?.current?.onItemSelectAll('right', keys, keys.length > 0)
-    }},
-    {title: '反选当页', onClick: async () => {
-      const keys: any[] = [];
-      currentData('right')?.forEach((item: any) => {
-        const status = dataSourceSelectedMap.get(item.key);
-        !item.disabled && dataSourceSelectedMap.set(item.key, !status);
-        !item.disabled && !status && keys.push(item.key);
-      })
-      ref?.current?.setState?.({
-        targetSelectedKeys: keys
-      })
-    }}
-  ], className: `rightDropdown`});
+    ]
+  }
+
+  const { DropdownView: LeftDropdown } = useDropdownView({ menuItems: getMenuItems('left'), className: `leftDropdown` });
+
+  const { DropdownView: RightDropdown } = useDropdownView({ menuItems: getMenuItems('right'), className: `rightDropdown` });
 
   return (
     <div className={`TableTransfer ${className ?? ""}`}>
       <LeftDropdown />
       <RightDropdown />
       <Transfer
+        showSearch
+        {...restProps}
         ref={ref}
         targetKeys={tableKeys['right']}
-        showSearch
         filterOption={mergedFilterOption}
-        {...restProps}
         onChange={onChange}
         onSearch={onSearch}
         showSelectAll={false}
+        onSelectChange={(sourceSelectedKeys, targetSelectedKeys) => {
+          setSelectedKeysLen({
+            'left': sourceSelectedKeys.length,
+            'right': targetSelectedKeys.length
+          })
+        }}
       >
         {({
           direction,
@@ -275,7 +318,7 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
             selectedRowKeys: currentSelectedKeys(direction),
             getCheckboxProps: (item: any) => ({ disabled: item.disabled }),
             onSelect(record: any, selected: boolean, selectedRows: any[], nativeEvent: any) {
-              if(selected) {
+              if (selected) {
                 dataSourceSelectedMap.set(record.key, true)
               } else {
                 dataSourceSelectedMap.set(record.key, false)
@@ -290,7 +333,7 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
               <Table
                 rowSelection={rowSelection}
                 columns={columns}
-                dataSource={tableData[direction]}
+                dataSource={filterData(direction)}
                 size="small"
                 style={{ pointerEvents: listDisabled ? 'none' : undefined }}
                 onRow={({ key, disabled: itemDisabled }) => ({
@@ -305,9 +348,8 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
                 pagination={{
                   simple: true,
                   pageSize: PAGE_SIZE,
-                  // total: 10,
                   onChange: (page: number) => {
-                    setPage(origin => Object.assign({}, origin, {[direction]: page}))
+                    setPage(origin => Object.assign({}, origin, { [direction]: page }))
                   }
                 }}
               />

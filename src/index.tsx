@@ -2,15 +2,17 @@ import 'react-app-polyfill/ie11';
 import 'react-app-polyfill/stable';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { ConfigProvider } from 'antd';
+import zhCN from 'antd/es/locale/zh_CN';
 // import './utils/flexible';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
-  // <React.StrictMode>
+  <ConfigProvider locale={zhCN}>
     <App />,
-  // </React.StrictMode>,
+  </ConfigProvider>,
   document.getElementById('root')
 );
 
