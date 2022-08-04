@@ -110,13 +110,13 @@ class App extends Component {
         {/* <FormView /> */}
         <TableTransfer 
           dataSource={data}
-          targetKeys={['1', '2']}
+          // targetKeys={['1', '2']}
           leftColumns={[{dataIndex: 'title'}]}
           rightColumns={[{dataIndex: 'title'}]}
           // showSearch
           // showSelectAll={false}
-          // maxTargetKeys={200}
-          // dropdownSelectCount={[100]}
+          maxTargetKeys={20}
+          dropdownSelectCount={[20]}
           // itemSize={10}
         />
         {/* <TreeSelect 

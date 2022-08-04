@@ -17,6 +17,14 @@ export interface VirtualTransferProps extends Omit<TransferProps, 'listStyle'> {
    */
   rightColumns: ColumnProps<any>[];
   listStyle?: ((style: ListStyle) => React.CSSProperties) | React.CSSProperties;
+  /**
+   * 自定义选择条目数量
+   */
+  dropdownSelectCount?: number[];
+  /** 允许转移到右侧的最大数据条数 */
+  maxTargetKeys?: number;
+  /** 超出右侧最大数据条数限制的告警文字 */
+  maxErrorMsg?: string;
 }
 
 const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
@@ -29,6 +37,9 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
     rightColumns,
     rowKey,
     targetKeys,
+    dropdownSelectCount,
+    maxTargetKeys,
+    maxErrorMsg,
     ...restProps
   } = props;
 
@@ -56,6 +67,7 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
     'left': 0,
     'right': 0,
   })
+  const [showMaxError, setShowMaxError] = useState(false); 
 
   const nodes = document.querySelectorAll(
     '.TableTransfer .ant-transfer-list-header-selected > span:first-child'
@@ -91,17 +103,15 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
   }
 
   /** 获取全部数据的key和map */
-  const [dataSourceKey, dataSourceMap, dataSourceSelectedMap] = useMemo(() => {
-    const dataKey: any[] = []; // 记录所有数据的key值
+  const [dataSourceMap, dataSourceSelectedMap] = useMemo(() => {
     const dataMap = new Map();
     const dataSelectedMap = new Map(); // 记录数据是否被勾选
     dataSource?.map((record: any, index: number) => {
       const key = getRecordKey(record, index);
-      dataKey.push(key);
       dataMap.set(key, record);
       dataSelectedMap.set(key, false);
     })
-    return [dataKey, dataMap, dataSelectedMap];
+    return [dataMap, dataSelectedMap];
   }, [dataSource])
 
   useEffect(() => {
@@ -110,7 +120,7 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
 
   useEffect(() => {
     const targetMap = new Map();
-    tableKeys['right'].forEach((item: any, index: number) => {
+    tableKeys['right']?.forEach((item: any, index: number) => {
       targetMap.set(item, index);
     })
     let lData: any[] = [];
@@ -171,7 +181,7 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
     //重写穿梭框的 moveTo 方法
     const $ = ref.current;
     $.moveTo = (direction: TransferDirection) => {
-      const { targetKeys = [], dataSource = [], onChange } = $.props;
+      const { targetKeys = [], onChange } = $.props;
       const { sourceSelectedKeys, targetSelectedKeys } = $.state;
       const newMoveKeysMap = new Map(); // 用 map 记录将被移动的数据的key值，替代下述的 indexOf 查询
       const moveKeys = direction === 'right' ? sourceSelectedKeys : targetSelectedKeys;
@@ -205,6 +215,38 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
   }, [])
 
   const onChange = (targetKeys: string[], direction: string, moveKeys: string[]) => {
+    // 当设置了向右最大转移条数限制时
+    if(direction === 'right' && typeof maxTargetKeys === 'number' && maxTargetKeys >= 0) {
+      // 当右侧表格数据量已经达到了最大条数限制时
+      if(tableKeys['right'].length >= maxTargetKeys) {
+        // 需要保持左侧数据的选中
+        ref?.current?.onItemSelectAll('left', moveKeys, true)
+        setShowMaxError(true);
+        return;
+      }
+      // 当移动后的数据量超出最大条数限制时
+      if(targetKeys.length > maxTargetKeys) {
+        const len = maxTargetKeys - tableKeys['right'].length;
+        const newMoveKeys = moveKeys.slice(0, len);
+        const needKeys = moveKeys.slice(len, moveKeys.length);
+
+        newMoveKeys.forEach((item: any) => dataSourceSelectedMap.set(item, false));
+        setTableKeys(origin => Object.assign({}, origin, {
+          'right': newMoveKeys.concat(tableKeys['right'])
+        }))
+        setShowMaxError(true);
+        setTimeout(() => {
+          ref?.current?.setState?.({
+            sourceSelectedKeys: needKeys
+          }, () => {
+            setSelectedKeysLen(origin => Object.assign({}, origin, {
+              'left': needKeys.length
+            }))
+          })
+        }, 100)
+        return;
+      }
+    }
     setTableKeys(origin => Object.assign({}, origin, {
       'right': targetKeys
     }))
@@ -230,7 +272,7 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
   }
 
   const getMenuItems = (direction: DirectionType) => {
-    return [
+    const defaultMenuItems = [
       {
         title: '全选所有', onClick: () => {
           const keys: any[] = [];
@@ -241,7 +283,7 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
             !isDisabled && keys.push(data[i].key);
             !isDisabled && dataSourceSelectedMap.set(data[i].key, true);
           }
-          ref?.current?.onItemSelectAll(direction, keys, keys.length > 0)
+          ref?.current?.onItemSelectAll(direction, keys, true)
         }
       },
       {
@@ -256,7 +298,7 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
         }
       },
       {
-        title: '反选当页', onClick: async () => {
+        title: '反选当页', onClick: () => {
           const keys: any[] = []; // 存储当前已经被勾选的数据
           currentData(direction)?.forEach((item: any) => {
             const status = dataSourceSelectedMap.get(item.key);
@@ -267,7 +309,6 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
               keys.push(item);
             }
           })
-
           let selectedKeys = direction === 'left' ? 'sourceSelectedKeys' : 'targetSelectedKeys'
           ref?.current?.setState?.({
             [selectedKeys]: keys
@@ -277,8 +318,30 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
             }))
           })
         }
-      }
+      },
     ]
+    const selectCountItems: typeof defaultMenuItems = [];
+    if(Array.isArray(dropdownSelectCount)) {
+      dropdownSelectCount.forEach((count: any) => {
+        const sum = typeof count === 'number' ? count : PAGE_SIZE;
+        selectCountItems.push({
+          title: `选择${sum}项`,
+          onClick: () => {
+            const keys: any[] = [];
+            const data: any[] = filterData(direction);
+            const len = Math.min(data.length, sum);
+            for (let i = 0; i < len; i++) {
+              const isDisabled = dataSourceMap.get(data[i].key).disabled;
+              !isDisabled && keys.push(data[i].key);
+              !isDisabled && dataSourceSelectedMap.set(data[i].key, true);
+            }
+            ref?.current?.onItemSelectAll(direction, keys, keys.length > 0)
+          }
+        })
+      })
+    }
+
+    return [...defaultMenuItems, ...selectCountItems];
   }
 
   const { DropdownView: LeftDropdown } = useDropdownView({ menuItems: getMenuItems('left'), className: `leftDropdown` });
@@ -357,6 +420,9 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
           );
         }}
       </Transfer>
+      <div className={`helpText ${showMaxError ? "helpTextIn" : "helpTextOut"}`}>
+        { maxErrorMsg ?? `最多${maxTargetKeys}项`}
+      </div>
     </div>
   )
 }
