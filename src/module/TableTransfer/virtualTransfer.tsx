@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Transfer, Table, Button } from 'antd';
+import { Transfer, Table } from 'antd';
 import { TransferProps, ListStyle, TransferDirection } from 'antd/lib/transfer';
 import { ColumnProps } from 'antd/lib/table';
 import useDropdownView from './useDropdownVIew';
@@ -38,6 +38,7 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
     rowKey,
     targetKeys,
     dropdownSelectCount,
+    selectedKeys,
     maxTargetKeys,
     maxErrorMsg,
     ...restProps
@@ -47,6 +48,7 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
 
   const PAGE_SIZE = 10;
 
+  const [sourceData, setSourceData] = useState([] as any[]);
   const [page, setPage] = useState({
     'left': 1,
     'right': 1
@@ -85,8 +87,7 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
 
   /** 默认筛选函数 */
   const defaultFilterOption = (inputValue: string, record: any) => {
-    const title = getTitle(record);
-    return title?.toUpperCase()?.indexOf(inputValue?.toUpperCase()) !== -1
+    return record.title?.toUpperCase()?.indexOf(inputValue?.toUpperCase()) !== -1
   }
 
   /** 筛选函数合并 */
@@ -104,19 +105,27 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
 
   /** 获取全部数据的key和map */
   const [dataSourceMap, dataSourceSelectedMap] = useMemo(() => {
+    const data: any[] = [];
     const dataMap = new Map();
     const dataSelectedMap = new Map(); // 记录数据是否被勾选
     dataSource?.map((record: any, index: number) => {
       const key = getRecordKey(record, index);
+      const title = getTitle(record);
+      data.push(Object.assign({}, record, {key}, {title}));
       dataMap.set(key, record);
       dataSelectedMap.set(key, false);
     })
+    setSourceData(data);
     return [dataMap, dataSelectedMap];
   }, [dataSource])
 
   useEffect(() => {
-    setTableKeys(origin => Object.assign({}, origin, { 'right': targetKeys }))
+    setTableKeys(origin => Object.assign({}, origin, { 'right': targetKeys || [] }))
   }, [targetKeys])
+
+  useEffect(() => {
+    selectedKeys?.forEach((item: any) => dataSourceSelectedMap.set(item, true));
+  }, [selectedKeys])
 
   useEffect(() => {
     const targetMap = new Map();
@@ -126,13 +135,12 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
     let lData: any[] = [];
     let lDataKey: any[] = [];
     let rData: any[] = [];
-    dataSource?.forEach((record: any, index: number) => {
-      const key = getRecordKey(record, index);
-      const idx = targetMap.get(key) ?? -1;
+    sourceData?.forEach((record: any) => {
+      const idx = targetMap.get(record.key) ?? -1;
       if (idx > -1) {
         rData[idx] = record;
       } else {
-        lDataKey.push(key);
+        lDataKey.push(record.key);
         lData.push(record);
       }
     })
@@ -141,7 +149,7 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
       'right': rData
     }));
     setTableKeys(origin => Object.assign({}, origin, { 'left': lDataKey }))
-  }, [tableKeys['right']])
+  }, [tableKeys['right'], sourceData])
 
   useEffect(() => {
     if(leftNode) {
@@ -212,7 +220,7 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
         onChange(newTargetKeys, direction, newMoveKeys);
       }
     };
-  }, [])
+  }, [dataSourceMap])
 
   const onChange = (targetKeys: string[], direction: string, moveKeys: string[]) => {
     // 当设置了向右最大转移条数限制时
@@ -231,8 +239,9 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
         const needKeys = moveKeys.slice(len, moveKeys.length);
 
         newMoveKeys.forEach((item: any) => dataSourceSelectedMap.set(item, false));
+        const newTargetKeys = newMoveKeys.concat(tableKeys['right']);
         setTableKeys(origin => Object.assign({}, origin, {
-          'right': newMoveKeys.concat(tableKeys['right'])
+          'right': newTargetKeys
         }))
         setShowMaxError(true);
         setTimeout(() => {
@@ -244,6 +253,7 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
             }))
           })
         }, 100)
+        props.onChange?.(newTargetKeys, direction, moveKeys);
         return;
       }
     }
@@ -251,6 +261,8 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
       'right': targetKeys
     }))
     moveKeys.forEach((item: any) => dataSourceSelectedMap.set(item, false));
+
+    props.onChange?.(targetKeys, direction, moveKeys);
   }
 
   const onSearch = (direction: DirectionType, value: string) => {
@@ -390,7 +402,6 @@ const VirtualTransfer: React.FC<VirtualTransferProps> = props => {
             },
             columnWidth: 40
           };
-
           return (
             <div>
               <Table
