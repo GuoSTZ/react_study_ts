@@ -1,15 +1,10 @@
-import React, { Component, useEffect } from 'react';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect
-} from 'react-router-dom';
-import { Select, Button } from 'antd';
-
-import {treeData} from './utils/mockData';
-
+import React, { Component } from 'react';
+import { Tabs } from 'antd';
+import McTreeSelectView from './module/TreeSelect/example/simple'
+import McTreeSelectView_children from './module/TreeSelect/example/childNode'
 import './App.less';
+
+const { TabPane } = Tabs;
 
 class App extends Component {
   state = {
@@ -17,32 +12,26 @@ class App extends Component {
     visible: false
   }
   render() {
-    const {Option, OptGroup} = Select;
-    const options = [];
-    const options2 = [];
-    for (let i = 1; i < 1; i++) {
-      const value = `content${i}`;
-      options.push({
-        value,
-        label: `content${i}`,
-        disabled: i === 10,
-      });
-      // i< 500 && options2.push({
-      //   value,
-      //   label: `content${i}`,
-      //   disabled: i === 10,
-      // });
-    }
-    let data = [];
-    for(let i=0;i< 50000; i++) {
-      data.push({
-        title: `content ${i}`,
-        key: i.toString(),
-        disabled: i === 4,
-      })
-    }
     return (
-      <div className="App">123</div>
+      <div className="App">
+        <Tabs
+          defaultActiveKey="1"
+          destroyInactiveTabPane>
+          <TabPane tab="树下拉框" key="1">
+            <Tabs
+              defaultActiveKey="1"
+              destroyInactiveTabPane
+              tabPosition='left'>
+              <TabPane tab="树下拉框-treeData" key="1">
+                <McTreeSelectView />
+              </TabPane>
+              <TabPane tab="树下拉框-treeNode" key="2">
+                <McTreeSelectView_children />
+              </TabPane>
+            </Tabs>
+          </TabPane>
+        </Tabs>
+      </div>
     );
   }
 }
