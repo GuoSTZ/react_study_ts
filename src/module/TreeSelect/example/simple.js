@@ -4,7 +4,7 @@ import McTreeSelect from "..";
 const McTreeSelectView = () => {
   const getData = () => {
     const treeData = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 50000; i++) {
       treeData.push({
         title: `Node${i}`,
         value: `0-${i}`,

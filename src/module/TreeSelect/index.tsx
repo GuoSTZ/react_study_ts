@@ -18,8 +18,7 @@ type ChangeEventExtra = {
 
 export interface McTreeSelectProps extends TreeSelectPropsWithChilren {
   showTotal?: boolean;
-  fixedTotal?: boolean;
-  defaultTotal?: any;
+  totalDefault?: any;
 }
 
 type CompoundedComponent = ((props: McTreeSelectProps) => React.ReactElement) & {
@@ -30,7 +29,7 @@ type CompoundedComponent = ((props: McTreeSelectProps) => React.ReactElement) & 
 const McTreeSelect: CompoundedComponent = props => {
   const {
     children,
-    defaultTotal = 'all',
+    totalDefault = 'all',
     dropdownRender: _dropdownRender,
     listItemHeight,
     multiple,
@@ -60,7 +59,9 @@ const McTreeSelect: CompoundedComponent = props => {
   useEffect(() => {
     let result = {};
     if (treeData) {
+      console.time("aa======")
       result = {treeData: handleTreeData(treeData, checkedTotal), children: undefined};
+      console.timeEnd("aa======")
     } else if (children) {
       result = {treeData: undefined, children: handleTreeNode(children, checkedTotal)};
     }
@@ -70,7 +71,7 @@ const McTreeSelect: CompoundedComponent = props => {
   const handleTreeData = (data: any[] = [], checked: boolean) => {
     const result: any[] = [];
     data?.forEach((item: any) => {
-      const record = { ...item, disabled: checked, children: undefined };
+      const record = Object.assign({}, item, {disabled: checked});
       if (item.children) {
         record.children = handleTreeData(item.children, checked);
       }
@@ -90,9 +91,9 @@ const McTreeSelect: CompoundedComponent = props => {
   const totalOnchange = (e: CheckboxChangeEvent) => {
     const checked = e?.target?.checked;
     setCheckedTotal(checked);
-    onChange?.(defaultTotal, [defaultTotal], {
-      preValue: checked ? (treeValue ?? []) : defaultTotal,
-      triggerValue: defaultTotal,
+    onChange?.(totalDefault, [totalDefault], {
+      preValue: checked ? (treeValue ?? []) : totalDefault,
+      triggerValue: totalDefault,
       selected: checked,
       allCheckedNodes: [],
       triggerNode: {}
@@ -135,7 +136,7 @@ const McTreeSelect: CompoundedComponent = props => {
     <TreeSelect 
       {...props}
       {...dataSource}
-      value={checkedTotal ? defaultTotal : treeValue}
+      value={checkedTotal ? totalDefault : treeValue}
       onChange={treeOnChange}
       dropdownRender={renderDropdown} 
     />
