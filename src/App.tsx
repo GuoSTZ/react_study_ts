@@ -9,6 +9,8 @@ import { Select, Button } from 'antd';
 
 import {treeData} from './utils/mockData';
 
+import './App.less';
+
 class App extends Component {
   state = {
     status: false,
@@ -40,7 +42,7 @@ class App extends Component {
       })
     }
     return (
-      <div className="App"></div>
+      <div className="App">123</div>
     );
   }
 }
