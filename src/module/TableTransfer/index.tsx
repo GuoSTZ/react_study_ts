@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Transfer, Table, message } from 'antd';
-import { TransferProps } from 'antd/lib/transfer';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Transfer, Table } from 'antd';
+import { TransferProps, ListStyle, TransferDirection } from 'antd/lib/transfer';
 import { ColumnProps } from 'antd/lib/table';
 import useDropdownView from './useDropdownVIew';
 import './index.less';
 
-export interface TableTransferProps extends Omit<TransferProps, "listStyle"> {
+type DirectionType = 'left' | 'right'
+
+export interface TableTransferProps extends Omit<TransferProps, 'listStyle'> {
   /**
    * 左侧表格列配置
    */
@@ -14,311 +16,369 @@ export interface TableTransferProps extends Omit<TransferProps, "listStyle"> {
    * 右侧表格列配置
    */
   rightColumns: ColumnProps<any>[];
+  listStyle?: ((style: ListStyle) => React.CSSProperties) | React.CSSProperties;
   /**
-   * 每页展示条数
-   */
-  itemSize?: number;
-  /**
-   * 自定义下拉菜单选取条数
+   * 自定义选择条目数量
    */
   dropdownSelectCount?: number[];
-  /**
-   * 允许转移的最大数据量
-   */
+  /** 允许转移到右侧的最大数据条数 */
   maxTargetKeys?: number;
-  /**
-   * 自定义穿梭框样式
-   */
-  listStyle?: any;
-  /**
-   * 自定义报错信息
-   */
+  /** 超出右侧最大数据条数限制的告警文字 */
   maxErrorMsg?: string;
 }
 
-const TableTransfer = (props: TableTransferProps) => {
-  const [dataSource, setDataSource] = useState([] as any);                             // 全部数据 - dataSource
-  const [targetKeys, setTargetKeys] = useState([] as any);                             // 右侧穿梭框内的数据
-  const [sourceSelectedKeys, setSourceSelectedKeys] = useState([] as any);             // 左侧穿梭框被勾选的数据
-  const [targetSelectedKeys, setTargetSelectedKeys] = useState([] as any);             // 右侧穿梭框被勾选的数据
-  const [sourcePage, setSourcePage] = useState(1);                                     // 左侧穿梭框当前页码
-  const [targetPage, setTargetPage] = useState(1);                                     // 右侧穿梭框当前页面
-  const [filterValue, setFilterValue] = useState({ 'left': '', 'right': '' } as any);  // 搜索框输入内容
-  const [showMaxError, setShowMaxError] = useState(false);                             // 错误信息显示状态
-
+const TableTransfer: React.FC<TableTransferProps> = props => {
   const {
-    leftColumns,
-    rightColumns,
-    dataSource: _dataSource = [],
-    targetKeys: _targetKeys = [],
-    itemSize = 10,
-    selectedKeys: _selectedKeys = [],
-    showSelectAll = true,
-    dropdownSelectCount = [],
-    maxTargetKeys,
     className,
-    maxErrorMsg,
+    dataSource,
     filterOption,
+    leftColumns,
+    render,
+    rightColumns,
+    rowKey,
+    targetKeys,
+    dropdownSelectCount,
+    selectedKeys,
+    maxTargetKeys,
+    maxErrorMsg,
     ...restProps
   } = props;
 
-  useEffect(() => {
-    let _data: any = _dataSource.slice(0, _dataSource.length);
-    // 默认为title字段处理，传入自定义render时，转化为title属性
-    if (props.render) {
-      _data = _data?.map((record: any) => {
-        return Object.assign({}, {
-          ...record,
-          title: props.render && props.render(record),
-        });
-      })
+  const ref: any = React.useRef();
+
+  const PAGE_SIZE = 10;
+
+  const [sourceData, setSourceData] = useState([] as any[]);
+  const [page, setPage] = useState({
+    'left': 1,
+    'right': 1
+  })
+  const [tableData, setTableData] = useState({
+    'left': [],
+    'right': []
+  })
+  const [tableKeys, setTableKeys] = useState({
+    'left': [],
+    'right': [] as any[]
+  })
+  const [filterValue, setFilterValue] = useState({
+    'left': '' as any,
+    'right': '' as any,
+  })
+  const [selectedKeysLen, setSelectedKeysLen] = useState({
+    'left': 0,
+    'right': 0,
+  })
+  const [showMaxError, setShowMaxError] = useState(false); 
+
+  const nodes = document.querySelectorAll(
+    '.TableTransfer .ant-transfer-list-header-selected > span:first-child'
+  );
+  const leftNode = nodes[0];
+  const rightNode = nodes[1];
+
+  const getTitle = (record: any) => typeof render === 'function' ? render(record) : record.title;
+  const getRecordKey = (record: any, index: number) => {
+    const { rowKey } = props;
+    const recordKey =
+      typeof rowKey === 'function' ? rowKey(record) : record.key;
+    return recordKey === undefined ? index : recordKey;
+  }
+
+  /** 默认筛选函数 */
+  const defaultFilterOption = (inputValue: string, record: any) => {
+    return record.title?.toUpperCase()?.indexOf(inputValue?.toUpperCase()) !== -1
+  }
+
+  /** 筛选函数合并 */
+  const mergedFilterOption = typeof filterOption === 'function'
+    ? filterOption
+    : defaultFilterOption
+
+  const filterData = (direction: DirectionType) => {
+    const inputValue = filterValue[direction];
+    if (inputValue === '' && inputValue.trim() === '') {
+      return tableData[direction];
     }
-    setDataSource(_data);
-    setTargetKeys(_targetKeys);
-    setSourceSelectedKeys(_selectedKeys?.filter((item: any) => !targetKeys.includes(item)));
-    setTargetSelectedKeys(_selectedKeys?.filter((item: any) => targetKeys.includes(item)));
-  }, [_dataSource]);
+    return tableData[direction].filter((record: any) => mergedFilterOption(inputValue, record));
+  }
 
-  const getKeys = (data: any) => data?.map((item: any) => item.key);
+  /** 获取全部数据的key和map */
+  const [dataSourceMap, dataSourceSelectedMap] = useMemo(() => {
+    const data: any[] = [];
+    const dataMap = new Map();
+    const dataSelectedMap = new Map(); // 记录数据是否被勾选
+    dataSource?.map((record: any, index: number) => {
+      const key = getRecordKey(record, index);
+      const title = getTitle(record);
+      data.push(Object.assign({}, record, {key}, {title}));
+      dataMap.set(key, record);
+      dataSelectedMap.set(key, false);
+    })
+    setSourceData(data);
+    return [dataMap, dataSelectedMap];
+  }, [dataSource])
 
-  /** 筛选方法 */
-  const mergedFilterOption = (inputValue: string, item: any) =>
-    typeof filterOption === 'function' 
-      ? filterOption(inputValue, item)
-      : item?.title?.toUpperCase()?.indexOf(inputValue?.toUpperCase()) !== -1
-  
-  // 筛选非禁用的数据key
-  const getEnabledItemKeys = (data: any) => {
-    const keys: any = [];
-    data?.forEach((item: any) => {
-      if (!item.disabled) {
+  useEffect(() => {
+    setTableKeys(origin => Object.assign({}, origin, { 'right': targetKeys || [] }))
+  }, [targetKeys])
+
+  useEffect(() => {
+    selectedKeys?.forEach((item: any) => dataSourceSelectedMap.set(item, true));
+  }, [selectedKeys])
+
+  useEffect(() => {
+    const targetMap = new Map();
+    tableKeys['right']?.forEach((item: any, index: number) => {
+      targetMap.set(item, index);
+    })
+    let lData: any[] = [];
+    let lDataKey: any[] = [];
+    let rData: any[] = [];
+    sourceData?.forEach((record: any) => {
+      const idx = targetMap.get(record.key) ?? -1;
+      if (idx > -1) {
+        rData[idx] = record;
+      } else {
+        lDataKey.push(record.key);
+        lData.push(record);
+      }
+    })
+    setTableData(origin => Object.assign({}, origin, {
+      'left': lData,
+      'right': rData
+    }));
+    setTableKeys(origin => Object.assign({}, origin, { 'left': lDataKey }))
+  }, [tableKeys['right'], sourceData])
+
+  useEffect(() => {
+    if(leftNode) {
+      const leftLen = filterData('left').length.toString();
+      leftNode.childNodes[0].nodeValue = leftLen
+    }
+  }, [filterData('left').length])
+
+  useEffect(() => {
+    if(rightNode) {
+      const rightLen = filterData('right').length.toString();
+      rightNode!.childNodes[0].nodeValue = rightLen;
+    }
+  }, [filterData('right').length])
+
+  useEffect(() => {
+    if(leftNode) {
+      if(leftNode.childNodes[0].nodeValue?.includes("/")) {
+        const leftLen = filterData('left').length.toString();
+        const values = leftNode.childNodes[0].nodeValue.split("/");
+        leftNode.childNodes[0].nodeValue = `${values[0]}/${leftLen}`;
+      }
+    }
+  }, [selectedKeysLen['left']])
+
+  useEffect(() => {
+    if(rightNode) {
+      if(rightNode.childNodes[0].nodeValue?.includes("/")) {
+        const rightLen = filterData('right').length.toString();
+        const values = rightNode.childNodes[0].nodeValue.split("/");
+        rightNode.childNodes[0].nodeValue = `${values[0]}/${rightLen}`;
+      }
+    }
+  }, [selectedKeysLen['right']])
+
+  useEffect(() => {
+    //重写穿梭框的 moveTo 方法
+    const $ = ref.current;
+    $.moveTo = (direction: TransferDirection) => {
+      const { targetKeys = [], onChange } = $.props;
+      const { sourceSelectedKeys, targetSelectedKeys } = $.state;
+      const newMoveKeysMap = new Map(); // 用 map 记录将被移动的数据的key值，替代下述的 indexOf 查询
+      const moveKeys = direction === 'right' ? sourceSelectedKeys : targetSelectedKeys;
+      // filter the disabled options
+      const newMoveKeys = moveKeys.filter(
+        (key: string) => {
+          const status = dataSourceMap.get(key).disabled;
+          if (!status) {
+            newMoveKeysMap.set(key, true);
+          }
+          return !status;
+        }
+      );
+      // move items to target box
+      const newTargetKeys =
+        direction === 'right'
+          ? newMoveKeys.concat(targetKeys)
+          : targetKeys.filter((targetKey: any[]) => !newMoveKeysMap.has(targetKey));
+
+      // empty checked keys
+      const oppositeDirection = direction === 'right' ? 'left' : 'right';
+      $.setState({
+        [$.getSelectedKeysName(oppositeDirection)]: [],
+      });
+      $.handleSelectChange(oppositeDirection, []);
+
+      if (onChange) {
+        onChange(newTargetKeys, direction, newMoveKeys);
+      }
+    };
+  }, [dataSourceMap])
+
+  const onChange = (targetKeys: string[], direction: string, moveKeys: string[]) => {
+    // 当设置了向右最大转移条数限制时
+    if(direction === 'right' && typeof maxTargetKeys === 'number' && maxTargetKeys >= 0) {
+      // 当右侧表格数据量已经达到了最大条数限制时
+      if(tableKeys['right'].length >= maxTargetKeys) {
+        // 需要保持左侧数据的选中
+        ref?.current?.onItemSelectAll('left', moveKeys, true)
+        setShowMaxError(true);
+        return;
+      }
+      // 当移动后的数据量超出最大条数限制时
+      if(targetKeys.length > maxTargetKeys) {
+        const len = maxTargetKeys - tableKeys['right'].length;
+        const newMoveKeys = moveKeys.slice(0, len);
+        const needKeys = moveKeys.slice(len, moveKeys.length);
+
+        newMoveKeys.forEach((item: any) => dataSourceSelectedMap.set(item, false));
+        const newTargetKeys = newMoveKeys.concat(tableKeys['right']);
+        setTableKeys(origin => Object.assign({}, origin, {
+          'right': newTargetKeys
+        }))
+        setShowMaxError(true);
+        setTimeout(() => {
+          ref?.current?.setState?.({
+            sourceSelectedKeys: needKeys
+          }, () => {
+            setSelectedKeysLen(origin => Object.assign({}, origin, {
+              'left': needKeys.length
+            }))
+          })
+        }, 100)
+        props.onChange?.(newTargetKeys, direction, moveKeys);
+        return;
+      }
+    }
+    setTableKeys(origin => Object.assign({}, origin, {
+      'right': targetKeys
+    }))
+    moveKeys.forEach((item: any) => dataSourceSelectedMap.set(item, false));
+
+    props.onChange?.(targetKeys, direction, moveKeys);
+  }
+
+  const onSearch = (direction: DirectionType, value: string) => {
+    setFilterValue(origin => Object.assign({}, origin, {
+      [direction]: value
+    }));
+  }
+
+  const currentData = (direction: DirectionType) =>
+    filterData(direction).slice((page[direction] - 1) * PAGE_SIZE, page[direction] * PAGE_SIZE)
+  const currentSelectedKeys = (direction: DirectionType) => {
+    const keys: any[] = [];
+    currentData(direction).map((item: any) => {
+      if (dataSourceSelectedMap.get(item.key)) {
         keys.push(item.key);
       }
-    });
+    })
     return keys;
   }
 
-  const getContraryKeys = (data: any, keys: any) => {
-    return data.filter((item: any) => keys?.indexOf(item) === -1);
-  }
-
-  // 获取当页穿梭框显示的数据数组
-  const getCurrentPageData = (data: any, page: number) => {
-    return data?.slice((page - 1) * itemSize, page * itemSize);
-  }
-
-  // 获取筛选后穿梭框内显示的数据数组
-  const getFilterData = (direction: string) => {
-    const data: any = {
-      'left': [],
-      'right': new Array(targetKeys.length)
-    };
-    dataSource?.forEach((record: any) => {
-      const indexOfKey = targetKeys.indexOf(record.key);
-      const isFiltered = mergedFilterOption(filterValue[direction], record);
-      if (isFiltered) {
-        if (indexOfKey !== -1) {
-          data['right'][indexOfKey] = record;
-        } else {
-          data['left'].push(record);
+  const getMenuItems = (direction: DirectionType) => {
+    const defaultMenuItems = [
+      {
+        title: '全选所有', onClick: () => {
+          const keys: any[] = [];
+          const data: any[] = filterData(direction);
+          const len = data.length;
+          for (let i = 0; i < len; i++) {
+            const isDisabled = dataSourceMap.get(data[i].key).disabled;
+            !isDisabled && keys.push(data[i].key);
+            !isDisabled && dataSourceSelectedMap.set(data[i].key, true);
+          }
+          ref?.current?.onItemSelectAll(direction, keys, true)
         }
-      }
-    });
-    return data;
-  }
-
-  // 获取筛选后穿梭框内显示的数据key值数组
-  const getFilterDataKeys = (direction: string, count?: number) => {
-    const data: any = {
-      'left': [],
-      'right': new Array(targetKeys.length)
-    };
-    let sum = 0;
-    dataSource?.every((record: any) => {
-      const indexOfKey = targetKeys.indexOf(record.key);
-      const isFiltered = mergedFilterOption(filterValue[direction], record);
-      const isEnabled = !record?.disabled;
-      if(direction === 'left' && typeof count === 'number' && data[direction].length >= count) {
-        return false;
-      }
-      if(direction === 'right' && sum >= targetKeys?.length) {
-        return false;
-      }
-      if (isFiltered && isEnabled) {
-        if (indexOfKey !== -1) {
-          data['right'][indexOfKey] = record.key;
-          sum += 1;
-        } else {
-          data['left'].push(record.key);
-        }
-      }
-      return true;
-    });
-    // 去除empty
-    if(direction === 'right') {
-      data[direction] = data[direction]?.filter((item: any) => item ?? !item)
-    }
-    return data;
-  }
-
-  // 全选所有
-  const getSelectAll = (direction: string, selectedKeys: any, setSelectedKeys: any) => {
-    return () => {
-      const data: any = getFilterDataKeys(direction);
-      if (data[direction]?.length === selectedKeys.length) {
-        setSelectedKeys([]);
-      } else {
-        setSelectedKeys(data[direction]);
-      }
-    }
-  }
-
-  // 全选当页
-  const getSelectCurrent = (direction: string, page: number, selectedKeys: any, setSelectedKeys: any) => {
-    return () => {
-      const data = getFilterData(direction);
-      const currentPageData = getCurrentPageData(data[direction], page);
-      const currentPageKeys: any = getEnabledItemKeys(currentPageData);
-
-      const otherPageKeys = selectedKeys?.filter((item: any) => !currentPageKeys?.includes(item));
-      setSelectedKeys([...otherPageKeys, ...currentPageKeys]);
-    }
-  }
-
-  // 反选当页
-  const getInvertCurrent = (direction: string, page: number, selectedKeys: any, setSelectedKeys: any) => {
-    return () => {
-      const data = getFilterData(direction);
-      const currentPageData = getCurrentPageData(data[direction], page);
-      const currentPageKeys: any = getEnabledItemKeys(currentPageData);
-
-      const invertKeys = currentPageKeys?.filter((item: any) => !selectedKeys?.includes(item));
-      const otherPageKeys = selectedKeys?.filter((item: any) => !currentPageKeys?.includes(item));
-      setSelectedKeys([...otherPageKeys, ...invertKeys]);
-    }
-  }
-
-  // 选中指定条数
-  const getSelectCount = (direction: string, count: number, setSelectedKeys: any) => {
-    return () => {
-      const data: any = getFilterDataKeys(direction, count);
-      setSelectedKeys(data[direction].slice(0, count));
-    }
-  }
-
-  // 下拉菜单配置
-  const handleDropdownConfig = (direction: string, className: string) => {
-    let menuItems: any = [];
-    const attrs: any = {
-      'left': {
-        page: sourcePage,
-        keys: sourceSelectedKeys,
-        setKeys: setSourceSelectedKeys
       },
-      'right': {
-        page: targetPage,
-        keys: targetSelectedKeys,
-        setKeys: setTargetSelectedKeys
-      }
-    }
-    const defaultConfig: any = [
-      { title: '全选所有', onClick: getSelectAll(direction, attrs[direction].keys, attrs[direction].setKeys) },
-      { title: '全选当页', onClick: getSelectCurrent(direction, attrs[direction].page, attrs[direction].keys, attrs[direction].setKeys) },
-      { title: '反选当页', onClick: getInvertCurrent(direction, attrs[direction].page, attrs[direction].keys, attrs[direction].setKeys) },
-    ];
-    menuItems.push(...defaultConfig);
-
-    const customConfig = dropdownSelectCount?.map((count: number) => {
-      const sum = typeof count === 'number' ? count : 0;
-      return {
-        title: `选择${sum}项`,
-        onClick: getSelectCount(direction, sum, attrs[direction].setKeys)
-      }
-    });
-    menuItems = menuItems.concat(customConfig)
-
-    return {
-      menuItems,
-      className
-    }
-  }
-
-  const { DropdownView: LeftDropdown } = useDropdownView(handleDropdownConfig('left', `leftDropdown  ${showSelectAll ? 'TableTransfer-selectAll' : ''}`));
-  const { DropdownView: RightDropdown } = useDropdownView(handleDropdownConfig('right', `rightDropdown  ${showSelectAll ? 'TableTransfer-selectAll' : ''}`));
-
-  // 数据转移回调
-  const onChange = (nextTargetKeys: any, direction: string, moveKeys: string[]) => {
-    // 当且仅当数据向右穿梭，且设定了预定上限值
-    if (direction === 'right' && typeof maxTargetKeys === 'number' && maxTargetKeys >= 0) {
-      // 右侧穿梭框数据数量已经达到预定上限时
-      if (targetKeys.length >= maxTargetKeys) {
-        setSourceSelectedKeys(moveKeys);
-        setShowMaxError(true);
-        return;
-      }
-      // 当移动后的数据数量达到预定上限时
-      if (nextTargetKeys?.length > maxTargetKeys) {
-        // 计算当前仍可以移动到右侧穿梭框的数据长度
-        const len = maxTargetKeys - targetKeys.length;
-        setSourceSelectedKeys(moveKeys.slice(len, moveKeys.length));
-        const newTargetKeys = [...targetKeys, ...moveKeys.slice(0, len)];
-        setTargetKeys(newTargetKeys);
-        setShowMaxError(true);
-        if (props.onChange) {
-          props.onChange(newTargetKeys, direction, moveKeys);
+      {
+        title: '全选当页', onClick: () => {
+          const keys: any[] = [];
+          currentData(direction)?.forEach((item: any) => {
+            const status = dataSourceSelectedMap.get(item.key);
+            !item.disabled && dataSourceSelectedMap.set(item.key, true);
+            !item.disabled && !status && keys.push(item.key);
+          })
+          ref?.current?.onItemSelectAll(direction, keys, true)
         }
-        return;
-      }
+      },
+      {
+        title: '反选当页', onClick: () => {
+          const keys: any[] = []; // 存储当前已经被勾选的数据
+          currentData(direction)?.forEach((item: any) => {
+            const status = dataSourceSelectedMap.get(item.key);
+            !item.disabled && dataSourceSelectedMap.set(item.key, !status);
+          })
+          tableKeys[direction]?.forEach((item: any) => {
+            if(dataSourceSelectedMap.get(item)) {
+              keys.push(item);
+            }
+          })
+          let selectedKeys = direction === 'left' ? 'sourceSelectedKeys' : 'targetSelectedKeys'
+          ref?.current?.setState?.({
+            [selectedKeys]: keys
+          }, () => {
+            setSelectedKeysLen(origin => Object.assign({}, origin, {
+              [direction]: keys.length
+            }))
+          })
+        }
+      },
+    ]
+    const selectCountItems: typeof defaultMenuItems = [];
+    if(Array.isArray(dropdownSelectCount)) {
+      dropdownSelectCount.forEach((count: any) => {
+        const sum = typeof count === 'number' ? count : PAGE_SIZE;
+        selectCountItems.push({
+          title: `选择${sum}项`,
+          onClick: () => {
+            const keys: any[] = [];
+            const data: any[] = filterData(direction);
+            const len = Math.min(data.length, sum);
+            for (let i = 0; i < len; i++) {
+              const isDisabled = dataSourceMap.get(data[i].key).disabled;
+              !isDisabled && keys.push(data[i].key);
+              !isDisabled && dataSourceSelectedMap.set(data[i].key, true);
+            }
+            ref?.current?.onItemSelectAll(direction, keys, keys.length > 0)
+          }
+        })
+      })
     }
-    setTargetKeys(nextTargetKeys);
-    setShowMaxError(false);
 
-    // 移动数据时产生的分页变化，需要做额外处理
-    const sourceKeys = getContraryKeys(getKeys(dataSource), nextTargetKeys)
-    if (nextTargetKeys.length > 0 && Math.ceil(nextTargetKeys.length / itemSize) < targetPage) {
-      setTargetPage(targetPage - 1);
-    }
-    if (sourceKeys.length > 0 && Math.ceil(sourceKeys.length / itemSize) < sourcePage) {
-      setSourcePage(sourcePage - 1);
-    }
-    if (props.onChange) {
-      props.onChange(nextTargetKeys, direction, moveKeys);
-    }
-  };
-
-  // 选中回调
-  const onSelectChange = (sourceSelectedKeys: any, targetSelectedKeys: any) => {
-    setSourceSelectedKeys(sourceSelectedKeys);
-    setTargetSelectedKeys(targetSelectedKeys);
-
-    if (props.onSelectChange) {
-      props.onSelectChange(sourceSelectedKeys, targetSelectedKeys);
-    }
+    return [...defaultMenuItems, ...selectCountItems];
   }
 
-  // 搜索回调
-  const onSearch = (direction: 'left' | 'right', value: string) => {
-    setFilterValue(Object.assign({}, filterValue, { [direction]: value }));
-    if (props.onSearch) {
-      props.onSearch(direction, value);
-    }
-  }
+  const { DropdownView: LeftDropdown } = useDropdownView({ menuItems: getMenuItems('left'), className: `leftDropdown` });
+
+  const { DropdownView: RightDropdown } = useDropdownView({ menuItems: getMenuItems('right'), className: `rightDropdown` });
 
   return (
-    <div className={`TableTransfer ${className}`}>
-      {<LeftDropdown />}
-      {<RightDropdown />}
+    <div className={`TableTransfer ${className ?? ""}`}>
+      <LeftDropdown />
+      <RightDropdown />
       <Transfer
-        dataSource={dataSource}
-        targetKeys={targetKeys}
-        // 默认用title处理，可传入自定义方法做覆盖
-        filterOption={mergedFilterOption}
+        showSearch
         {...restProps}
-        selectedKeys={[...sourceSelectedKeys, ...targetSelectedKeys]}
+        ref={ref}
+        targetKeys={tableKeys['right']}
+        filterOption={mergedFilterOption}
         onChange={onChange}
-        onSelectChange={onSelectChange}
         onSearch={onSearch}
-        showSelectAll={showSelectAll}
+        showSelectAll={false}
+        onSelectChange={(sourceSelectedKeys, targetSelectedKeys) => {
+          setSelectedKeysLen({
+            'left': sourceSelectedKeys.length,
+            'right': targetSelectedKeys.length
+          })
+        }}
       >
         {({
           direction,
@@ -330,36 +390,44 @@ const TableTransfer = (props: TableTransferProps) => {
         }) => {
           const columns = direction === 'left' ? leftColumns : rightColumns;
           const rowSelection = {
-            getCheckboxProps: (item: any) => ({ disabled: listDisabled || item.disabled }),
-            onSelect({ key }: any, selected: boolean) {
-              onItemSelect(key, selected);
+            selectedRowKeys: currentSelectedKeys(direction),
+            getCheckboxProps: (item: any) => ({ disabled: item.disabled }),
+            onSelect(record: any, selected: boolean, selectedRows: any[], nativeEvent: any) {
+              if (selected) {
+                dataSourceSelectedMap.set(record.key, true)
+              } else {
+                dataSourceSelectedMap.set(record.key, false)
+              }
+              onItemSelect(record.key, selected);
             },
-            selectedRowKeys: listSelectedKeys,
             columnWidth: 40
           };
-
           return (
-            <Table
-              rowSelection={rowSelection}
-              columns={columns}
-              dataSource={filteredItems}
-              size="small"
-              style={{ pointerEvents: listDisabled ? 'none' : undefined }}
-              onRow={({ key, disabled: itemDisabled }) => ({
-                onClick: () => {
-                  if (itemDisabled || listDisabled) return;
-                  onItemSelect(key, !listSelectedKeys.includes(key));
-                },
-              })}
-              showHeader={false}
-              pagination={{
-                pageSize: itemSize,
-                simple: true,
-                onChange(page, pageSize) {
-                  direction === 'left' ? setSourcePage(page) : setTargetPage(page)
-                }
-              }}
-            />
+            <div>
+              <Table
+                rowSelection={rowSelection}
+                columns={columns}
+                dataSource={filterData(direction)}
+                size="small"
+                style={{ pointerEvents: listDisabled ? 'none' : undefined }}
+                onRow={({ key, disabled: itemDisabled }) => ({
+                  onClick: () => {
+                    if (itemDisabled) return;
+                    const status = dataSourceSelectedMap.get(key);
+                    dataSourceSelectedMap.set(key, !status)
+                    onItemSelect(key, !status);
+                  },
+                })}
+                showHeader={false}
+                pagination={{
+                  simple: true,
+                  pageSize: PAGE_SIZE,
+                  onChange: (page: number) => {
+                    setPage(origin => Object.assign({}, origin, { [direction]: page }))
+                  }
+                }}
+              />
+            </div>
           );
         }}
       </Transfer>

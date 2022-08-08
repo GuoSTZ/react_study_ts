@@ -20,7 +20,7 @@ import CheckView from './module/EditTable/check';
 // import SelectView from './module/SelectView';
 import TreeSelect from './module/TreeSelect/select';
 import AntdTreeSelect from './module/TreeSelect';
-import TableTransfer from './module/TableTransfer/virtualTransfer';
+import TableTransfer from './module/TableTransfer';
 // import EchartsView from './module/EchartsView';
 // import LessView from './module/LessView';
 // import { ModalMethodView } from './module/Modal';
