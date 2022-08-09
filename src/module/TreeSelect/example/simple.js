@@ -4,11 +4,11 @@ import McTreeSelect from "..";
 const McTreeSelectView = () => {
   const getData = () => {
     const treeData = [];
-    for (let i = 0; i < 50000; i++) {
+    for (let i = 0; i < 500; i++) {
       treeData.push({
         title: `Node${i}`,
         value: `0-${i}`,
-        children: i === 0 ? [{title: "children", value: '0-0-1'}] : undefined
+        children: i % 5 === 0 ? [{title: "children", value: '0-0-1'}] : undefined
       });
     }
 
@@ -25,8 +25,8 @@ const McTreeSelectView = () => {
         placeholder="请输入"
       />
       <McTreeSelect
-        showTotal
-        open
+        selectAll
+        // open
         treeCheckable
         multiple
         style={{ width: 400 }}

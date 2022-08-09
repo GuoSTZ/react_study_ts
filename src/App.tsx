@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Tabs } from 'antd';
 import McTreeSelectView from './module/TreeSelect/example/simple'
 import McTreeSelectView_children from './module/TreeSelect/example/childNode'
+import FormView from './module/Form/example/mc_tree_select';
 import './App.less';
 
 const { TabPane } = Tabs;
@@ -17,7 +18,10 @@ class App extends Component {
         <Tabs
           defaultActiveKey="1"
           destroyInactiveTabPane>
-          <TabPane tab="树下拉框" key="1">
+          <TabPane tab="表单（用于验证自定义组件）" key="1">
+            <FormView />
+          </TabPane>
+          <TabPane tab="树下拉框" key="2">
             <Tabs
               defaultActiveKey="1"
               destroyInactiveTabPane

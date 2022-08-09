@@ -17,8 +17,8 @@ type ChangeEventExtra = {
 }
 
 export interface McTreeSelectProps extends TreeSelectPropsWithChilren {
-  showTotal?: boolean;
-  totalDefault?: any;
+  selectAll?: boolean;
+  selectAllValue?: any;
 }
 
 type CompoundedComponent = ((props: McTreeSelectProps) => React.ReactElement) & {
@@ -28,25 +28,27 @@ type CompoundedComponent = ((props: McTreeSelectProps) => React.ReactElement) & 
 
 const McTreeSelect: CompoundedComponent = props => {
   const {
-    totalDefault,
+    selectAllValue,
     dropdownRender,
     listItemHeight,
     multiple,
     onChange,
-    showTotal,
+    selectAll,
     treeCheckable,
     value
   } = props;
 
   const ITEM_HEIGHT = listItemHeight ?? 24;
-  const TOTAL_TEXT = '全部';
+  const SELECTALL_TEXT = '全部';
   const isMultiple = !!(treeCheckable || multiple);
 
+  const [selectedAll, setSelectedAll] = useState(false);
   const [treeValue, setTreeValue] = useState(undefined as any);
-  const [checkedTotal, setCheckedTotal] = useState(false);
+  const [treeLabel, setTreeLabel] = useState(undefined as any);
+  const [treeChildren, setTreeChildren] = useState(undefined as any);
 
   useEffect(() => {
-    setTreeValue(value);
+    value !== selectAllValue && setTreeValue(value);
   }, [value])
 
   const handleTreeData = (data: any[] = [], checked: boolean) => {
@@ -60,41 +62,59 @@ const McTreeSelect: CompoundedComponent = props => {
   }
 
   const handleTreeNode = (data: any = {}, checked: boolean): any => {
-    // return React.Children.map(data, (child: any) => React.cloneElement(child, {
-    //   disabled: checked,
-    //   children: child.props.children ? handleTreeNode(child.props.children, checked) : undefined
-    // }))
-    return React.Children.map(data, (child: any) => {
-      console.log(child, child.props, '====child')
-      // child.props.disabled = checked;
-      // if(child.props.children) {
-      //   child.props.children = handleTreeNode(child.props.children, checked);
-      // }
-    })
+    const newData = Array.isArray(data) ? data : [data];
+    return newData?.map((child: any) => React.cloneElement(child, {
+      disabled: checked,
+      children: child.props.children ? handleTreeNode(child.props.children, checked) : undefined
+    }))
   }
 
-  const totalOnchange = (e: CheckboxChangeEvent) => {
-    const checked = e?.target?.checked;
-    setCheckedTotal(checked);
+  const handleTree = (checked: boolean) => {
     if (props.treeData) {
       handleTreeData(props.treeData, checked);
     } else if (props.children) {
-      handleTreeNode(props.children, checked);
+      setTreeChildren(handleTreeNode(props.children, checked))
     }
-    onChange?.(totalDefault, [totalDefault], {
-      preValue: checked ? (treeValue ?? []) : totalDefault,
-      triggerValue: totalDefault,
-      selected: checked,
-      allCheckedNodes: [],
-      triggerNode: {}
-    } as any);
+  }
+
+  const selectAllOnchange = (e: CheckboxChangeEvent) => {
+    const checked = e?.target?.checked;
+    setSelectedAll(checked);
+    handleTree(checked);
+    if (checked) {
+      onChange?.(selectAllValue, [SELECTALL_TEXT], {
+        preValue: treeValue ?? [],
+        triggerValue: selectAllValue,
+        selected: checked,
+        allCheckedNodes: [],
+        triggerNode: {} as React.ReactElement
+      });
+    } else {
+      onChange?.(treeValue, treeLabel, {
+        preValue: selectAllValue,
+        triggerValue: treeValue,
+        selected: checked,
+        allCheckedNodes: [],
+        triggerNode: {} as React.ReactElement
+      });
+    }
   }
 
   const treeOnChange = (value: any, label: ReactNode[], extra: ChangeEventExtra) => {
-    if (checkedTotal && value.length === 0) {
-      setCheckedTotal(false);
+    if (selectedAll && value.length === 0) {
+      setSelectedAll(false);
+      handleTree(false);
+      onChange?.(treeValue, treeLabel, {
+        preValue: selectAllValue,
+        triggerValue: treeValue,
+        selected: false,
+        allCheckedNodes: [],
+        triggerNode: {} as React.ReactElement
+      });
+      return;
     }
-    !checkedTotal && setTreeValue(value);
+    !selectedAll && setTreeValue(value);
+    !selectedAll && setTreeLabel(label);
     onChange?.(value, label, extra);
   }
 
@@ -102,15 +122,15 @@ const McTreeSelect: CompoundedComponent = props => {
     const menu = (
       <React.Fragment>
         {
-          isMultiple && showTotal && (
+          isMultiple && selectAll && (
             <div
-              className={styles['McTreeSelect-total']}
+              className={styles['McTreeSelect-all']}
               style={{ height: ITEM_HEIGHT }}>
               <Checkbox
-                onChange={totalOnchange}
-                checked={checkedTotal}
+                onChange={selectAllOnchange}
+                checked={selectedAll}
                 style={{ lineHeight: `${ITEM_HEIGHT}px` }}>
-                {TOTAL_TEXT}
+                {SELECTALL_TEXT}
               </Checkbox>
             </div>
           )
@@ -124,7 +144,8 @@ const McTreeSelect: CompoundedComponent = props => {
   return (
     <TreeSelect
       {...props}
-      value={checkedTotal ? totalDefault : treeValue}
+      children={treeChildren ?? props.children}
+      value={selectedAll ? [SELECTALL_TEXT] : treeValue}
       onChange={treeOnChange}
       dropdownRender={renderDropdown}
     />
@@ -133,7 +154,7 @@ const McTreeSelect: CompoundedComponent = props => {
 
 McTreeSelect.McTreeNode = TreeNode;
 McTreeSelect.defaultProps = {
-  totalDefault: 'all'
+  selectAllValue: 'all'
 }
 
 export default McTreeSelect;
