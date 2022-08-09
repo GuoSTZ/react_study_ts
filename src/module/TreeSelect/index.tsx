@@ -28,15 +28,13 @@ type CompoundedComponent = ((props: McTreeSelectProps) => React.ReactElement) & 
 
 const McTreeSelect: CompoundedComponent = props => {
   const {
-    children,
-    totalDefault = 'all',
-    dropdownRender: _dropdownRender,
+    totalDefault,
+    dropdownRender,
     listItemHeight,
     multiple,
     onChange,
     showTotal,
     treeCheckable,
-    treeData,
     value
   } = props;
 
@@ -44,53 +42,45 @@ const McTreeSelect: CompoundedComponent = props => {
   const TOTAL_TEXT = '全部';
   const isMultiple = !!(treeCheckable || multiple);
 
-  const [dataSource, setDataSource] = useState({} as {treeData?: typeof treeData, children?: typeof children});
   const [treeValue, setTreeValue] = useState(undefined as any);
   const [checkedTotal, setCheckedTotal] = useState(false);
-
-  useEffect(() => {
-    setDataSource({ treeData, children })
-  }, [treeData, children])
 
   useEffect(() => {
     setTreeValue(value);
   }, [value])
 
-  useEffect(() => {
-    let result = {};
-    if (treeData) {
-      console.time("aa======")
-      result = {treeData: handleTreeData(treeData, checkedTotal), children: undefined};
-      console.timeEnd("aa======")
-    } else if (children) {
-      result = {treeData: undefined, children: handleTreeNode(children, checkedTotal)};
-    }
-    setDataSource(result);
-  }, [checkedTotal])
-
   const handleTreeData = (data: any[] = [], checked: boolean) => {
-    const result: any[] = [];
-    data?.forEach((item: any) => {
-      const record = Object.assign({}, item, {disabled: checked});
+    return data?.map((item: any) => {
+      item.disabled = checked;
       if (item.children) {
-        record.children = handleTreeData(item.children, checked);
+        item.children = handleTreeData(item.children, checked);
       }
-      result.push(record);
+      return item;
     })
-    return result;
   }
 
   const handleTreeNode = (data: any = {}, checked: boolean): any => {
-    return React.Children.map(data, (child: any) => React.cloneElement(child, {
-      disabled: checked,
-      children: child.props.children ? handleTreeNode(child.props.children, checked) : undefined
-    }))
+    // return React.Children.map(data, (child: any) => React.cloneElement(child, {
+    //   disabled: checked,
+    //   children: child.props.children ? handleTreeNode(child.props.children, checked) : undefined
+    // }))
+    return React.Children.map(data, (child: any) => {
+      console.log(child, child.props, '====child')
+      // child.props.disabled = checked;
+      // if(child.props.children) {
+      //   child.props.children = handleTreeNode(child.props.children, checked);
+      // }
+    })
   }
 
-  /** 勾选【全部】选项时的回调事件 */
   const totalOnchange = (e: CheckboxChangeEvent) => {
     const checked = e?.target?.checked;
     setCheckedTotal(checked);
+    if (props.treeData) {
+      handleTreeData(props.treeData, checked);
+    } else if (props.children) {
+      handleTreeNode(props.children, checked);
+    }
     onChange?.(totalDefault, [totalDefault], {
       preValue: checked ? (treeValue ?? []) : totalDefault,
       triggerValue: totalDefault,
@@ -100,15 +90,14 @@ const McTreeSelect: CompoundedComponent = props => {
     } as any);
   }
 
-  const treeOnChange = (value:any, label: ReactNode[], extra: ChangeEventExtra) => {
-    if(checkedTotal && value.length === 0) {
+  const treeOnChange = (value: any, label: ReactNode[], extra: ChangeEventExtra) => {
+    if (checkedTotal && value.length === 0) {
       setCheckedTotal(false);
     }
     !checkedTotal && setTreeValue(value);
     onChange?.(value, label, extra);
   }
 
-  // 自定义下拉菜单
   const renderDropdown = (originNode: ReactNode) => {
     const menu = (
       <React.Fragment>
@@ -129,20 +118,22 @@ const McTreeSelect: CompoundedComponent = props => {
         {originNode}
       </React.Fragment>
     )
-    return _dropdownRender ? _dropdownRender(menu) : menu;
+    return dropdownRender ? dropdownRender(menu) : menu;
   }
 
   return (
-    <TreeSelect 
+    <TreeSelect
       {...props}
-      {...dataSource}
       value={checkedTotal ? totalDefault : treeValue}
       onChange={treeOnChange}
-      dropdownRender={renderDropdown} 
+      dropdownRender={renderDropdown}
     />
   )
 }
 
 McTreeSelect.McTreeNode = TreeNode;
+McTreeSelect.defaultProps = {
+  totalDefault: 'all'
+}
 
 export default McTreeSelect;

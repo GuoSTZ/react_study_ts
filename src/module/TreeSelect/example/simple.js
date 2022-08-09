@@ -8,6 +8,7 @@ const McTreeSelectView = () => {
       treeData.push({
         title: `Node${i}`,
         value: `0-${i}`,
+        children: i === 0 ? [{title: "children", value: '0-0-1'}] : undefined
       });
     }
 
@@ -17,7 +18,7 @@ const McTreeSelectView = () => {
     <div>
       <McTreeSelect
         showTotal
-        open
+        // open
         defaultValue={'0-1'}
         style={{ width: 400 }}
         treeData={getData()}
@@ -26,6 +27,7 @@ const McTreeSelectView = () => {
       <McTreeSelect
         showTotal
         open
+        treeCheckable
         multiple
         style={{ width: 400 }}
         treeData={getData()}
