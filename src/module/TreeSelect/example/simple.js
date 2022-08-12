@@ -25,8 +25,6 @@ const McTreeSelectView = () => {
         placeholder="请输入"
       />
       <McTreeSelect
-        selectAll
-        // open
         treeCheckable
         multiple
         style={{ width: 400 }}

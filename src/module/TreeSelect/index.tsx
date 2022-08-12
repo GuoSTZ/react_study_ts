@@ -19,6 +19,7 @@ type ChangeEventExtra = {
 export interface McTreeSelectProps extends TreeSelectPropsWithChilren {
   selectAll?: boolean;
   selectAllValue?: any;
+  selectAllText?: string;
 }
 
 type CompoundedComponent = ((props: McTreeSelectProps) => React.ReactElement) & {
@@ -28,6 +29,7 @@ type CompoundedComponent = ((props: McTreeSelectProps) => React.ReactElement) & 
 
 const McTreeSelect: CompoundedComponent = props => {
   const {
+    selectAllText,
     selectAllValue,
     dropdownRender,
     listItemHeight,
@@ -39,7 +41,6 @@ const McTreeSelect: CompoundedComponent = props => {
   } = props;
 
   const ITEM_HEIGHT = listItemHeight ?? 24;
-  const SELECTALL_TEXT = '全部';
   const isMultiple = !!(treeCheckable || multiple);
 
   const [selectedAll, setSelectedAll] = useState(false);
@@ -82,7 +83,7 @@ const McTreeSelect: CompoundedComponent = props => {
     setSelectedAll(checked);
     handleTree(checked);
     if (checked) {
-      onChange?.(selectAllValue, [SELECTALL_TEXT], {
+      onChange?.(selectAllValue, [selectAllText], {
         preValue: treeValue ?? [],
         triggerValue: selectAllValue,
         selected: checked,
@@ -130,7 +131,7 @@ const McTreeSelect: CompoundedComponent = props => {
                 onChange={selectAllOnchange}
                 checked={selectedAll}
                 style={{ lineHeight: `${ITEM_HEIGHT}px` }}>
-                {SELECTALL_TEXT}
+                {selectAllText}
               </Checkbox>
             </div>
           )
@@ -145,7 +146,7 @@ const McTreeSelect: CompoundedComponent = props => {
     <TreeSelect
       {...props}
       children={treeChildren ?? props.children}
-      value={selectedAll ? [SELECTALL_TEXT] : treeValue}
+      value={selectedAll ? [selectAllText] : treeValue}
       onChange={treeOnChange}
       dropdownRender={renderDropdown}
     />
@@ -154,6 +155,8 @@ const McTreeSelect: CompoundedComponent = props => {
 
 McTreeSelect.McTreeNode = TreeNode;
 McTreeSelect.defaultProps = {
+  selectAll: true,
+  selectAllText: '全部',
   selectAllValue: 'all'
 }
 
