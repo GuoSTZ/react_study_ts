@@ -3,6 +3,7 @@ import { Tabs } from 'antd';
 import McTreeSelectView from './module/TreeSelect/example/simple'
 import McTreeSelectView_children from './module/TreeSelect/example/childNode'
 import FormView from './module/Form/example/mc_tree_select';
+import CollapseCardView from './module/CollapseCard/example/base';
 import './App.less';
 
 const { TabPane } = Tabs;
@@ -33,6 +34,9 @@ class App extends Component {
                 <McTreeSelectView_children />
               </TabPane>
             </Tabs>
+          </TabPane>
+          <TabPane tab="折叠面板-包含表单处理" key="3">
+            <CollapseCardView />
           </TabPane>
         </Tabs>
       </div>

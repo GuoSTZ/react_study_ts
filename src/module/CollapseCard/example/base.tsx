@@ -1,65 +1,50 @@
 import React from 'react';
-import { Form, Checkbox, Button, Input, Icon } from 'antd';
+import { Form, Button, Input } from 'antd';
 import CollapseCard from '..';
-import { FormItem } from '@mcfed/components';
 
-const CollapseCardForm = (props: any) => {
-  const { getFieldDecorator } = props.form;
-  console.log(props.form, '=====form')
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    props.form.validateFields((err: any, values: any) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-      }
-    });
+const CollapseCardView = (props: any) => {
+  const onFinish = (values: any) => {
+    console.log('Success:', values);
   };
+
+  const onFinishFailed = (errorInfo: any) => {
+    console.log('Failed:', errorInfo);
+  };
+
   return (
-    <Form onSubmit={handleSubmit} className="login-form" labelCol={{ span: 4 }} wrapperCol={{ span: 18 }}>
+    <Form
+      name="basic"
+      labelCol={{ span: 8 }}
+      wrapperCol={{ span: 16 }}
+      onFinish={onFinish}
+      onFinishFailed={onFinishFailed}
+      autoComplete="off"
+    >
       <CollapseCard>
-
-        <Form.Item label="Username">
-          {getFieldDecorator('username', {
-            rules: [{ required: true, message: 'Please input your username!' }],
-          })(
-            <Input
-              prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-              placeholder="Username"
-            />,
-          )}
-        </Form.Item>
-        <Form.Item label="password">
-          {getFieldDecorator('password', {
-            rules: [{ required: true, message: 'Please input your Password!' }],
-          })(
-            <Input
-              prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-              type="password"
-              placeholder="Password"
-            />,
-          )}
+        <Form.Item
+          label="Username"
+          name="username"
+          rules={[{ required: true, message: 'Please input your username!' }]}
+        >
+          <Input />
         </Form.Item>
 
-        {/* <FormItem name="ceshi" label="password" rules={[
-          { required: true, message: 'Please input your Password!' }
-        ]}>
-          <Input
-            prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-            type="password"
-            placeholder="Password"
-          />
-        </FormItem> */}
+        <Form.Item
+          label="Password"
+          name="password"
+          rules={[{ required: true, message: 'Please input your password!' }]}
+        >
+          <Input.Password />
+        </Form.Item>
       </CollapseCard>
 
-      <Form.Item>
+      <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
         <Button type="primary" htmlType="submit">
-          Log in
+          Submit
         </Button>
       </Form.Item>
     </Form>
   )
 }
-
-const CollapseCardView = Form.create({})(CollapseCardForm);
 
 export default CollapseCardView;
