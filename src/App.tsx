@@ -4,6 +4,7 @@ import McTreeSelectView from './module/TreeSelect/example/simple'
 import McTreeSelectView_children from './module/TreeSelect/example/childNode'
 import FormView from './module/Form/example/mc_tree_select';
 import CollapseCardView from './module/CollapseCard/example/base';
+import CollapseCardJson from './module/CollapseCard/example/schema';
 import './App.less';
 
 const { TabPane } = Tabs;
@@ -35,8 +36,19 @@ class App extends Component {
               </TabPane>
             </Tabs>
           </TabPane>
-          <TabPane tab="折叠面板-包含表单处理" key="3">
-            <CollapseCardView />
+          <TabPane tab="折叠面板" key="3">
+            <Tabs
+              defaultActiveKey="1"
+              destroyInactiveTabPane
+              tabPosition='left'>
+              <TabPane tab="折叠面板-antd Form表单" key="1">
+                <CollapseCardView />
+              </TabPane>
+              <TabPane tab="折叠面板-formily Form表单" key="2">
+                <CollapseCardJson />
+              </TabPane>
+            </Tabs>
+            
           </TabPane>
         </Tabs>
       </div>

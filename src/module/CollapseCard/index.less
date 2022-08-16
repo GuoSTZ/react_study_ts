@@ -1,23 +1,15 @@
 .ant-collapse.collapse-card {
+  // background-color: #fafafa;
+  // border: 1px solid #CED2DE;
+  background-color: unset;
+  border: unset;
+
   > .ant-collapse-item {
-    > .ant-collapse-header {
-      position: relative;
-      padding-right: 88px;
-      .ant-checkbox-wrapper.ant-collapse-arrow {
-        display: inline-flex;
-        vertical-align: unset;
-      }
+    background-color: #fafafa;
+    border: 1px solid #CED2DE;
 
-      > .ant-collapse-extra {
-        position: absolute;
-        top: 0;
-        right: 0;
-        height: 100%;
-
-        > button {
-          height: 100%;
-        }
-      }
+    &:not(:last-child) {
+      margin-bottom: 10px;
     }
   }
 }
