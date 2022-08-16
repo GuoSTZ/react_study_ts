@@ -43,7 +43,6 @@ import { ConfigProvider } from 'antd';
 import zhCN from 'antd/lib/locale/zh_CN';
 import * as onFormEffects from '@formily/core/esm/effects/onFormEffects';
 import * as onFieldEffects from '@formily/core/esm/effects/onFieldEffects';
-import './assets/index.css';
 
 const { onFormInit, onFormMount } = onFormEffects;
 
