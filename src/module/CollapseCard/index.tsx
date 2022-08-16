@@ -10,7 +10,6 @@ const { Panel } = Collapse;
 type ActiveKeyType = (string | number)[];
 
 export interface CollapseCardProps extends CollapseProps {
-  mode?: 'dom'|'json';
 }
 
 type CompoundedComponent = ((props: CollapseCardProps) => React.ReactElement) & {
@@ -19,7 +18,7 @@ type CompoundedComponent = ((props: CollapseCardProps) => React.ReactElement) & 
 }
 
 const CollapseCard: CompoundedComponent = props => {
-  const { mode, className, onChange, children, defaultActiveKey, ...restProps } = props;
+  const { className, onChange, children, defaultActiveKey, ...restProps } = props;
 
   useEffect(() => {
     setActiveKey(defaultActiveKey as any[] || [])
@@ -52,10 +51,6 @@ const CollapseCard: CompoundedComponent = props => {
     if(!children) {
       return;
     }
-    if(mode === 'json') {
-
-    }
-    console.log(children, '=------======child')
     const data = Array.isArray(children) ? children : [children];
     return data.map((child: any, index: number) => {
       if(child?.type?.name !== 'CollapsePanel') {
@@ -66,7 +61,6 @@ const CollapseCard: CompoundedComponent = props => {
         )
       } else {
         return React.cloneElement(child, {
-          // ...child.props,
           header: renderHeader(child.props.header ?? '-', child.key ?? index),
           showArrow: false
         })
@@ -86,7 +80,6 @@ const CollapseCard: CompoundedComponent = props => {
 }
 
 CollapseCard.defaultProps = {
-  mode: 'dom'
 };
 CollapseCard.Panel = Panel;
 
