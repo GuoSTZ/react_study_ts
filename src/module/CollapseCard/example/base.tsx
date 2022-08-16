@@ -20,10 +20,10 @@ const CollapseCardView = (props: any) => {
       onFinishFailed={onFinishFailed}
       autoComplete="off"
     >
-      <CollapseCard>
+      <CollapseCard header={'短信'}>
         <Form.Item
           label="Username"
-          name="username"
+          name={['message', 'username']}
           rules={[{ required: true, message: 'Please input your username!' }]}
         >
           <Input />
@@ -31,7 +31,25 @@ const CollapseCardView = (props: any) => {
 
         <Form.Item
           label="Password"
-          name="password"
+          name={['message', 'password']}
+          rules={[{ required: true, message: 'Please input your password!' }]}
+        >
+          <Input.Password />
+        </Form.Item>
+      </CollapseCard>
+
+      <CollapseCard header={'消息'}>
+        <Form.Item
+          label="Username"
+          name={['email', 'username']}
+          rules={[{ required: true, message: 'Please input your username!' }]}
+        >
+          <Input />
+        </Form.Item>
+
+        <Form.Item
+          label="Password"
+          name={['email', 'password']}
           rules={[{ required: true, message: 'Please input your password!' }]}
         >
           <Input.Password />

@@ -1206,17 +1206,17 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
+"@babel/runtime@^7.1.5", "@babel/runtime@^7.10.4", "@babel/runtime@^7.18.0", "@babel/runtime@^7.18.3", "@babel/runtime@^7.2.0":
+  version "7.18.9"
+  resolved "https://r.cnpmjs.org/@babel/runtime/-/runtime-7.18.9.tgz#b4fcfce55db3d2e5e080d2490f608a3b9f407f4a"
+  integrity sha512-lkqXDcvlFT5rvEjiu6+QYO+1GXrEHRo2LOtS7E4GtX5ESIZOgepqsZBVIj6Pv+a6zqsya9VCgiK1KAK4BvJDAw==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/runtime@^7.10.1", "@babel/runtime@^7.11.1":
   version "7.16.5"
   resolved "https://registry.npmmirror.com/@babel/runtime/download/@babel/runtime-7.16.5.tgz#7f3e34bf8bdbbadf03fbb7b1ea0d929569c9487a"
   integrity sha512-TXWihFIS3Pyv5hzR7j6ihmeLkZfrXGxAr5UfSl8CHf+6q/wpiYDkUau0czckpYG8QmnCIuPpdLtuA9VmuGGyMA==
-  dependencies:
-    regenerator-runtime "^0.13.4"
-
-"@babel/runtime@^7.10.4", "@babel/runtime@^7.18.0", "@babel/runtime@^7.18.3":
-  version "7.18.9"
-  resolved "https://registry.npmjs.org/@babel/runtime/-/runtime-7.18.9.tgz#b4fcfce55db3d2e5e080d2490f608a3b9f407f4a"
-  integrity sha512-lkqXDcvlFT5rvEjiu6+QYO+1GXrEHRo2LOtS7E4GtX5ESIZOgepqsZBVIj6Pv+a6zqsya9VCgiK1KAK4BvJDAw==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -1313,6 +1313,99 @@
     js-yaml "^3.13.1"
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
+
+"@formily/antd@^2.2.0":
+  version "2.2.0"
+  resolved "https://r.cnpmjs.org/@formily/antd/-/antd-2.2.0.tgz#fe8ce76212f3428f7e16d2bac5cf7926764bd30c"
+  integrity sha512-RSUh7o5EVnBn9EbxbBtmWswT9JpYVUQybt19Skj5z7vq6hjzrnyYicQeBB3v6eC/nccswEjZkT6jTC66F4ZhrQ==
+  dependencies:
+    "@formily/core" "2.2.0"
+    "@formily/grid" "2.2.0"
+    "@formily/json-schema" "2.2.0"
+    "@formily/react" "2.2.0"
+    "@formily/reactive" "2.2.0"
+    "@formily/reactive-react" "2.2.0"
+    "@formily/shared" "2.2.0"
+    classnames "^2.2.6"
+    react-sortable-hoc "^1.11.0"
+    react-sticky-box "^0.9.3"
+
+"@formily/core@2.2.0", "@formily/core@^2.2.0":
+  version "2.2.0"
+  resolved "https://r.cnpmjs.org/@formily/core/-/core-2.2.0.tgz#6a566ae35f0114a2ab4c9d5f3c527819e3d14a62"
+  integrity sha512-NYx3BAMDZaHtblTg+YXdK4tIBiXmPpkjeQbewR4l+6FlO4S6eqt198arAq8j6k6OQmDRgyLdpBNw8bpXrPLn5w==
+  dependencies:
+    "@formily/reactive" "2.2.0"
+    "@formily/shared" "2.2.0"
+    "@formily/validator" "2.2.0"
+
+"@formily/grid@2.2.0":
+  version "2.2.0"
+  resolved "https://r.cnpmjs.org/@formily/grid/-/grid-2.2.0.tgz#282c2eb85f6c94494137dea8ca7775154617c017"
+  integrity sha512-5cVlcJpv1VsWZATYkXzkshgfM9yRAJB4tp8WaP1dxu9VZ0l0hbBm4eOSHcrgfJX+9oZAl0xK3iRXNdpQ1hViQw==
+  dependencies:
+    "@formily/reactive" "2.2.0"
+    "@juggle/resize-observer" "^3.3.1"
+
+"@formily/json-schema@2.2.0":
+  version "2.2.0"
+  resolved "https://r.cnpmjs.org/@formily/json-schema/-/json-schema-2.2.0.tgz#f6fda13ceb3891de02ad4a2e1834c1d73351b319"
+  integrity sha512-gCGfM2g1s91ARsHCWR6SsFAou66oCAU84jcg+9wKtIuyXWoVEEt/18ozvQGdR5aZoWgPjYwbUObRPOL/3QkMkg==
+  dependencies:
+    "@formily/core" "2.2.0"
+    "@formily/reactive" "2.2.0"
+    "@formily/shared" "2.2.0"
+
+"@formily/path@2.2.0":
+  version "2.2.0"
+  resolved "https://r.cnpmjs.org/@formily/path/-/path-2.2.0.tgz#a2c165252613beed9bc102ba9907af63497be671"
+  integrity sha512-oxsqDT7p5qHRooCGwXU26FoV9hUueYtH0+MNQxFWuC6QgJ4KKKe8EEkoA7vLco3CPu96NKwTHbhhMd86XcGCrw==
+
+"@formily/react@2.2.0", "@formily/react@^2.2.0":
+  version "2.2.0"
+  resolved "https://r.cnpmjs.org/@formily/react/-/react-2.2.0.tgz#08356ef25f56312fc970688f8472874ed0bb5f8b"
+  integrity sha512-f/joNeHYCR2uVSptptY4JqDfJrHUJdZ69saZL7wn1jzK24656+bbPjUa25ioFB1DOceqq0gqU4zSkxTUJfDEIA==
+  dependencies:
+    "@formily/core" "2.2.0"
+    "@formily/json-schema" "2.2.0"
+    "@formily/reactive" "2.2.0"
+    "@formily/reactive-react" "2.2.0"
+    "@formily/shared" "2.2.0"
+    "@formily/validator" "2.2.0"
+    hoist-non-react-statics "^3.3.2"
+
+"@formily/reactive-react@2.2.0":
+  version "2.2.0"
+  resolved "https://r.cnpmjs.org/@formily/reactive-react/-/reactive-react-2.2.0.tgz#d90ba213e52c320fff74a3d0078ca8dbf0c56b6d"
+  integrity sha512-UPDahJiwxn129tWQeXTrtO4vexrqRxLJUdRBawQ6V9r8VZhKoHWCXA+zP0HcfTJdR3ZFMQNbY83WvartODtDAQ==
+  dependencies:
+    "@formily/reactive" "2.2.0"
+    hoist-non-react-statics "^3.3.2"
+
+"@formily/reactive@2.2.0", "@formily/reactive@^2.2.0":
+  version "2.2.0"
+  resolved "https://r.cnpmjs.org/@formily/reactive/-/reactive-2.2.0.tgz#d45993b36c350313dfdeb28208a76e1d1506a10d"
+  integrity sha512-lmcl9Z4yUu8hSD+Bj7pk/3xFiDeMZ8LSA8aLkhqriO4OU1noXuRPrqqHNjC0JNS5SoHI+Ot9VhhmgkFr+PIT9A==
+
+"@formily/shared@2.2.0":
+  version "2.2.0"
+  resolved "https://r.cnpmjs.org/@formily/shared/-/shared-2.2.0.tgz#21a8ada3f12ceb9f54e8260e354efd736b13ce88"
+  integrity sha512-wtwTKXdwc+BiZ986SldU0E6l1ZuVIwsIFzTEe317HlxVGVu5z3n7SIDSBL+pXmgvYW4cKkm5qzKypk90ZYa7oA==
+  dependencies:
+    "@formily/path" "2.2.0"
+    camel-case "^4.1.1"
+    lower-case "^2.0.1"
+    no-case "^3.0.4"
+    param-case "^3.0.4"
+    pascal-case "^3.1.1"
+    upper-case "^2.0.1"
+
+"@formily/validator@2.2.0":
+  version "2.2.0"
+  resolved "https://r.cnpmjs.org/@formily/validator/-/validator-2.2.0.tgz#424864f75e271017b74840248dd73a756f4aba80"
+  integrity sha512-vpDqpOdoHLr0Tqnpdg9JlpRJHOpEc77RJH2pV2WVwVwcGBoLH75h0atQMmEjCoZ4nD5fVBs768osawrxz7hLCQ==
+  dependencies:
+    "@formily/shared" "2.2.0"
 
 "@gar/promisify@^1.0.1":
   version "1.1.2"
@@ -1569,6 +1662,11 @@
   dependencies:
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
+
+"@juggle/resize-observer@^3.3.1":
+  version "3.3.1"
+  resolved "https://r2.cnpmjs.org/@juggle/resize-observer/-/resize-observer-3.3.1.tgz#b50a781709c81e10701004214340f25475a171a0"
+  integrity sha512-zMM9Ds+SawiUkakS7y94Ymqx+S0ORzpG3frZirN3l+UlXUmSUR7hF4wxCVqW+ei94JzV5kt0uXBcoOEAuiydrw==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -1957,10 +2055,10 @@
   resolved "https://registry.npmjs.org/@types/qs/-/qs-6.9.7.tgz#63bb7d067db107cc1e457c303bc25d511febf6cb"
   integrity sha512-FGa1F62FT09qcrueBA6qYTrJPVDzah9a+493+o2PCXsesWHIn27G98TsSMs3WPNbZIEj4+VJf6saSFpvD+3Zsw==
 
-"@types/react-dom@17.0.0":
-  version "17.0.0"
-  resolved "http://nexus.mchz.com.cn:4873/@types%2freact-dom/-/react-dom-17.0.0.tgz#b3b691eb956c4b3401777ee67b900cb28415d95a"
-  integrity sha512-lUqY7OlkF/RbNtD5nIq7ot8NquXrdFrjSOR6+w9a9RFQevGi1oZO1dcJbXMeONAPKtZ2UrZOEJ5UOCVsxbLk/g==
+"@types/react-dom@17.0.2":
+  version "17.0.2"
+  resolved "https://r2.cnpmjs.org/@types/react-dom/-/react-dom-17.0.2.tgz#35654cf6c49ae162d5bc90843d5437dc38008d43"
+  integrity sha512-Icd9KEgdnFfJs39KyRyr0jQ7EKhq8U6CcHRMGAS45fp5qgUvxL3ujUCfWFttUK2UErqZNj97t9gsVPNAqcwoCg==
   dependencies:
     "@types/react" "*"
 
@@ -2007,10 +2105,10 @@
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
-"@types/react@17.0.0":
-  version "17.0.0"
-  resolved "http://nexus.mchz.com.cn:4873/@types%2freact/-/react-17.0.0.tgz#5af3eb7fad2807092f0046a1302b7823e27919b8"
-  integrity sha512-aj/L7RIMsRlWML3YB6KZiXB3fV2t41+5RBGYF8z+tAKU43Px8C3cYUZsDvf1/+Bm4FK21QWBrDutu8ZJ/70qOw==
+"@types/react@17.0.2":
+  version "17.0.2"
+  resolved "https://r2.cnpmjs.org/@types/react/-/react-17.0.2.tgz#3de24c4efef902dd9795a49c75f760cbe4f7a5a8"
+  integrity sha512-Xt40xQsrkdvjn1EyWe1Bc0dJLcil/9x2vAuW7ya+PuQip4UYUaXyhzWmAbwRsdMgwOFHpfp7/FFZebDU6Y8VHA==
   dependencies:
     "@types/prop-types" "*"
     csstype "^3.0.2"
@@ -5904,9 +6002,9 @@ hmac-drbg@^1.0.1:
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.1"
 
-hoist-non-react-statics@^3.1.0:
+hoist-non-react-statics@^3.1.0, hoist-non-react-statics@^3.3.2:
   version "3.3.2"
-  resolved "http://nexus.mchz.com.cn:4873/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz#ece0acaf71d62c2969c2ec59feff42a4b1a85b45"
+  resolved "https://r2.cnpmjs.org/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz#ece0acaf71d62c2969c2ec59feff42a4b1a85b45"
   integrity sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==
   dependencies:
     react-is "^16.7.0"
@@ -6266,6 +6364,13 @@ internal-slot@^1.0.3:
     get-intrinsic "^1.1.0"
     has "^1.0.3"
     side-channel "^1.0.4"
+
+invariant@^2.2.4:
+  version "2.2.4"
+  resolved "https://r2.cnpmjs.org/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
+  integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
+  dependencies:
+    loose-envify "^1.0.0"
 
 ip-regex@^2.1.0:
   version "2.1.0"
@@ -7641,7 +7746,7 @@ loglevel@^1.6.8:
   resolved "http://nexus.mchz.com.cn:4873/loglevel/-/loglevel-1.8.0.tgz#e7ec73a57e1e7b419cb6c6ac06bf050b67356114"
   integrity sha512-G6A/nJLRgWOuuwdNuA6koovfEV1YpqqAG4pRUlFaz3jj2QNZ8M4vBqnVA+HBTmU/AMNUtlOsMmSpF6NyOjztbA==
 
-loose-envify@^1.1.0, loose-envify@^1.2.0, loose-envify@^1.3.1, loose-envify@^1.4.0:
+loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.2.0, loose-envify@^1.3.1, loose-envify@^1.4.0:
   version "1.4.0"
   resolved "http://nexus.mchz.com.cn:4873/loose-envify/-/loose-envify-1.4.0.tgz#71ee51fa7be4caec1a63839f7e682d8132d30caf"
   integrity sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==
@@ -7657,7 +7762,7 @@ lop@^0.4.1:
     option "~0.2.1"
     underscore "^1.13.1"
 
-lower-case@^2.0.2:
+lower-case@^2.0.1, lower-case@^2.0.2:
   version "2.0.2"
   resolved "http://nexus.mchz.com.cn:4873/lower-case/-/lower-case-2.0.2.tgz#6fa237c63dbdc4a82ca0fd882e4722dc5e634e28"
   integrity sha512-7fm3l3NAF9WfN6W3JOmf5drwpVqX78JtoGJ3A6W0a6ZnldM41w2fV5D490psKFTpMds8TJse/eHLFFsNHHjHgg==
@@ -8560,9 +8665,9 @@ parallel-transform@^1.1.0:
     inherits "^2.0.3"
     readable-stream "^2.1.5"
 
-param-case@^3.0.3:
+param-case@^3.0.3, param-case@^3.0.4:
   version "3.0.4"
-  resolved "http://nexus.mchz.com.cn:4873/param-case/-/param-case-3.0.4.tgz#7d17fe4aa12bde34d4a77d91acfb6219caad01c5"
+  resolved "https://r2.cnpmjs.org/param-case/-/param-case-3.0.4.tgz#7d17fe4aa12bde34d4a77d91acfb6219caad01c5"
   integrity sha512-RXlj7zCYokReqWpOPH9oYivUzLYZ5vAPIfEmCTNViosC78F8F0H9y7T7gG2M39ymgutxF5gcFEsyZQSph9Bp3A==
   dependencies:
     dot-case "^3.0.4"
@@ -8619,7 +8724,7 @@ parseurl@~1.3.2, parseurl@~1.3.3:
   resolved "http://nexus.mchz.com.cn:4873/parseurl/-/parseurl-1.3.3.tgz#9da19e7bee8d12dff0513ed5b76957793bc2e8d4"
   integrity sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==
 
-pascal-case@^3.1.2:
+pascal-case@^3.1.1, pascal-case@^3.1.2:
   version "3.1.2"
   resolved "http://nexus.mchz.com.cn:4873/pascal-case/-/pascal-case-3.1.2.tgz#b48e0ef2b98e205e7c1dae747d0b1508237660eb"
   integrity sha512-uWlGT3YSnK9x3BQJaOdcZwrnV6hPpd8jFH1/ucpiLRPh/2zCVJKS19E4GvYHvaCcACn3foXZ0cLB9Wrx1KGe5g==
@@ -9574,6 +9679,15 @@ prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
+prop-types@^15.5.7:
+  version "15.8.1"
+  resolved "https://r.cnpmjs.org/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
+  integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
+  dependencies:
+    loose-envify "^1.4.0"
+    object-assign "^4.1.1"
+    react-is "^16.13.1"
+
 prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "http://nexus.mchz.com.cn:4873/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
@@ -10230,22 +10344,21 @@ react-dev-utils@^11.0.3:
     strip-ansi "6.0.0"
     text-table "0.2.0"
 
-react-dom@16.13.1:
-  version "16.13.1"
-  resolved "http://nexus.mchz.com.cn:4873/react-dom/-/react-dom-16.13.1.tgz#c1bd37331a0486c078ee54c4740720993b2e0e7f"
-  integrity sha512-81PIMmVLnCNLO/fFOQxdQkvEq/+Hfpv24XNJfpyZhTRfO0QcmQIF/PgCa1zCOj2w1hrn12MFLyaJ/G0+Mxtfag==
+react-dom@17.0.2:
+  version "17.0.2"
+  resolved "https://r2.cnpmjs.org/react-dom/-/react-dom-17.0.2.tgz#ecffb6845e3ad8dbfcdc498f0d0a939736502c23"
+  integrity sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
-    prop-types "^15.6.2"
-    scheduler "^0.19.1"
+    scheduler "^0.20.2"
 
 react-error-overlay@^6.0.9:
   version "6.0.9"
   resolved "http://nexus.mchz.com.cn:4873/react-error-overlay/-/react-error-overlay-6.0.9.tgz#3c743010c9359608c375ecd6bc76f35d93995b0a"
   integrity sha512-nQTTcUu+ATDbrSD1BZHr5kgSD4oF8OFjxun8uAaL8RwPBacGBNPf/yAuVVdx17N8XNzRDMrZ9XcKZHCjPW+9ew==
 
-react-is@^16.12.0, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1:
+react-is@^16.12.0, react-is@^16.13.1, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"
   resolved "http://nexus.mchz.com.cn:4873/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
@@ -10362,14 +10475,30 @@ react-scripts@4.0.3:
   optionalDependencies:
     fsevents "^2.1.3"
 
-react@16.13.1:
-  version "16.13.1"
-  resolved "http://nexus.mchz.com.cn:4873/react/-/react-16.13.1.tgz#2e818822f1a9743122c063d6410d85c1e3afe48e"
-  integrity sha512-YMZQQq32xHLX0bz5Mnibv1/LHb3Sqzngu7xstSM+vrkE5Kzr9xE0yMByK5kMoTK30YVJE61WfbxIFFvfeDKT1w==
+react-sortable-hoc@^1.11.0:
+  version "1.11.0"
+  resolved "https://r2.cnpmjs.org/react-sortable-hoc/-/react-sortable-hoc-1.11.0.tgz#fe4022362bbafc4b836f5104b9676608a40a278f"
+  integrity sha512-v1CDCvdfoR3zLGNp6qsBa4J1BWMEVH25+UKxF/RvQRh+mrB+emqtVHMgZ+WreUiKJoEaiwYoScaueIKhMVBHUg==
+  dependencies:
+    "@babel/runtime" "^7.2.0"
+    invariant "^2.2.4"
+    prop-types "^15.5.7"
+
+react-sticky-box@^0.9.3:
+  version "0.9.3"
+  resolved "https://r2.cnpmjs.org/react-sticky-box/-/react-sticky-box-0.9.3.tgz#8450d4cef8e4fdd7b0351520365bc98c97da11af"
+  integrity sha512-Y/qO7vTqAvXuRR6G6ZCW4fX2Bz0GZRwiiLTVeZN5CVz9wzs37ev0Xj3KSKF/PzF0jifwATivI4t24qXG8rSz4Q==
+  dependencies:
+    "@babel/runtime" "^7.1.5"
+    resize-observer-polyfill "^1.5.1"
+
+react@17.0.2:
+  version "17.0.2"
+  resolved "https://r2.cnpmjs.org/react/-/react-17.0.2.tgz#d0b5cc516d29eb3eee383f75b62864cfb6800037"
+  integrity sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
-    prop-types "^15.6.2"
 
 read-pkg-up@^7.0.1:
   version "7.0.1"
@@ -10864,10 +10993,10 @@ saxes@^5.0.1:
   dependencies:
     xmlchars "^2.2.0"
 
-scheduler@^0.19.1:
-  version "0.19.1"
-  resolved "http://nexus.mchz.com.cn:4873/scheduler/-/scheduler-0.19.1.tgz#4f3e2ed2c1a7d65681f4c854fa8c5a1ccb40f196"
-  integrity sha512-n/zwRWRYSUj0/3g/otKDRPMh6qv2SYMWNq85IEa8iZyAv8od9zDYpGSnpBEjNgcMNq6Scbu5KfIPxNF72R/2EA==
+scheduler@^0.20.2:
+  version "0.20.2"
+  resolved "https://r2.cnpmjs.org/scheduler/-/scheduler-0.20.2.tgz#4baee39436e34aa93b4874bddcbf0fe8b8b50e91"
+  integrity sha512-2eWfGgAqqWFGqtdMmcL5zCMK1U8KlXv8SQFGglL3CEtd0aDVDWgeF/YoCmvln55m5zSk3J/20hTaSBeSObsQDQ==
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
@@ -12125,6 +12254,13 @@ upath@^1.1.1, upath@^1.1.2, upath@^1.2.0:
   version "1.2.0"
   resolved "http://nexus.mchz.com.cn:4873/upath/-/upath-1.2.0.tgz#8f66dbcd55a883acdae4408af8b035a5044c1894"
   integrity sha1-j2bbzVWog6za5ECK+LA1pQRMGJQ=
+
+upper-case@^2.0.1:
+  version "2.0.2"
+  resolved "https://r2.cnpmjs.org/upper-case/-/upper-case-2.0.2.tgz#d89810823faab1df1549b7d97a76f8662bae6f7a"
+  integrity sha512-KgdgDGJt2TpuwBUIjgG6lzw2GWFRCW9Qkfkiv0DxqHHLYJHmtmdUIKcZd8rHgFSjopVTlw6ggzCm1b8MFQwikg==
+  dependencies:
+    tslib "^2.0.3"
 
 uri-js@^4.2.2:
   version "4.4.1"

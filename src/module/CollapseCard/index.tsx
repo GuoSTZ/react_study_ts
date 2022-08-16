@@ -10,11 +10,11 @@ const { Panel } = Collapse;
 type ActiveKeyType = string | number | string[] | number[] | undefined;
 
 export interface CollapseCardProps extends CollapseProps {
-  className?: string;
+  header?: string;
 }
 
 const CollapseCard: React.FC<CollapseCardProps> = props => {
-  const { className, onChange, children } = props;
+  const { className, onChange, children, header, ...restProps } = props;
 
   const [activeKey, setActiveKey] = useState(undefined as ActiveKeyType);
   const [checked, setChecked] = useState(false);
@@ -60,11 +60,11 @@ const CollapseCard: React.FC<CollapseCardProps> = props => {
   return (
     <Collapse
       activeKey={activeKey}
-      destroyInactivePanel
+      // destroyInactivePanel={checked}
       className={classNames('collapse-card', className)}
       // onChange={handleChange}
       expandIcon={renderExpandIcon}>
-      <Panel header="短信" key="1" extra={renderExtra()}>
+      <Panel header={header} key="1" extra={renderExtra()}>
         {children}
       </Panel>
     </Collapse>
