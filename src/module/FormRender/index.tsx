@@ -37,7 +37,7 @@ import {
   registerValidateRules
 } from '@formily/core';
 import { Form as IForm } from '@formily/core/esm/models/Form';
-import { createSchemaField } from '@formily/react';
+import { createSchemaField, RecursionField } from '@formily/react';
 import { action } from '@formily/reactive';
 import { ConfigProvider } from 'antd';
 import zhCN from 'antd/lib/locale/zh_CN';
@@ -179,3 +179,4 @@ const FormRender = React.forwardRef((props: FormRenderProps, ref: any) => {
 
 export default FormRender;
 export { onFieldEffects, onFormEffects };
+export { RecursionField }

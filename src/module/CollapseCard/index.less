@@ -1,6 +1,4 @@
 .ant-collapse.collapse-card {
-  // background-color: #fafafa;
-  // border: 1px solid #CED2DE;
   background-color: unset;
   border: unset;
 
@@ -10,6 +8,12 @@
 
     &:not(:last-child) {
       margin-bottom: 10px;
+    }
+
+    > .ant-collapse-header {
+      > span {
+        padding: 0 8px;
+      }
     }
   }
 }

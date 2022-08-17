@@ -11,6 +11,9 @@
         "title": "面板数据",
         "x-decorator": "FormItem",
         "x-component": "CollapseCard",
+        "x-component-props": {
+          "mode": "json"
+        },
         "properties": {
           "email": {
             "type": "void",
@@ -40,6 +43,67 @@
           "message": {
             "type": "object",
             "x-component": "CollapseCardPanel",
+            "x-component-props": {
+              "header": "消息",
+              "key": "2"
+            },
+            "properties": {
+              "username": {
+                "type": "string",
+                "title": "Username",
+                "x-decorator": "FormItem",
+                "x-component": "Input",
+                "x-component-props": {
+                  "placeholder": "请输入用户名"
+                },
+                "x-validator": [
+                  {
+                    "required": true,
+                    "message": "请输入用户名"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "collapse1": {
+        "type": "void",
+        "title": "面板数据",
+        "x-decorator": "FormItem",
+        "x-component": "FormCollapse",
+        "x-component-props": {
+          "mode": "json"
+        },
+        "properties": {
+          "email": {
+            "type": "void",
+            "x-component": "FormCollapse.CollapsePanel",
+            "x-component-props": {
+              "header": "短信",
+              "key": "1"
+            },
+            "properties": {
+              "username": {
+                "type": "string",
+                "title": "Username",
+                "x-decorator": "FormItem",
+                "x-component": "Input",
+                "x-component-props": {
+                  "placeholder": "请输入用户名"
+                },
+                "x-validator": [
+                  {
+                    "required": true,
+                    "message": "请输入用户名"
+                  }
+                ]
+              }
+            }
+          },
+          "message": {
+            "type": "object",
+            "x-component": "FormCollapse.CollapsePanel",
             "x-component-props": {
               "header": "消息",
               "key": "2"

@@ -14,48 +14,85 @@ const CollapseCardView = (props: any) => {
   return (
     <Form
       name="basic"
-      labelCol={{ span: 8 }}
+      labelCol={{ span: 4 }}
       wrapperCol={{ span: 16 }}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
+      initialValues={{
+        collapse: ['email', 'message'],
+        testInput: 'testInput',
+        email: { username: '短信-用户名', password: '123' },
+        message: { username: '消息-用户名', password: '456' }
+      }}
       autoComplete="off">
-      <CollapseCard>
-        <CollapseCard.Panel header="短信" key="1">
-          <Form.Item
-            label="Username"
-            name={['email', 'username']}
-            rules={[{ required: true, message: 'Please input your username!' }]}
-          >
-            <Input />
-          </Form.Item>
+      <Form.Item
+        label="测试输入框"
+        name="testInput"
+        rules={[{ required: true, message: '请输入数据' }]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item
+        label="折叠面板"
+        name="collapse"
+        rules={[{ required: true, message: '请勾选数据' }]}
+      >
+        <CollapseCard>
+          <CollapseCard.Panel header="短信" key="email">
+            <Form.Item
+              label="Username"
+              name={['email', 'username']}
+              rules={[{ required: true, message: 'Please input your username!' }]}
+            >
+              <Input />
+            </Form.Item>
 
-          <Form.Item
-            label="Password"
-            name={['email', 'password']}
-            rules={[{ required: true, message: 'Please input your password!' }]}
-          >
-            <Input.Password />
-          </Form.Item>
-        </CollapseCard.Panel>
+            <Form.Item
+              label="Password"
+              name={['email', 'password']}
+              rules={[{ required: true, message: 'Please input your password!' }]}
+            >
+              <Input.Password />
+            </Form.Item>
+          </CollapseCard.Panel>
 
-        <CollapseCard.Panel header="消息" key="2">
-          <Form.Item
-            label="Username"
-            name={['message', 'username']}
-            rules={[{ required: true, message: 'Please input your username!' }]}
-          >
-            <Input />
-          </Form.Item>
+          <CollapseCard.Panel header="消息" key="message">
+            <Form.Item
+              label="Username"
+              name={['message', 'username']}
+              rules={[{ required: true, message: 'Please input your username!' }]}
+            >
+              <Input />
+            </Form.Item>
 
-          <Form.Item
-            label="Password"
-            name={['message', 'password']}
-            rules={[{ required: true, message: 'Please input your password!' }]}
-          >
-            <Input.Password />
-          </Form.Item>
-        </CollapseCard.Panel>
-      </CollapseCard>
+            <Form.Item
+              label="Password"
+              name={['message', 'password']}
+              rules={[{ required: true, message: 'Please input your password!' }]}
+            >
+              <Input.Password />
+            </Form.Item>
+          </CollapseCard.Panel>
+
+          <CollapseCard.Panel header="测试" key="test">
+            <Form.Item
+              label="Username"
+              name={['test', 'username']}
+              rules={[{ required: true, message: 'Please input your username!' }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Password"
+              name={['test', 'password']}
+              rules={[{ required: true, message: 'Please input your password!' }]}
+            >
+              <Input.Password />
+            </Form.Item>
+          </CollapseCard.Panel>
+        </CollapseCard>
+      </Form.Item>
 
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
         <Button type="primary" htmlType="submit">

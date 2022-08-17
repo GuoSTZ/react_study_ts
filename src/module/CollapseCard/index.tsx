@@ -10,6 +10,7 @@ const { Panel } = Collapse;
 type ActiveKeyType = (string | number)[];
 
 export interface CollapseCardProps extends CollapseProps {
+  value?: any;
 }
 
 type CompoundedComponent = ((props: CollapseCardProps) => React.ReactElement) & {
@@ -18,17 +19,23 @@ type CompoundedComponent = ((props: CollapseCardProps) => React.ReactElement) & 
 }
 
 const CollapseCard: CompoundedComponent = props => {
-  const { className, onChange, children, defaultActiveKey, ...restProps } = props;
+  const { className, onChange, children, defaultActiveKey, value, ...restProps } = props;
 
   useEffect(() => {
-    setActiveKey(defaultActiveKey as any[] || [])
-  }, [defaultActiveKey])
+    const mergedActiveKey: any[] = value || defaultActiveKey || [];
+    setActiveKey(mergedActiveKey)
+  }, [value, defaultActiveKey])
 
   const [activeKey, setActiveKey] = useState([] as ActiveKeyType);
 
+  const collapseOnchange = (key: any) => {
+    console.log(key, '====collapse')
+    setActiveKey(key);
+  }
+
   const checkOnChange = (e: CheckboxChangeEvent, key: any) => {
     let data: any[];
-    if(e?.target?.checked) {
+    if (e?.target?.checked) {
       data = [...activeKey, key];
     } else {
       data = activeKey.filter((item: any) => item !== key);
@@ -39,21 +46,22 @@ const CollapseCard: CompoundedComponent = props => {
 
   const renderHeader = (text: string, key: any) => {
     return (
-      <Checkbox
-        checked={activeKey.includes(key)}
-        onChange={(e: CheckboxChangeEvent) => checkOnChange(e, key)}>
-        {text}
-      </Checkbox>
+      <React.Fragment>
+        <Checkbox
+          checked={activeKey.includes(key)}
+          onChange={(e: CheckboxChangeEvent) => checkOnChange(e, key)} />
+        <span>{text}</span>
+      </React.Fragment>
     )
   }
 
   const renderChildren = () => {
-    if(!children) {
+    if (!children) {
       return;
     }
     const data = Array.isArray(children) ? children : [children];
     return data.map((child: any, index: number) => {
-      if(child?.type?.name !== 'CollapsePanel') {
+      if (child?.type?.name !== 'CollapsePanel') {
         return (
           <Panel header={renderHeader('-', index)} key={index} showArrow={false}>
             {child}
@@ -73,6 +81,7 @@ const CollapseCard: CompoundedComponent = props => {
       {...restProps}
       activeKey={activeKey}
       destroyInactivePanel
+      onChange={collapseOnchange}
       className={classNames('collapse-card', className)}>
       {renderChildren()}
     </Collapse>

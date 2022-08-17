@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'antd';
+import { Button, Checkbox } from 'antd';
 import CollapseCard from '..';
 import FormRender from '../../FormRender';
 import schema from './data.json';
@@ -17,6 +17,10 @@ const CollapseCardJson = (props: any) => {
       })
   }
 
+  const test = () => {
+    return <Checkbox>测试</Checkbox>
+  }
+
   return (
     <div>
       <FormRender
@@ -25,6 +29,9 @@ const CollapseCardJson = (props: any) => {
         components={{
           CollapseCard,
           CollapseCardPanel: CollapseCard.Panel
+        }}
+        scope={{
+          test
         }}
       />
       <Button
