@@ -29,8 +29,8 @@ const CollapseCard: CompoundedComponent = props => {
   const [activeKey, setActiveKey] = useState([] as ActiveKeyType);
 
   const collapseOnchange = (key: any) => {
-    console.log(key, '====collapse')
     setActiveKey(key);
+    onChange?.(key);
   }
 
   const checkOnChange = (e: CheckboxChangeEvent, key: any) => {
