@@ -4,15 +4,45 @@
 
   > .ant-collapse-item {
     background-color: #fafafa;
-    border: 1px solid #CED2DE;
+    border: unset;
 
     &:not(:last-child) {
       margin-bottom: 10px;
     }
 
     > .ant-collapse-header {
+      background-color: #fff;
+      align-items: center;
+      border: 1px solid #CED2DE;
+
+      &:hover {
+        background-color: rgb(249, 250, 254);
+      }
+
+      > label {
+        height: 16px;
+
+        > .ant-checkbox {
+          top: unset;
+        }
+      }
       > span {
         padding: 0 8px;
+      }
+    }
+
+    > .ant-collapse-content {
+      border: 1px solid #CED2DE;
+      border-top: unset;
+    }
+  }
+
+  > .ant-collapse-item-active {
+    > .ant-collapse-header {
+      border-color: #3385FF;
+
+      &:hover {
+        background-color: #fff;
       }
     }
   }
