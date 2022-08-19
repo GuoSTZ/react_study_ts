@@ -3,20 +3,23 @@
   border: unset;
 
   > .ant-collapse-item {
-    background-color: #fafafa;
-    border: unset;
+    background-color: #fff;
+    border: 1px solid #CED2DE;
 
     &:not(:last-child) {
       margin-bottom: 10px;
     }
 
     > .ant-collapse-header {
-      background-color: #fff;
       align-items: center;
-      border: 1px solid #CED2DE;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      background-color: #fff;
 
       &:hover {
-        background-color: rgb(249, 250, 254);
+        .ant-checkbox-inner{
+          border-color: #3385FF;
+        }
       }
 
       > label {
@@ -24,25 +27,16 @@
 
         > .ant-checkbox {
           top: unset;
+
+          > input {
+            width: 16px;
+            height: 16px;
+          }
         }
       }
+
       > span {
         padding: 0 8px;
-      }
-    }
-
-    > .ant-collapse-content {
-      border: 1px solid #CED2DE;
-      border-top: unset;
-    }
-  }
-
-  > .ant-collapse-item-active {
-    > .ant-collapse-header {
-      border-color: #3385FF;
-
-      &:hover {
-        background-color: #fff;
       }
     }
   }
