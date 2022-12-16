@@ -2,6 +2,7 @@ import { LaptopOutlined, NotificationOutlined, UserOutlined } from '@ant-design/
 import type { MenuProps } from 'antd';
 import { Breadcrumb, Layout, Menu } from 'antd';
 import React from 'react';
+import TreeComponent from '../components/TreeComponent';
 import styles from './index.module.less';
 
 const { Header, Content, Sider } = Layout;
@@ -60,7 +61,7 @@ const Container: React.FC = () => (
             minHeight: 280,
           }}
         >
-          Content
+          <TreeComponent />
         </Content>
       </Layout>
     </Layout>
