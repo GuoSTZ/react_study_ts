@@ -1,15 +1,26 @@
 .TreeComponent {
   display: flex;
 
-  > .tree {
+  > .tree,
+  > .treeShow {
     height: 400px;
     width: 256px;
     background-color: #fff;
+  }
+
+  > .treeShow {
+    .show {
+      display: block;
+    }
+    .hidden {
+      display: none;
+    }
   }
 
   > .btns {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    width: 20px;
   }
 }
