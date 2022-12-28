@@ -61,7 +61,7 @@ const Container: React.FC = () => (
             minHeight: 280,
           }}
         >
-          <TreeComponent />
+          <TreeComponent showSearch/>
         </Content>
       </Layout>
     </Layout>
