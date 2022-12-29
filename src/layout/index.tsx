@@ -59,6 +59,7 @@ const Container: React.FC = () => (
             padding: 24,
             margin: 0,
             minHeight: 280,
+            background: '#fff'
           }}
         >
           <TreeComponent showSearch/>

@@ -39,7 +39,7 @@ const mockData = (path: number) => {
 }
 const treeData = [
   {
-    title: 'title1',
+    title: 'titlea',
     key: '0',
     renderable: false,
     children: mockData(0)
@@ -62,8 +62,9 @@ const checkedKeysSet = new Set(); // 仅用作记录当前哪些树节点被手�
 const halfCheckedKeysSet = new Set(); // 仅用作记录当前哪些树节点被半选中，用于快速判定该树节点是否被半选中
 const TREE_HEIGHT = 281; // 树高，配合虚拟滚动
 const CHECK_ALL_HEIGHT = 28; // “全部”选项的高度
-const COUNT_TEXT_HEIGHT = 22; // 条数文字高度
-const SEARCH_HEIGHT = 32; // 搜索框的高度
+const COUNT_TEXT_HEIGHT = 22 + 2 * 8 + 1; // 条数文字高度
+const SEARCH_HEIGHT = 32 + 2 * 8; // 搜索框的高度
+const BODER_HEIGHT = 2; // 边框
 
 export default (props: Props) => {
   const { showSearch } = props;
@@ -76,7 +77,7 @@ export default (props: Props) => {
     data.map(item => {
       const node = map.get(item.key)!;
       node.renderable = checked;
-      if(checked) {
+      if (checked) {
         checkedKeysSet.add(item.key);
       } else {
         checkedKeysSet.delete(item.key);
@@ -89,7 +90,7 @@ export default (props: Props) => {
     const pKey: React.Key | undefined = data?.pKey;
     if (pKey) {
       const node = map.get(pKey);
-      if(!checkedKeys.includes(pKey) && !halfCheckedKeys.includes(pKey)) {
+      if (!checkedKeys.includes(pKey) && !halfCheckedKeys.includes(pKey)) {
         map.get(pKey)!.renderable = false;
         halfCheckedKeysSet.delete(pKey);
       }
@@ -117,7 +118,23 @@ export default (props: Props) => {
   }, [treeData])
 
   const onCheck = useCallback((checked: any, info: any) => {
-    console.log(checked, info, '=======')
+    console.log(checked, info, '====info')
+    // 处于搜索模式下的选中，与常规的存在差异
+    if (searchValue) {
+      if (info?.checked) {
+        // 点击子节点时
+        if (!info.node.children) {
+          const pNode = treeMap.get(info.node.pKey)!;
+          // 当存在兄弟节点时
+          if (pNode.children && pNode.children?.length > 1) {
+            halfCheckedKeysSet.add(info.node.pKey);
+            checkedKeysSet.add(info.node.key);
+          } else {
+
+          }
+        }
+      }
+    }
     if (info?.checked) {
       info?.halfCheckedKeys?.map((key: React.Key) => {
         const node = treeMap.get(key)!;
@@ -150,12 +167,12 @@ export default (props: Props) => {
   const cloneNodes = useCallback((data: TreeDataNode[]) => {
     const list: TreeDataNode[] = [];
     const len = data.length;
-    for(let i=0; i<len; i++) {
-      if(!data[i].renderable) {
+    for (let i = 0; i < len; i++) {
+      if (!data[i].renderable) {
         continue;
       }
-      const item: TreeDataNode = Object.assign({}, data[i], {children: null});
-      if(data[i].children) {
+      const item: TreeDataNode = Object.assign({}, data[i], { children: null });
+      if (data[i].children) {
         item.children = cloneNodes(data[i].children!);
       }
       list.push(item);
@@ -169,19 +186,37 @@ export default (props: Props) => {
   }, [])
 
   const searchTreeData = (data: TreeDataNode[]) => {
-    if(!searchValue) {
+    if (!searchValue) {
       return data;
     }
     const list: TreeDataNode[] = [];
     const len = data.length;
-    for(let i=0; i<len; i++) {
-      if((data[i].title as string).indexOf(searchValue) === -1 && !data[i].children) {
+    for (let i = 0; i < len; i++) {
+      // // 搜索值未匹配时
+      // if ((data[i].title as string).indexOf(searchValue) === -1) {
+      //   // 子节点
+      //   if (!data[i].children) {
+      //     continue;
+      //   } else { // 父节点
+      //     const item: TreeDataNode = Object.assign({}, data[i], {children: null});
+      //     const result = searchTreeData(data[i].children!);
+      //     if (result.length !== 0) {
+      //       item.children = result;
+      //     }
+      //     list.push(item);
+      //   }
+      // } else {
+
+      // }
+
+      console.log(data[i].title, (data[i].title as string).indexOf(searchValue), '=====')
+      if ((data[i].title as string).indexOf(searchValue) === -1 && !data[i].children) {
         continue;
       }
-      const item: TreeDataNode = Object.assign({}, data[i], {children: null});
-      if(data[i].children) {
+      const item: TreeDataNode = Object.assign({}, data[i], { children: null });
+      if (data[i].children) {
         const result = searchTreeData(data[i].children!);
-        if(result.length === 0) {
+        if (result.length === 0) {
           continue;
         } else {
           item.children = result;
@@ -192,8 +227,6 @@ export default (props: Props) => {
     return list;
   }
 
-  console.log(treeData, '====treeData')
-
   // 左侧树 checkedKeys 值
   const mergedLeftCheckedKeys = checkAll ? treeKeys : checkedKeys;
   // const mergedDisabled = checkAll ? checkAll : 
@@ -201,31 +234,43 @@ export default (props: Props) => {
   // 右侧树高度设置
   const mergedRightTreeHeight = showSearch ? (SEARCH_HEIGHT + CHECK_ALL_HEIGHT + TREE_HEIGHT) : (CHECK_ALL_HEIGHT + TREE_HEIGHT)
   // 包裹树的div的高度设置
-  const treeDivHeight = showSearch ? (COUNT_TEXT_HEIGHT + SEARCH_HEIGHT + CHECK_ALL_HEIGHT + TREE_HEIGHT) : (COUNT_TEXT_HEIGHT + CHECK_ALL_HEIGHT + TREE_HEIGHT)
+  const treeDivHeight = showSearch ? (COUNT_TEXT_HEIGHT + SEARCH_HEIGHT + CHECK_ALL_HEIGHT + TREE_HEIGHT + BODER_HEIGHT) : (COUNT_TEXT_HEIGHT + CHECK_ALL_HEIGHT + TREE_HEIGHT + BODER_HEIGHT)
 
   return (
     <div className={styles.TreeComponent}>
-      <div className={styles.tree} style={{height: treeDivHeight}}>
-        <span>共 {treeMap.size} 条</span>
-        { showSearch && <Input onChange={onSearch} placeholder='请输入'/> }
+      <div className={styles.tree} style={{ height: treeDivHeight }}>
+        <div className={styles.countText}>
+          <span>共 {treeMap.size} 条</span>
+        </div>
+        {showSearch && (
+          <div className={styles.search}>
+            <Input onChange={onSearch} placeholder='请输入' />
+          </div>
+        )}
         <div>
-          <Checkbox className={styles.checkAll} style={{height: CHECK_ALL_HEIGHT}} onChange={(e: any) => {
-            const checked = e.target.checked;
-            setCheckAll(checked);
-            if(checked) {
-              treeKeys.forEach((item: React.Key) => {
-                const node = treeMap.get(item)!;
-                node.renderable = true;
-              })
-            } else {
-              treeKeys.forEach((item: React.Key) => {
-                const node = treeMap.get(item)!;
-                if(!checkedKeysSet.has(item) && !halfCheckedKeysSet.has(item)) {
-                  node.renderable = false;
-                }
-              })
+          <Checkbox
+            className={styles.checkAll}
+            style={{ height: CHECK_ALL_HEIGHT }}
+            onChange={(e: any) => {
+              const checked = e.target.checked;
+              setCheckAll(checked);
+              if (checked) {
+                treeKeys.forEach((item: React.Key) => {
+                  const node = treeMap.get(item)!;
+                  node.renderable = true;
+                })
+              } else {
+                treeKeys.forEach((item: React.Key) => {
+                  const node = treeMap.get(item)!;
+                  if (!checkedKeysSet.has(item) && !halfCheckedKeysSet.has(item)) {
+                    node.renderable = false;
+                  }
+                })
+              }
             }
-          }}>全部</Checkbox>
+            }>
+            全部
+          </Checkbox>
           <Tree
             checkable
             checkedKeys={mergedLeftCheckedKeys}
@@ -242,30 +287,17 @@ export default (props: Props) => {
       <div className={styles.btns}>
       </div>
 
-      <div className={styles.treeShow} style={{height: treeDivHeight}}>
-        <span>共 {checkAll ? treeMap.size : checkedKeysSet.size} 条</span>
+      <div className={styles.treeShow} style={{ height: treeDivHeight }}>
+        <div className={styles.countText}>
+          <span>共 {checkAll ? treeMap.size : checkedKeysSet.size} 条</span>
+        </div>
         <Tree
           treeData={cloneNodes(treeData)}
           height={mergedRightTreeHeight}
           key={Math.random() * 100}
           defaultExpandAll
           selectable={false}
-          // titleRender={(nodeData: any) => {
-          //   return (
-          //     <div>
-          //       {nodeData.title} 
-          //       <DeleteOutlined onClick={() => {
-          //         const node = treeMap.get(nodeData.key)!;
-          //         node.renderable = false;
-          //         // 本不该这么写的，只是为了做强制刷新，建议优化
-          //         setTreeShowData([])
-          //       }}/> 
-          //     </div>
-          //   )
-          // }}
-        >
-          {/* {renderTreeNodes(treeData)} */}
-        </Tree>
+        />
       </div>
     </div>
   )
