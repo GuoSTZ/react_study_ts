@@ -1,0 +1,38 @@
+{
+  "form": {
+    "labelCol": 4,
+    "wrapperCol": 12
+  },
+  "schema": {
+    "type": "object",
+    "properties": {
+      "test": {
+        "type": "array",
+        "title": "防护目的",
+        "x-decorator": "FormItem",
+        "x-component": "CollapseForm",
+        "x-component-props": {
+
+        },
+        "x-validator": [
+          {
+            "required": true,
+            "message": "请选择防护目的"
+          },
+          {
+            "validateChildValue": true
+          }
+        ]
+      },
+      "desc": {
+        "type": "string",
+        "title": "描述信息",
+        "x-decorator": "FormItem",
+        "x-component": "Input",
+        "x-component-props": {
+          "placeholder": "请输入描述信息"
+        }
+      }
+    }
+  }
+}

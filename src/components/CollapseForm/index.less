@@ -1,0 +1,55 @@
+.ant-collapse.collapse-form {
+  background-color: unset;
+  border: unset;
+
+  > .ant-collapse-item {
+    background-color: #fff;
+    border: unset;
+
+    &:not(:last-child) {
+      margin-bottom: 10px;
+    }
+
+    > .ant-collapse-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background-color: #fff;
+      border: 1px solid #ced2de;
+      border-radius:  2px 2px 0 0;
+
+      &:hover {
+        .ant-checkbox-inner{
+          border-color: #3385FF;
+        }
+      }
+
+      > div:first-child {
+        > label {
+          margin-right: 8px;
+          color: #38415c;
+          font-weight: 400;
+        }
+      }
+      > div:last-child {
+        font-weight: 400;
+        color: #82899e;
+      }
+    }
+
+    .ant-collapse-content {
+      border: unset;
+      border-radius:  0 0 2px 2px;
+      &-box {
+        background: #f7f8fa;
+      }
+    }
+  }
+
+  .empty-content {
+    > .ant-collapse-content {
+      display: none;
+    }
+  }
+}
