@@ -120,15 +120,21 @@ class App extends Component {
           dropdownSelectCount={[20]}
           // itemSize={10}
         /> */}
-        {/* <TreeSelect 
+        <AntdTreeSelect 
           style={{ width: '100%' }}
-          dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
           treeData={treeData}
           placeholder="Please select"
-          treeDefaultExpandAll
-          showSearch
-          treeCheckable
-        /> */}
+          // treeDefaultExpandAll
+          // showSearch
+          // treeCheckable
+          // showSearch
+          // allowClear
+          // treeNodeFilterProp='title'
+          // treeDefaultExpandAll
+          dropdownStyle={{maxHeight: 280, overflow: 'auto'}}
+          // getPopupContainer={(target: any) => target.parentNode}
+          loading
+        />
         {/* <JsonEditorView /> */}
         {/* <RcSelectView /> */}
         {/* <VirtualView />
@@ -138,7 +144,7 @@ class App extends Component {
         {/* <div style={{width: 800, height: 500}}>
           <InfiniteLoaderList />
         </div> */}
-        <CollapseFormView />
+        {/* <CollapseFormView /> */}
       </div>
     );
   }

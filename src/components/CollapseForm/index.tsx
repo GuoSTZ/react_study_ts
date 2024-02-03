@@ -213,7 +213,6 @@ const CollapseForm: React.FC<CollapseFormProps> = props => {
         {renderChildren()}
       </Collapse>
     </Form>
-
   )
 }
 

@@ -1,25 +1,46 @@
 import React, { useEffect } from 'react'
-import { Button, Radio } from 'antd'
+import { Button, Radio, Select, Cascader } from 'antd'
 import CollapseForm from "../../components/CollapseForm";
 import McFormily from '@meichuang/formily';
 import {
   onFieldValidateStart,
   onFieldValidateEnd,
-  onFieldValidating,
-  onFieldSubmitValidateStart,
-  onFieldSubmitValidateEnd,
-  onFieldValidateFailed,
-  onFieldValidateSuccess,
-  onFieldSubmit,
-  onFieldSubmitStart,
-  onFieldSubmitEnd,
-  onFieldSubmitFailed,
-  onFieldSubmitSuccess,
-  onFieldSubmitValidateSuccess,
-  onFieldSubmitValidateFailed,
   onFieldValueChange,
-} from '@meichuang/formily/dist/dependencies/formilyCore'
+  onFieldMount,
+  onFieldChange
+} from '@meichuang/formily/dist/dependencies/formilyCore';
 import schema from './test.json'
+import { mockData } from './data'
+
+// 数据库类型级联数据处理
+const handleDsTypes = (data: any) => {
+  return data?.map((item: any) => {
+    const children =
+      item.dbList?.map((item: any) => ({
+        label: item.dsTypeStr,
+        value: item.dsType
+      })) || [];
+    return {
+      label: item.datasourceClassStr,
+      value: item.datasourceClass,
+      children,
+      disabled: children?.length === 0
+    };
+  });
+};
+
+const dbData = handleDsTypes(mockData)
+
+const getDbVersion = (dsType: string) => {
+  const obj: any = {};
+  mockData.map((item: any) => {
+    item.dbList.map((db: any) => {
+      obj[db.dsType] = db.dsVersion.map((version: any) => ({label: version, value: version}))
+    })
+  })
+  return obj[dsType] || [];
+}
+
 
 const options = [
   { label: "label1", value: 1 },
@@ -83,7 +104,7 @@ const data = [
       {
         label: "运行模式",
         name: "deployMode",
-        content: <Radio.Group options={options}/>,
+        content: <Radio.Group options={options} />,
         // FormItem相关配置传入
         options: {
           rules: [
@@ -151,10 +172,10 @@ const extraComponents = {
 function validateChildValue(value: any, rule: any) {
   if (!value) return ('请选择防护目的' || rule.message)
   const flag = value?.some((item: any) => {
-    if(!item.children) return ""
+    if (!item.children) return ""
     return Object.values(item.children)?.some(child => child === undefined)
   })
-  if(flag) {
+  if (flag) {
     return "请选择内部组件值"
   } else {
     return ""
@@ -163,6 +184,13 @@ function validateChildValue(value: any, rule: any) {
 
 const validator = {
   validateChildValue
+}
+
+const components = {
+  AntdSelect: Select,
+  AntdCascader: (props: any) => {
+    return <Cascader {...props} options={dbData} />
+  }
 }
 
 let baseForm: any;
@@ -180,19 +208,27 @@ export default () => {
       <McFormily
         getForm={form => baseForm = form}
         schema={schema}
-        extraComponents={extraComponents}
+        components={components}
+        formComponents={extraComponents}
         validator={validator}
+        scope={{
+          getDbVersion
+        }}
         effects={() => {
-          onFieldValidateStart('test', (field, form) => {
-            field.componentProps.isValidating = true
-          })
-          onFieldValidateEnd('test', (field, form) => {
-            field.componentProps.isValidating = false
-          })
-          onFieldValueChange('test', (field, form) => {
-            // 修改值而不是触发校验时，组件内部不应该对子组件进行校验
-            field.componentProps.isValidating = false
-          })
+          // onFieldValidateStart('test', (field, form) => {
+          //   field.componentProps.isValidating = true
+          // })
+          // onFieldValidateEnd('test', (field, form) => {
+          //   field.componentProps.isValidating = false
+          // })
+          // onFieldValueChange('test', (field, form) => {
+          //   // 修改值而不是触发校验时，组件内部不应该对子组件进行校验
+          //   field.componentProps.isValidating = false
+          // })
+          // onFieldMount('dbType', (field) => {
+          //   // @ts-ignore
+          //   field.dataSource = []
+          // })
         }}
       />
       <Button

@@ -1,4 +1,4 @@
-import 'react-app-polyfill/ie11'; 
+import 'react-app-polyfill/ie11';
 import 'react-app-polyfill/stable';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -10,9 +10,11 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
-  <ConfigProvider locale={zhCN}>
-    <App />,
-  </ConfigProvider>,
+  <React.StrictMode>
+    <ConfigProvider locale={zhCN}>
+      <App />
+    </ConfigProvider>
+  </React.StrictMode>,
   document.getElementById('root')
 );
 

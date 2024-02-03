@@ -6,6 +6,36 @@
   "schema": {
     "type": "object",
     "properties": {
+      "dbType": {
+        "type": "string",
+        "title": "数据库类型",
+        "x-decorator": "FormItem",
+        "x-component": "Cascader",
+        "x-component-props": {
+          "placeholder": "请选择"
+        },
+        "required": true
+      },
+      "dbVersion": {
+        "type": "string",
+        "title": "数据库版本",
+        "x-decorator": "FormItem",
+        "x-component": "Select",
+        "x-component-props": {
+          "placeholder": "请选择"
+        },
+        "enum": [
+          {"label": 1, "value": 1}
+        ],
+        "x-reactions": {
+          "dependencies": ["dbType"],
+          "fulfill": {
+            "schema": {
+              "enum": "{{getDbVersion($values.dbType?.[1])}}"
+            }
+          }
+        }
+      },
       "test": {
         "type": "array",
         "title": "防护目的",
